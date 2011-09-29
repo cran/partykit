@@ -1,0 +1,98 @@
+<PMML version="3.2" xmlns="http://www.dmg.org/PMML-3_2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-3_2 http://www.dmg.org/v3-2/pmml-3-2.xsd">
+ <Header copyright="Copyright (c) 2008 zeileis" description="RPart decision tree model">
+  <Extension name="timestamp" value="2008-09-25 17:14:12" extender="Rattle"/>
+  <Extension name="description" value="zeileis" extender="Rattle"/>
+  <Application name="Rattle/PMML" version="1.1.9"/>
+ </Header>
+ <DataDictionary numberOfFields="11">
+  <DataField name="choice" optype="categorical" dataType="string">
+   <Value value="no"/>
+   <Value value="yes"/>
+  </DataField>
+  <DataField name="gender" optype="categorical" dataType="string">
+   <Value value="female"/>
+   <Value value="male"/>
+  </DataField>
+  <DataField name="amount" optype="continuous" dataType="double"/>
+  <DataField name="freq" optype="continuous" dataType="double"/>
+  <DataField name="last" optype="continuous" dataType="double"/>
+  <DataField name="first" optype="continuous" dataType="double"/>
+  <DataField name="child" optype="continuous" dataType="double"/>
+  <DataField name="youth" optype="continuous" dataType="double"/>
+  <DataField name="cook" optype="continuous" dataType="double"/>
+  <DataField name="diy" optype="continuous" dataType="double"/>
+  <DataField name="art" optype="categorical" dataType="string">
+   <Value value="0"/>
+   <Value value="1"/>
+   <Value value="2+"/>
+  </DataField>
+ </DataDictionary>
+ <TreeModel modelName="RPart_Model" functionName="classification" algorithmName="rpart" splitCharacteristic="binarySplit" missingValueStrategy="defaultChild">
+  <MiningSchema>
+   <MiningField name="choice" usageType="predicted"/>
+   <MiningField name="gender" usageType="active"/>
+   <MiningField name="amount" usageType="active"/>
+   <MiningField name="freq" usageType="active"/>
+   <MiningField name="last" usageType="active"/>
+   <MiningField name="first" usageType="active"/>
+   <MiningField name="child" usageType="active"/>
+   <MiningField name="youth" usageType="active"/>
+   <MiningField name="cook" usageType="active"/>
+   <MiningField name="diy" usageType="active"/>
+   <MiningField name="art" usageType="active"/>
+  </MiningSchema>
+  <Node id="1" score="no" recordCount="400" defaultChild="2">
+   <True/>
+   <ScoreDistribution value="no" recordCount="275" confidence="0.6875"/>
+   <ScoreDistribution value="yes" recordCount="125" confidence="0.3125"/>
+   <Node id="2" score="no" recordCount="261">
+    <CompoundPredicate booleanOperator="surrogate">
+     <SimpleSetPredicate field="art" booleanOperator="isIn">
+      <Array n="1" type="string">0</Array>
+     </SimpleSetPredicate>
+     <SimplePredicate field="last" operator="lessThan" value="5.5"/>
+     <SimplePredicate field="first" operator="lessThan" value="31"/>
+     <SimplePredicate field="amount" operator="lessThan" value="314.5"/>
+     <SimplePredicate field="child" operator="lessThan" value="2.5"/>
+     <SimplePredicate field="cook" operator="lessThan" value="2.5"/>
+    </CompoundPredicate>
+    <ScoreDistribution value="no" recordCount="207" confidence="0.793103448275862"/>
+    <ScoreDistribution value="yes" recordCount="54" confidence="0.206896551724138"/>
+   </Node>
+   <Node id="3" score="yes" recordCount="139" defaultChild="6">
+    <CompoundPredicate booleanOperator="surrogate">
+     <SimpleSetPredicate field="art" booleanOperator="isIn">
+      <Array n="2" type="string">1 2+</Array>
+     </SimpleSetPredicate>
+     <SimplePredicate field="last" operator="greaterOrEqual" value="5.5"/>
+     <SimplePredicate field="first" operator="greaterOrEqual" value="31"/>
+     <SimplePredicate field="amount" operator="greaterOrEqual" value="314.5"/>
+     <SimplePredicate field="child" operator="greaterOrEqual" value="2.5"/>
+     <SimplePredicate field="cook" operator="greaterOrEqual" value="2.5"/>
+    </CompoundPredicate>
+    <ScoreDistribution value="no" recordCount="68" confidence="0.489208633093525"/>
+    <ScoreDistribution value="yes" recordCount="71" confidence="0.510791366906475"/>
+    <Node id="6" score="no" recordCount="52">
+     <CompoundPredicate booleanOperator="surrogate">
+      <SimplePredicate field="freq" operator="greaterOrEqual" value="13"/>
+      <SimplePredicate field="first" operator="greaterOrEqual" value="51"/>
+      <SimplePredicate field="amount" operator="greaterOrEqual" value="410"/>
+      <SimplePredicate field="cook" operator="greaterOrEqual" value="2.5"/>
+     </CompoundPredicate>
+     <ScoreDistribution value="no" recordCount="37" confidence="0.711538461538462"/>
+     <ScoreDistribution value="yes" recordCount="15" confidence="0.288461538461538"/>
+    </Node>
+    <Node id="7" score="yes" recordCount="87">
+     <CompoundPredicate booleanOperator="surrogate">
+      <SimplePredicate field="freq" operator="lessThan" value="13"/>
+      <SimplePredicate field="first" operator="lessThan" value="51"/>
+      <SimplePredicate field="amount" operator="lessThan" value="410"/>
+      <SimplePredicate field="cook" operator="lessThan" value="2.5"/>
+     </CompoundPredicate>
+     <ScoreDistribution value="no" recordCount="31" confidence="0.35632183908046"/>
+     <ScoreDistribution value="yes" recordCount="56" confidence="0.64367816091954"/>
+    </Node>
+   </Node>
+  </Node>
+ </TreeModel>
+</PMML>

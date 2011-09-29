@@ -1,0 +1,74 @@
+
+R version 2.13.1 (2011-07-08)
+Copyright (C) 2011 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ## package
+> library("partykit")
+Loading required package: grid
+> 
+> ## iris data
+> data("iris", package = "datasets")
+> irisct <- ctree(Species ~ ., data = iris)
+Loading required package: Formula
+> print(irisct)
+
+Model formula:
+Species ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width
+
+Fitted party:
+[1] root
+|   [2] Petal.Length <= 1.9: setosa (n = 50, err = 0.0%)      
+|   [3] Petal.Length > 1.9
+|   |   [4] Petal.Width <= 1.7
+|   |   |   [5] Petal.Length <= 4.8: versicolor (n = 46, err = 2.2%)  
+|   |   |   [6] Petal.Length > 4.8: versicolor (n = 8, err = 50.0%)  
+|   |   [7] Petal.Width > 1.7: virginica (n = 46, err = 2.2%)   
+
+Number of inner nodes:    3
+Number of terminal nodes: 4
+> table(fit = predict(irisct), true = iris$Species)
+            true
+fit          setosa versicolor virginica
+  setosa         50          0         0
+  versicolor      0         49         5
+  virginica       0          1        45
+> 
+> ## airquality data
+> data("airquality", package = "datasets")
+> airq <- subset(airquality, !is.na(Ozone))
+> airqct <- ctree(Ozone ~ ., data = airq)
+> print(airqct)
+
+Model formula:
+Ozone ~ Solar.R + Wind + Temp + Month + Day
+
+Fitted party:
+[1] root
+|   [2] Temp <= 82
+|   |   [3] Wind <= 6.9: 55.600 (n = 10, err = 21946.4)  
+|   |   [4] Wind > 6.9
+|   |   |   [5] Temp <= 77: 18.479 (n = 48, err = 3956.0)   
+|   |   |   [6] Temp > 77: 31.143 (n = 21, err = 4620.6)   
+|   [7] Temp > 82
+|   |   [8] Wind <= 10.3: 81.633 (n = 30, err = 15119.0)  
+|   |   [9] Wind > 10.3: 48.714 (n = 7, err = 1183.4)    
+
+Number of inner nodes:    4
+Number of terminal nodes: 5
+> sum((airq$Ozone - predict(airqct))^2)
+[1] 46825.35
+> 
