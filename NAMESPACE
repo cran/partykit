@@ -1,0 +1,113 @@
+useDynLib("partykit")
+importFrom("survival", "survfit")
+
+export(
+  ## core infrastructure
+  "party",
+  "partynode",
+  "partysplit",
+
+  ## new ctree implementation
+  "ctree",
+  "ctree_control",
+
+  ## as/is class generics
+  "as.party",  
+  "as.partynode",
+  "as.constparty",
+  "as.simpleparty",
+  "is.constparty",
+  "is.partynode",
+  "is.simpleparty",
+
+  ## new generics
+  "depth",
+  "is.terminal",
+  "nodeapply",
+  "nodeids",
+  "width",
+
+  ## exported methods (to facilitate re-use)
+  "plot.party",
+  "print.party",
+
+  ## workhorse infrastructure
+  "breaks_split",
+  "character_split",
+  "formatinfo_node",
+  "data_party",
+  "data_party.default",
+  "edge_simple",
+  "fitted_node",
+  "id_node",
+  "index_split",
+  "info_node",
+  "info_split",
+  "kidids_node",
+  "kidids_split",
+  "kids_node",
+  "predict_party",
+  "predict_party.default",
+  "prob_split",
+  "right_split",
+  "split_node",
+  "surrogates_node",
+  "varid_split",
+
+  ## visualization tools
+  "node_barplot",
+  "node_boxplot",
+  "node_inner",
+  "node_party",
+  "node_terminal",
+
+  ## coercion methods for (non-imported) external classes
+  "as.party.J48",
+  "as.party.rpart",
+  "as.party.XMLNode",
+  "as.simpleparty.XMLNode",
+
+  ## misc infrastructure
+  "model.frame.rpart",
+  "pmmlTreeModel"
+)
+
+## methods for class party
+S3method("[", "party")
+S3method("[[", "party")
+S3method("as.simpleparty", "party")
+S3method("depth", "party")
+S3method("length", "party")
+S3method("names", "party")
+S3method("names<-", "party")
+S3method("nodeapply", "party")
+S3method("nodeids", "party")
+S3method("predict", "party")
+S3method("width", "party")
+
+## methods for class partynode
+S3method("[", "partynode")
+S3method("[[", "partynode")
+S3method("as.list", "partynode")
+S3method("as.partynode", "partynode")
+S3method("depth", "partynode")
+S3method("is.terminal", "partynode")
+S3method("length", "partynode")
+S3method("nodeapply", "partynode")
+S3method("nodeids", "partynode")
+S3method("print", "partynode")
+S3method("width", "partynode")
+
+## methods for class constparty
+S3method("as.simpleparty", "constparty")
+S3method("plot", "constparty")
+S3method("predict_party", "constparty")
+S3method("print", "constparty")
+
+## methods for class simpleparty
+S3method("as.simpleparty", "simpleparty")
+S3method("predict_party", "simpleparty")
+S3method("print", "simpleparty")
+
+## misc methods
+S3method("as.partynode", "list")

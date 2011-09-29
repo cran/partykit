@@ -1,0 +1,6 @@
+Changes in Version 0.1-1
+
+  o First CRAN release.
+  
+  o See vignette("partykit", package = "partykit") for a (somewhat rough)
+    introduction to the package and its classes/methods.

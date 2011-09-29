@@ -1,0 +1,98 @@
+<PMML version="3.2" xmlns="http://www.dmg.org/PMML-3_2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-3_2 http://www.dmg.org/v3-2/pmml-3-2.xsd">
+ <Header copyright="Copyright (c) 2008 zeileis" description="RPart decision tree model">
+  <Extension name="timestamp" value="2008-09-25 17:21:57" extender="Rattle"/>
+  <Extension name="description" value="zeileis" extender="Rattle"/>
+  <Application name="Rattle/PMML" version="1.1.9"/>
+ </Header>
+ <DataDictionary numberOfFields="6">
+  <DataField name="Ozone" optype="continuous" dataType="double"/>
+  <DataField name="Solar.R" optype="continuous" dataType="double"/>
+  <DataField name="Wind" optype="continuous" dataType="double"/>
+  <DataField name="Temp" optype="continuous" dataType="double"/>
+  <DataField name="Month" optype="continuous" dataType="double"/>
+  <DataField name="Day" optype="continuous" dataType="double"/>
+ </DataDictionary>
+ <TreeModel modelName="RPart_Model" functionName="regression" algorithmName="rpart" splitCharacteristic="binarySplit" missingValueStrategy="defaultChild">
+  <MiningSchema>
+   <MiningField name="Ozone" usageType="predicted"/>
+   <MiningField name="Solar.R" usageType="active"/>
+   <MiningField name="Wind" usageType="active"/>
+   <MiningField name="Temp" usageType="active"/>
+   <MiningField name="Month" usageType="active"/>
+   <MiningField name="Day" usageType="active"/>
+  </MiningSchema>
+  <Node id="1" score="42.1293103448276" recordCount="116" defaultChild="2">
+   <True/>
+   <Node id="2" score="26.5443037974684" recordCount="79" defaultChild="4">
+    <CompoundPredicate booleanOperator="surrogate">
+     <SimplePredicate field="Temp" operator="lessThan" value="82.5"/>
+     <SimplePredicate field="Wind" operator="greaterOrEqual" value="6.6"/>
+     <SimplePredicate field="Day" operator="greaterOrEqual" value="10.5"/>
+    </CompoundPredicate>
+    <Node id="4" score="22.3333333333333" recordCount="69" defaultChild="8">
+     <SimplePredicate field="Wind" operator="greaterOrEqual" value="7.15"/>
+     <Node id="8" score="12.2222222222222" recordCount="18">
+      <CompoundPredicate booleanOperator="surrogate">
+       <SimplePredicate field="Solar.R" operator="lessThan" value="79.5"/>
+       <SimplePredicate field="Temp" operator="lessThan" value="63.5"/>
+       <SimplePredicate field="Wind" operator="greaterOrEqual" value="16.05"/>
+      </CompoundPredicate>
+     </Node>
+     <Node id="9" score="25.9019607843137" recordCount="51" defaultChild="18">
+      <CompoundPredicate booleanOperator="surrogate">
+       <SimplePredicate field="Solar.R" operator="greaterOrEqual" value="79.5"/>
+       <SimplePredicate field="Temp" operator="greaterOrEqual" value="63.5"/>
+       <SimplePredicate field="Wind" operator="lessThan" value="16.05"/>
+      </CompoundPredicate>
+      <Node id="18" score="21.1818181818182" recordCount="33">
+       <CompoundPredicate booleanOperator="surrogate">
+        <SimplePredicate field="Temp" operator="lessThan" value="77.5"/>
+        <SimplePredicate field="Month" operator="lessThan" value="6.5"/>
+        <SimplePredicate field="Wind" operator="greaterOrEqual" value="10.6"/>
+       </CompoundPredicate>
+      </Node>
+      <Node id="19" score="34.5555555555556" recordCount="18">
+       <CompoundPredicate booleanOperator="surrogate">
+        <SimplePredicate field="Temp" operator="greaterOrEqual" value="77.5"/>
+        <SimplePredicate field="Month" operator="greaterOrEqual" value="6.5"/>
+        <SimplePredicate field="Wind" operator="lessThan" value="10.6"/>
+       </CompoundPredicate>
+      </Node>
+     </Node>
+    </Node>
+    <Node id="5" score="55.6" recordCount="10">
+     <SimplePredicate field="Wind" operator="lessThan" value="7.15"/>
+    </Node>
+   </Node>
+   <Node id="3" score="75.4054054054054" recordCount="37" defaultChild="6">
+    <CompoundPredicate booleanOperator="surrogate">
+     <SimplePredicate field="Temp" operator="greaterOrEqual" value="82.5"/>
+     <SimplePredicate field="Wind" operator="lessThan" value="6.6"/>
+     <SimplePredicate field="Day" operator="lessThan" value="10.5"/>
+    </CompoundPredicate>
+    <Node id="6" score="62.95" recordCount="20" defaultChild="12">
+     <CompoundPredicate booleanOperator="surrogate">
+      <SimplePredicate field="Temp" operator="lessThan" value="87.5"/>
+      <SimplePredicate field="Wind" operator="greaterOrEqual" value="6.6"/>
+      <SimplePredicate field="Month" operator="lessThan" value="7.5"/>
+      <SimplePredicate field="Day" operator="lessThan" value="27.5"/>
+     </CompoundPredicate>
+     <Node id="12" score="45.5714285714286" recordCount="7">
+      <SimplePredicate field="Wind" operator="greaterOrEqual" value="8.9"/>
+     </Node>
+     <Node id="13" score="72.3076923076923" recordCount="13">
+      <SimplePredicate field="Wind" operator="lessThan" value="8.9"/>
+     </Node>
+    </Node>
+    <Node id="7" score="90.0588235294118" recordCount="17">
+     <CompoundPredicate booleanOperator="surrogate">
+      <SimplePredicate field="Temp" operator="greaterOrEqual" value="87.5"/>
+      <SimplePredicate field="Wind" operator="lessThan" value="6.6"/>
+      <SimplePredicate field="Month" operator="greaterOrEqual" value="7.5"/>
+      <SimplePredicate field="Day" operator="greaterOrEqual" value="27.5"/>
+     </CompoundPredicate>
+    </Node>
+   </Node>
+  </Node>
+ </TreeModel>
+</PMML>

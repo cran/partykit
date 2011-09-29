@@ -1,0 +1,27 @@
+Package: partykit
+Title: A Toolkit for Recursive Partytioning
+Date: 2011-09-29
+Version: 0.1-1
+Authors@R: c(person(given = "Torsten", family = "Hothorn", role =
+        c("aut", "cre"), email = "Torsten.Hothorn@R-project.org"),
+        person(given = "Achim", family = "Zeileis", role = "aut", email
+        = "Achim.Zeileis@R-project.org"))
+Author: Torsten Hothorn [aut, cre], Achim Zeileis [aut]
+Maintainer: Torsten Hothorn <Torsten.Hothorn@R-project.org>
+Description: A toolkit with infrastructure for representing,
+        summarizing, and visualizing tree-structured regression and
+        classification models. This unified infrastructure can be used
+        for reading/coercing tree models from different sources (rpart,
+        RWeka, PMML) yielding objects that share functionality for
+        print/plot/predict methods. (It will also be the basis for a
+        re-implementation of the party package. Currently, only a
+        re-implementation of ctree() is contained in the package.)
+Depends: R (>= 2.5.0), graphics, stats, grid
+Imports: survival
+Suggests: XML, pmml, mlbench, RWeka, rJava, rpart, mvtnorm, Formula
+Enhances: ipred
+LazyData: yes
+License: GPL-2
+Packaged: 2011-09-29 09:14:23 UTC; zeileis
+Repository: CRAN
+Date/Publication: 2011-09-29 09:27:01
