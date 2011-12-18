@@ -1,24 +1,8 @@
-print.simpleparty <- function(x, digits = getOption("digits") - 4,
-  header = NULL, footer = TRUE, ...)
+.make_formatinfo_simpleparty <- function(x, digits = getOption("digits") - 4, sep = "")
 {
   ## digit processing
   digits <- max(c(0, digits))
   digits2 <- max(c(0, digits - 2))
-
-  ## header panel
-  if(is.null(header)) header <- !is.null(terms(x))
-  header_panel <- if(header) function(party) {
-    c("", "Model formula:", deparse(formula(terms(party))), "", "Fitted party:", "")
-  } else function(party) ""
-  
-  ## footer panel
-  footer_panel <- if(footer) function(party) {
-    n <- width(party)
-    n <- format(c(length(party) - n, n))
-    
-    c("", paste("Number of inner nodes:   ", n[1]),
-      paste("Number of terminal nodes:", n[2]), "")
-  } else function (party) ""
 
   ## type of predictions
   y <- node_party(x)$info$prediction
@@ -42,25 +26,52 @@ print.simpleparty <- function(x, digits = getOption("digits") - 4,
   }
 
   ## compute terminal node labels
-  FUN <- function(node) {
-    yhat <- node$info$prediction
+  FUN <- function(info) {
+    yhat <- info$prediction
     if (yclass == "survfit") {
         yhat <- .median_survival_time(yhat)
         yclass <- "numeric"
     }
     if(yclass == "numeric") yhat <- format(round(yhat, digits = digits), nsmall = digits)
-    w <- node$info$n
-    yerr <- if(is.null(node$info$error)) "" else paste(", err = ",
-      format(round(node$info$error, digits = digits2), nsmall = digits2),
-      names(node$info$error), sep = "")
-    paste(yhat, " (", wsym, " = ", format(round(w, digits = wdigits), nsmall = wdigits),
+    w <- info$n
+    yerr <- if(is.null(info$error)) "" else paste(", err = ",
+      format(round(info$error, digits = digits2), nsmall = digits2),
+      names(info$error), sep = "")
+    rval <- paste(yhat, sep,
+      " (", wsym, " = ", format(round(w, digits = wdigits), nsmall = wdigits),
       yerr, ")", sep = "")
+    unlist(strsplit(rval, "\n"))
   }
-  node_labs <- nodeapply(x, nodeids(x), FUN, by_node = TRUE)
-  node_labs <- paste(":", format(do.call("c", node_labs)))  
+  return(FUN)
+}
+
+plot.simpleparty <- function(x, digits = getOption("digits") - 4, tp_args = NULL, ...) {
+  if(is.null(tp_args)) tp_args <- list(FUN = .make_formatinfo_simpleparty(x, digits = digits, sep = "\n"))
+  plot.party(x, tp_args = tp_args, ...)
+}
+
+print.simpleparty <- function(x, digits = getOption("digits") - 4,
+  header = NULL, footer = TRUE, ...)
+{
+  ## header panel
+  if(is.null(header)) header <- !is.null(terms(x))
+  header_panel <- if(header) function(party) {
+    c("", "Model formula:", deparse(formula(terms(party))), "", "Fitted party:", "")
+  } else function(party) ""
+  
+  ## footer panel
+  footer_panel <- if(footer) function(party) {
+    n <- width(party)
+    n <- format(c(length(party) - n, n))
+    
+    c("", paste("Number of inner nodes:   ", n[1]),
+      paste("Number of terminal nodes:", n[2]), "")
+  } else function (party) ""
 
   ## terminal panel
-  terminal_panel <- function(node) node_labs[id_node(node)]
+  terminal_panel <- function(node) formatinfo_node(node,
+    FUN = .make_formatinfo_simpleparty(x, digits = digits),
+    default = "*", prefix = ": ")
 
   print.party(x, terminal_panel = terminal_panel,
     header_panel = header_panel, footer_panel = footer_panel, ...)

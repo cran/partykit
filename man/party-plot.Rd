@@ -2,6 +2,7 @@
 \alias{party-plot}
 \alias{plot.party}
 \alias{plot.constparty}
+\alias{plot.simpleparty}
 \title{ Visualization of Trees }
 
 \description{
@@ -23,6 +24,7 @@
     type = c("extended", "simple"), drop_terminal = NULL, 
     tnex = NULL, newpage = TRUE, pop = TRUE, gp = gpar(), 
     \dots)
+\method{plot}{simpleparty}(x, digits = getOption("digits") - 4, tp_args = NULL, \dots)
 }
 \arguments{
   \item{x}{ an object of class \code{party} or \code{constparty}.}
@@ -63,6 +65,7 @@
   \item{pop}{ a logical whether the viewport tree should be popped before
               return. }
   \item{gp}{graphical parameters.}
+  \item{digits}{number of digits to be printed.}
   \item{\dots}{ additional arguments passed to callies.}
 }
 

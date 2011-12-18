@@ -79,11 +79,12 @@ node_terminal <- function(obj,
 		          abbreviate = FALSE,
 		          fill = c("lightgray", "white"),
 		          id = TRUE,
-			  gp = gpar())
+			  gp = gpar(),
+			  FUN = NULL)
 {
   nam <- names(obj)
 
-  extract_label <- function(node) formatinfo_node(node, default = c("terminal", "node"))
+  extract_label <- function(node) formatinfo_node(node, FUN = FUN, default = c("terminal", "node"))
 
   maxstr <- function(node) {
       lab <- extract_label(node)
@@ -266,9 +267,9 @@ plot.party <- function(x, main = NULL,
 
     ## setup root viewport
     root_vp <- viewport(layout = grid.layout(3, 3, 
-    			height = unit(c(ifelse(is.null(main), 0, 3), 1, 1), 
+    			heights = unit(c(ifelse(is.null(main), 0, 3), 1, 1), 
                                       c("lines", "null", "lines")),
-    			width = unit(c(1, 1, 1), 
+    			widths = unit(c(1, 1, 1), 
                                      c("lines", "null", "lines"))), 
     			name = "root",
 			gp = gp)       

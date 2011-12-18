@@ -212,7 +212,7 @@ as.party.XMLNode <- function(obj, ...) {
       varid <- which(rval["field", 1] == mf_names)
       lev <- mf_levels[[varid]]
       stopifnot(length(lev) > 1)
-      idx <- rep(0, length(lev))
+      idx <- rep(NA, length(lev))
       lab <- lapply(wi, function(j) {
         nj <- if(surrogates) xnode[[j]][["CompoundPredicate"]] else xnode[[j]]
         if(any(names(nj) %in% c("SimplePredicate", "SimpleSetPredicate"))) {
@@ -231,7 +231,7 @@ as.party.XMLNode <- function(obj, ...) {
         if(rval["booleanOperator",j] == "isIn") idx[which(lev %in% lab[[j]])] <- j
 	  else idx[which(!(lev %in% lab[[j]]))] <- j
       }
-      stopifnot(all(idx > 0))
+      stopifnot(all(na.omit(idx) > 0))
       partysplit(
         varid = varid,
 	breaks = NULL,

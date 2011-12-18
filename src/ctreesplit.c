@@ -5,7 +5,7 @@ void C_split_numeric (SEXP x, SEXP y, int *iweights, int minbucket,
                       double *expinf, double *covinf, double *breaks) {
 
      int *orderx, i, j, k, n, q, sw = 0, count;
-     double dsw = 0.0, *dx, tmp, lastx, thisx;
+     double dsw = 0.0, *dx, lastx, thisx;
      double cstat = 0.0, laststat = 0.0;
      double *linstat, *explinstat, *covlinstat, *dy;
 
