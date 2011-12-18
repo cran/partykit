@@ -130,7 +130,7 @@ double x2d(SEXP x, int obs) {
 int kidid_split(SEXP split, SEXP data, SEXP vmatch, int obs) {
 
     SEXP x, breaks;
-    int i, ret = NA_INTEGER;
+    int ret = NA_INTEGER;
 
     /* get the variable (all observations) */
     x = split_data(split, data, vmatch);

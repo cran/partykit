@@ -46,7 +46,7 @@ void C_Linstat_factor (const int *x, const int p,
                        const int *weights, const int n,
                        double *ans) {
               
-    int i, j, k, kp, kn, pq;
+    int i, k, kp, kn, pq;
     double tmp;
 
 
@@ -212,8 +212,8 @@ void C_ExpCovLinstat (const double *swx, const double *swx2, const int p, const 
                       const int sw, const double *expinf, const double *covinf, 
                       double *explinstat, double *covlinstat) {
 
-    int i, j, k, pq, ip;
-    double f1, f2, tmp, dsw;
+    int j, k, pq;
+    double f1, f2, dsw;
     double *CT2, *Covy_x_swx;
 
     pq = p * q;
@@ -269,9 +269,9 @@ void C_ExpCovLinstat (const double *swx, const double *swx2, const int p, const 
 void C_LinstatExpCov (const SEXP x, const SEXP y, const SEXP weights, 
                       int *thisweights, SEXP ans) {
     
-    SEXP expcovinf, explinstat, covlinstat, linstat, dim, cx, test;
+    SEXP explinstat, covlinstat, linstat, dim, cx;
     double *expinf, *covinf, *swx, *swx2, *dy, *dx;
-    int sw = 0, i, n, p, q, pq;
+    int sw = 0, n, p, q, pq;
     int *ix;
 
     /* determine the dimensions and some checks */

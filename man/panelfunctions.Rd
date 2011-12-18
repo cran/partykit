@@ -17,7 +17,7 @@
 node_inner(obj, id = TRUE, abbreviate = FALSE, fill = "white", 
     gp = gpar())
 node_terminal(obj, digits = 3, abbreviate = FALSE,
-    fill = c("lightgray", "white"), id = TRUE, gp = gpar())
+    fill = c("lightgray", "white"), id = TRUE, gp = gpar(), FUN = NULL)
 edge_simple(obj, digits = 3, abbreviate = FALSE)
 node_boxplot(obj, col = "black", fill = "lightgray", width = 0.5,
     yscale = NULL, ylines = 3, cex = 0.5, id = TRUE, gp = gpar())
@@ -44,6 +44,7 @@ node_barplot(obj, col = "black", fill = NULL, beside = NULL,
   \item{reverse}{logical indicating whether the order of levels should be reversed
     for barplots.}
   \item{gp}{graphical parameters.}
+  \item{FUN}{function for formatting the \code{info}, passed to \code{\link{formatinfo_node}}.}
   \item{\dots}{ additional arguments passed to callies.}
 }
 

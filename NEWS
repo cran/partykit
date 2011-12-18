@@ -1,3 +1,18 @@
+Changes in Version 0.1-2
+
+  o The node_terminal() panel-generating function is now customizable
+    by a FUN argument that is passed to formatinfo().
+
+  o The plot() method for "simpleparty" object now sets up a formatting
+    function passed to formatinfo(), both in print() and plot().
+
+  o Fixed bug in pmmlTreeModel() for processing label IDS in splits when
+    not all levels are present.
+  
+  o Cleaned up unused variables in C code and partial argument matching
+    in R code.
+  
+
 Changes in Version 0.1-1
 
   o First CRAN release.

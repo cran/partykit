@@ -106,6 +106,7 @@ S3method("print", "constparty")
 
 ## methods for class simpleparty
 S3method("as.simpleparty", "simpleparty")
+S3method("plot", "simpleparty")
 S3method("predict_party", "simpleparty")
 S3method("print", "simpleparty")
 
