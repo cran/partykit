@@ -1,6 +1,6 @@
-8580a1f5bf0f32d882f0663ac1593acf *DESCRIPTION
+0af44c5eb8d5099e6f1a536eba0fc961 *DESCRIPTION
 6b2b0d9afc16f8f106a4dbd67209090a *NAMESPACE
-d7137f66e715c7951c34af97a3ab3010 *NEWS
+d0fcd2f4890dafd8fcdee3bd3c0afdd3 *NEWS
 90b88d66790490ef0b66d0632cd94ff4 *R/as.party.R
 70912556f464c409c2c6e86885a4eb3f *R/ctree.R
 c893f98c5422fcb08838b5b12098f089 *R/node.R
@@ -12,9 +12,9 @@ bf98399fc023879f4cee6838d80459f4 *R/simpleparty.R
 00c593d741c4bb9d1ee854afe63e1849 *R/split.R
 300484b2d2558af4fdf6d705f2f82291 *R/utils.R
 99ae7c2bdd510f9a7ce79dabab47b158 *cleanup
-728e9b61fbdb87156d1d2995a87f286f *data/WeatherPlay.rda
+8b548afc15849c79397650baeb535077 *data/WeatherPlay.rda
 a7c267f9079e42c3728401bd11bcadcc *inst/doc/partykit.Rnw
-38b185be5b8aba5c614e386fefd1a387 *inst/doc/partykit.pdf
+2801cf0b1dcc7f2aa4ba1db231495354 *inst/doc/partykit.pdf
 1b961019a4c8e43e4d046ae20d4a2cf5 *inst/pmml/airq.pmml
 8a72f1494239b092e6821e6534ed6627 *inst/pmml/bbbc.pmml
 ecc0e4f670cfbfda89e14f9df7a76df3 *inst/pmml/iris.pmml

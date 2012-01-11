@@ -1,3 +1,9 @@
+Changes in Version 0.1-3
+
+  o Added "ipred" to the list of suggested packages due to usage of
+    GlaucomaM and GBSG2 data in tests/examples.
+
+
 Changes in Version 0.1-2
 
   o The node_terminal() panel-generating function is now customizable
