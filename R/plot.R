@@ -333,12 +333,16 @@ plot.constparty <- function(x, main = NULL,
         if (is.null(tnex)) tnex <- 1
         if (is.null(drop_terminal)) drop_terminal <- FALSE
     } else {
-        if (is.null(terminal_panel))
-            terminal_panel <- switch(class(x$fitted[["(response)"]])[1],
-	                             "Surv" = stop("node_surv not yet implemented"),
-                                     "factor" = node_barplot,
-                                     "ordered" = node_barplot,
-                                     node_boxplot)
+        if (is.null(terminal_panel)) {
+	    cl <- class(x$fitted[["(response)"]])
+	    terminal_panel <- if("factor" %in% cl) {
+	        node_barplot 
+	    } else if("Surv" %in% cl) {
+	        node_surv
+            } else {
+	        node_boxplot
+	    }
+	}
         if (is.null(tnex)) tnex <- 2
         if (is.null(drop_terminal)) drop_terminal <- TRUE
     }
@@ -590,3 +594,99 @@ node_boxplot <- function(obj,
     return(rval)
 }
 class(node_boxplot) <- "grapcon_generator"
+
+node_surv <- function(obj, col = "black", ylines = 2,
+		      id = TRUE, gp = gpar(), ...)
+{
+    ## extract response
+    y <- obj$fitted[["(response)"]]
+    stopifnot(inherits(y, "Surv"))
+
+    ## helper functions
+    mysurvfit <- function(y, weights, ...) structure(
+        survival:::survfitKM(x = gl(1, NROW(y)), y = y, casewt = weights, ...),
+	class = "survfit")
+
+    dostep <- function(x, y) {
+        ### create a step function based on x, y coordinates
+        ### modified from `survival:print.survfit'
+        if (is.na(x[1] + y[1])) {
+            x <- x[-1]
+            y <- y[-1]
+        }
+        n <- length(x)
+        if (n > 2) {  
+            # replace verbose horizonal sequences like
+            # (1, .2), (1.4, .2), (1.8, .2), (2.3, .2), (2.9, .2), (3, .1)
+            # with (1, .2), (3, .1).  They are slow, and can smear the looks
+            # of the line type.
+            dupy <- c(TRUE, diff(y[-n]) !=0, TRUE)
+            n2 <- sum(dupy)
+
+            #create a step function
+            xrep <- rep(x[dupy], c(1, rep(2, n2-1)))
+            yrep <- rep(y[dupy], c(rep(2, n2-1), 1))
+            RET <- list(x = xrep, y = yrep)
+        } else {
+            if (n == 1) {
+                RET <- list(x = x, y = y)
+            } else {
+                RET <- list(x = x[c(1,2,2)], y = y[c(1,1,2)])
+            }
+        }
+        return(RET)
+    }
+
+    ### panel function for Kaplan-Meier curves in nodes
+    rval <- function(node) {
+
+        ## extract data
+	nid <- id_node(node)
+	dat <- data_party(obj, nid)
+	yn <- dat[["(response)"]]
+	wn <- dat[["(weights)"]]
+	if(is.null(wn)) wn <- rep(1, NROW(yn))
+
+        ## get Kaplan-Meier curver in node
+        km <- mysurvfit(yn, weights = wn, ...)
+        a <- dostep(km$time, km$surv)
+
+        ## set up plot
+        yscale <- c(0, 1)
+        xscale <- c(0, max(y[,1]))
+
+        top_vp <- viewport(layout = grid.layout(nrow = 2, ncol = 3,
+                           widths = unit(c(ylines, 1, 1), 
+                                         c("lines", "null", "lines")),  
+                           heights = unit(c(1, 1), c("lines", "null"))),
+                           width = unit(1, "npc"), 
+                           height = unit(1, "npc") - unit(2, "lines"),
+			   name = paste("node_surv", nid, sep = ""), gp = gp)
+
+        pushViewport(top_vp)
+        grid.rect(gp = gpar(fill = "white", col = 0))
+
+        ## main title
+        top <- viewport(layout.pos.col=2, layout.pos.row=1)
+        pushViewport(top)
+	mainlab <- paste(ifelse(id, paste("Node", nid, "(n = "), "n = "),
+	                 sum(wn), ifelse(id, ")", ""), sep = "")
+        grid.text(mainlab)
+        popViewport()
+	
+        plot <- viewport(layout.pos.col=2, layout.pos.row=2,
+                         xscale=xscale, yscale=yscale,
+			 name = paste("node_surv", nid, "plot", 
+                         sep = ""))
+
+        pushViewport(plot)
+        grid.lines(a$x/max(a$x), a$y, gp = gpar(col = col))
+        grid.xaxis()
+        grid.yaxis()
+        grid.rect(gp = gpar(fill = "transparent"))
+        upViewport(2)
+    }
+
+    return(rval)
+}
+class(node_surv) <- "grapcon_generator"

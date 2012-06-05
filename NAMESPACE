@@ -57,6 +57,7 @@ export(
   ## visualization tools
   "node_barplot",
   "node_boxplot",
+  "node_surv",
   "node_inner",
   "node_party",
   "node_terminal",

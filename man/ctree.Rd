@@ -126,6 +126,7 @@ ctree(formula, data, weights, subset, na.action = na.pass,
         data("GBSG2", package = "ipred")
         GBSG2ct <- ctree(Surv(time, cens) ~ .,data = GBSG2)
         predict(GBSG2ct, newdata = GBSG2[1:2,], type = "response")        
+        plot(GBSG2ct)
     }
 
     ### multivariate responses

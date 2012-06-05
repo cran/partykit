@@ -5,7 +5,7 @@ void C_split_numeric (SEXP x, SEXP y, int *iweights, int minbucket,
                       double *expinf, double *covinf, double *breaks) {
 
      int *orderx, i, j, k, n, q, sw = 0, count;
-     double dsw = 0.0, *dx, lastx, thisx;
+     double dsw = 0.0, *dx, lastx, thisx, xmax;
      double cstat = 0.0, laststat = 0.0;
      double *linstat, *explinstat, *covlinstat, *dy;
 
@@ -21,6 +21,7 @@ void C_split_numeric (SEXP x, SEXP y, int *iweights, int minbucket,
      rsort_with_index(dx, orderx, n);
      Free(dx);
      dx = REAL(x);
+     xmax = dx[orderx[n-1]];
 
      q = NCOL(y);
      dy = REAL(y); 
@@ -66,7 +67,7 @@ void C_split_numeric (SEXP x, SEXP y, int *iweights, int minbucket,
              linstat[k] += iweights[orderx[i]] * dy[k * n + orderx[i]];
 
          /* check sample size constraints */
-         if (dsw > (sw - minbucket)) break;
+         if (dsw > (sw - minbucket) || thisx >= xmax) break;
          if (dsw < minbucket) continue;
          
          /* handle ties: look ahead if next valid x value is tied */

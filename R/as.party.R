@@ -23,10 +23,10 @@ as.party.rpart <- function(obj, ...) {
     mf <- model.frame(obj)
 
     rpart_fitted <- function() {
-        y <- model.response(mf)
-        weights <- model.weights(mf)
-        ret <- data.frame("(fitted)" = obj$where, "(response)" = y, check.names = FALSE)
-        if (!is.null(weights)) ret[["(weights)"]] <- weights
+	ret <- as.data.frame(matrix(nrow = NROW(mf), ncol = 0))
+	ret[["(fitted)"]] <- obj$where
+        ret[["(response)"]] <- model.response(mf)        
+        ret[["(weights)"]] <- model.weights(mf)
         ret
     }
     fitted <- rpart_fitted()
@@ -89,13 +89,21 @@ as.party.rpart <- function(obj, ...) {
 }
 
 model.frame.rpart <- function(formula, ...) {
+  ## if model.frame is stored, simply extract
+  if(!is.null(formula$model)) return(formula$model)
+  
+  ## otherwise reevaluate model.frame using original call
   mf <- formula$call
   mf <- mf[c(1L, match(c("formula", "data", "subset", "na.action", "weights"), names(mf), 0L))]
   if (is.null(mf$na.action)) mf$na.action <- na.rpart
   mf$drop.unused.levels <- TRUE
   mf[[1L]] <- as.name("model.frame")
-  env <- if (is.null(environment(formula$terms))) environment(formula$terms) 
-             else parent.frame()
+  
+  ## use terms instead of formula in call
+  mf$formula <- formula$terms
+  
+  ## evaluate in the right environment and return
+  env <- if(!is.null(environment(formula$terms))) environment(formula$terms) else parent.frame()
   mf <- eval(mf, env)
   return(mf)
 }

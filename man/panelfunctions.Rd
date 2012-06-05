@@ -5,6 +5,7 @@
 \alias{edge_simple}
 \alias{node_barplot}
 \alias{node_boxplot}
+\alias{node_surv}
 
 \title{ Panel-Generators for Visualization of Party Trees }
 \description{
@@ -24,6 +25,7 @@ node_boxplot(obj, col = "black", fill = "lightgray", width = 0.5,
 node_barplot(obj, col = "black", fill = NULL, beside = NULL,
     ymax = NULL, ylines = NULL, widths = 1, gap = NULL,
     reverse = NULL, id = TRUE, gp = gpar())
+node_surv(obj, col = "black", ylines = 2, id = TRUE, gp = gpar(), \dots)
 }
 \arguments{
   \item{obj}{ an object of class \code{party}.}
@@ -45,7 +47,8 @@ node_barplot(obj, col = "black", fill = NULL, beside = NULL,
     for barplots.}
   \item{gp}{graphical parameters.}
   \item{FUN}{function for formatting the \code{info}, passed to \code{\link{formatinfo_node}}.}
-  \item{\dots}{ additional arguments passed to callies.}
+  \item{\dots}{ additional arguments passed to callies 
+                (for example to \code{\link[survival]{survfit}}).}
 }
 
 \details{
