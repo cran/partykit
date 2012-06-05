@@ -257,7 +257,9 @@ ctree <- function(formula, data, weights, subset, na.action = na.pass,
     weights <- model.weights(mf)
     dat <- mf[, colnames(mf) != "(weights)"]
     ret <- .ctree_fit(dat, response, weights = weights, ctrl = control)
-    ret$terms <- terms(formula, data = mf)
+    ### doesn't work for Surv objects
+    # ret$terms <- terms(formula, data = mf)
+    ret$terms <- terms(mf)
     ### need to adjust print and plot methods
     ### for multivariate responses
     if (length(response) > 1) class(ret) <- "party"
