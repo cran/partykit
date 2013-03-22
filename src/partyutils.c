@@ -52,7 +52,7 @@ void C_SampleNoReplace(int *x, int m, int k, int *ans) {
     for (i = 0; i < m; i++)
         x[i] = i;
     for (i = 0; i < k; i++) {
-        j = n * unif_rand(); 
+        j = floor((double) n * unif_rand());
         ans[i] = x[j];
         x[j] = x[--n];
     }
