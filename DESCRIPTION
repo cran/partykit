@@ -1,7 +1,7 @@
 Package: partykit
 Title: A Toolkit for Recursive Partytioning
-Date: 2012-06-05
-Version: 0.1-4
+Date: 2013-03-22
+Version: 0.1-5
 Authors@R: c(person(given = "Torsten", family = "Hothorn", role =
         c("aut", "cre"), email = "Torsten.Hothorn@R-project.org"),
         person(given = "Achim", family = "Zeileis", role = "aut", email
@@ -22,6 +22,7 @@ Suggests: XML, pmml, mlbench, RWeka, rJava, rpart, mvtnorm, Formula,
         ipred
 LazyData: yes
 License: GPL-2
-Packaged: 2012-06-05 08:54:16 UTC; hothorn
+Packaged: 2013-03-22 09:31:07 UTC; hothorn
+NeedsCompilation: yes
 Repository: CRAN
-Date/Publication: 2012-06-05 09:12:07
+Date/Publication: 2013-03-22 10:44:36

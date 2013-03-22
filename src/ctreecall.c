@@ -4,7 +4,7 @@
 SEXP R_split (const SEXP x, const SEXP y, const SEXP weights, const SEXP minbucket) {
 
     SEXP ans, cx;
-    int i, n, q, sw = 0;
+    int n, q, sw = 0;
     int *thisweights;
     double *expinf, *covinf;
 

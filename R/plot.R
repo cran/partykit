@@ -79,7 +79,10 @@ node_terminal <- function(obj,
 		          abbreviate = FALSE,
 		          fill = c("lightgray", "white"),
 		          id = TRUE,
-			  gp = gpar(),
+			  just = c("center", "top"),
+			  top = 0.85,
+			  align = c("center", "left", "right"),
+			  gp = NULL,
 			  FUN = NULL)
 {
   nam <- names(obj)
@@ -96,28 +99,43 @@ node_terminal <- function(obj,
 
   nstr <- maxstr(node_party(obj))
 
+  just <- match.arg(just[1L], c("center", "centre", "top"))
+  if(just == "centre") just <- "center"
+  align <- match.arg(align[1L], c("center", "centre", "left", "right"))
+  if(align == "centre") align <- "center"
+
   ### panel function for simple n, Y terminal node labeling
   rval <- function(node) {
     fill <- rep(fill, length.out = 2)	    
 
     lab <- extract_label(node)
 
-    node_vp <- viewport(x = unit(0.5, "npc"),	
-      y = unit(0.5, "npc"),   
+    ## if gp is set, then an additional viewport may be
+    ## required to appropriately evaluate strwidth unit
+    if(!is.null(gp)) {
+      outer_vp <- viewport(gp = gp)
+      pushViewport(outer_vp)
+    }
+    
+    node_vp <- viewport(x = unit(0.5, "npc"),
+      y = unit(if(just == "top") top else 0.5, "npc"),
+      just = c("center", just),
       width = unit(1, "strwidth", nstr) * 1.1,
       height = unit(length(lab) + 1, "lines"),
       name = paste("node_terminal", id_node(node), sep = ""),
-      gp = gp
+      gp = if(is.null(gp)) gpar() else gp
     )
     pushViewport(node_vp)
 
     grid.rect(gp = gpar(fill = fill[1]))
-    center <- TRUE ## FIXME: justification?
-    if(center) {    
-      for(i in seq_along(lab)) grid.text(y = unit(length(lab) - i + 1, "lines"), lab[i])
-    } else {
-      for(i in seq_along(lab)) grid.text(x = unit(1, "strwidth", "a"), y = unit(length(lab) - i + 1, "lines"), lab[i], just = "left")    
-    }    
+      "center" = 
+      
+    for(i in seq_along(lab)) grid.text(
+      x = switch(align,
+        "center" = unit(0.5, "npc"),
+	"left"   = unit(1, "strwidth", "a"),
+	"right"  = unit(1, "npc") - unit(1, "strwidth", "a")),
+      y = unit(length(lab) - i + 1, "lines"), lab[i], just = align)
 
     if(id) {
       nodeIDvp <- viewport(x = unit(0.5, "npc"), y = unit(1, "npc"),
@@ -128,7 +146,8 @@ node_terminal <- function(obj,
       grid.text(nam[id_node(node)])
       popViewport()
     }
-    upViewport()
+    
+    if(is.null(gp)) upViewport() else upViewport(2)
   }
   return(rval)
 }

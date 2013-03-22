@@ -1,3 +1,9 @@
+
+Changes in Version 0.1-5
+
+  o fix C code problems reported by clang under OS X
+
+
 Changes in Version 0.1-4
 
   o Added "node_surv" for plotting survival ctrees. Accompanying

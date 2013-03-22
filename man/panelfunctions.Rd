@@ -17,14 +17,21 @@
 \usage{
 node_inner(obj, id = TRUE, abbreviate = FALSE, fill = "white", 
     gp = gpar())
+
 node_terminal(obj, digits = 3, abbreviate = FALSE,
-    fill = c("lightgray", "white"), id = TRUE, gp = gpar(), FUN = NULL)
+    fill = c("lightgray", "white"), id = TRUE,
+    just = c("center", "top"), top = 0.85,
+    align = c("center", "left", "right"), gp = NULL, FUN = NULL)
+
 edge_simple(obj, digits = 3, abbreviate = FALSE)
+
 node_boxplot(obj, col = "black", fill = "lightgray", width = 0.5,
     yscale = NULL, ylines = 3, cex = 0.5, id = TRUE, gp = gpar())
+
 node_barplot(obj, col = "black", fill = NULL, beside = NULL,
     ymax = NULL, ylines = NULL, widths = 1, gap = NULL,
     reverse = NULL, id = TRUE, gp = gpar())
+
 node_surv(obj, col = "black", ylines = 2, id = TRUE, gp = gpar(), \dots)
 }
 \arguments{
@@ -35,6 +42,10 @@ node_surv(obj, col = "black", ylines = 2, id = TRUE, gp = gpar(), \dots)
   \item{col}{ a color for points and lines. }
   \item{fill}{ a color to filling rectangles. }
   \item{id}{ logical. Should node IDs be plotted?}
+  \item{just}{justification of terminal panel viewport.}
+  \item{top}{in case of top justification, the npc coordinate at which the
+    viewport is justified.}
+  \item{align}{alignment of text within terminal panel viewport.}
   \item{ylines}{ number of lines for spaces in y-direction. }
   \item{widths}{ widths in barplots. }
   \item{width}{ width in boxplots. }
