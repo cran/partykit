@@ -1,28 +1,25 @@
 Package: partykit
 Title: A Toolkit for Recursive Partytioning
-Date: 2013-03-22
-Version: 0.1-5
-Authors@R: c(person(given = "Torsten", family = "Hothorn", role =
-        c("aut", "cre"), email = "Torsten.Hothorn@R-project.org"),
-        person(given = "Achim", family = "Zeileis", role = "aut", email
-        = "Achim.Zeileis@R-project.org"))
+Date: 2013-09-03
+Version: 0.1-6
+Authors@R: c(person(given = "Torsten", family = "Hothorn", role = c("aut", "cre"), email = "Torsten.Hothorn@R-project.org"),
+             person(given = "Achim", family = "Zeileis", role = "aut", email = "Achim.Zeileis@R-project.org"))
 Author: Torsten Hothorn [aut, cre], Achim Zeileis [aut]
 Maintainer: Torsten Hothorn <Torsten.Hothorn@R-project.org>
 Description: A toolkit with infrastructure for representing,
-        summarizing, and visualizing tree-structured regression and
-        classification models. This unified infrastructure can be used
-        for reading/coercing tree models from different sources (rpart,
-        RWeka, PMML) yielding objects that share functionality for
-        print/plot/predict methods. (It will also be the basis for a
-        re-implementation of the party package. Currently, only a
-        re-implementation of ctree() is contained in the package.)
+  summarizing, and visualizing tree-structured regression and
+  classification models. This unified infrastructure can be
+  used for reading/coercing tree models from different sources
+  (rpart, RWeka, PMML) yielding objects that share functionality for
+  print/plot/predict methods. (It will also be the basis for
+  a re-implementation of the party package. Currently, only
+  a re-implementation of ctree() is contained in the package.)
 Depends: R (>= 2.5.0), graphics, stats, grid
-Imports: survival
-Suggests: XML, pmml, mlbench, RWeka, rJava, rpart, mvtnorm, Formula,
-        ipred
+Imports: survival, RWeka (>= 0.4-19)
+Suggests: XML, pmml, mlbench, rJava, rpart, mvtnorm, Formula, TH.data
 LazyData: yes
 License: GPL-2
-Packaged: 2013-03-22 09:31:07 UTC; hothorn
+Packaged: 2013-09-03 18:21:52 UTC; hothorn
 NeedsCompilation: yes
 Repository: CRAN
-Date/Publication: 2013-03-22 10:44:36
+Date/Publication: 2013-09-03 20:37:16

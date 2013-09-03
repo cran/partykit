@@ -1,5 +1,6 @@
 ## load package and fix seed
 library("partykit")
+library("survival")
 set.seed(1)
 
 ## rpart: kyphosis data
@@ -22,7 +23,7 @@ all.equal(predict(itree,  newdata = iris),
           predict(pitree, newdata = iris))
 
 ## rpart/J48: GlaucomaM data
-data("GlaucomaM", package = "ipred")
+data("GlaucomaM", package = "TH.data")
 w <- runif(nrow(GlaucomaM))
 fit <- rpart(Class ~ ., data = GlaucomaM, weights = w)
 pfit <- as.party(fit)
@@ -44,7 +45,7 @@ tmp <- subset(airquality, is.na(Ozone))
 all.equal(predict(aqr, newdata = tmp), predict(aqp, newdata = tmp))
 
 ## rpart: GBSG2 data
-data("GBSG2", package = "ipred")
+data("GBSG2", package = "TH.data")
 library("survival")
 fit <- rpart(Surv(time, cens) ~ ., data = GBSG2)
 pfit <- as.party(fit)

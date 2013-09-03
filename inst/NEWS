@@ -1,7 +1,12 @@
+Changes in Version 0.1-6
+
+  o Bug fix in as.party() method for J48 trees with ordered factors.
+
+  o data now in TH.data and not ipred
 
 Changes in Version 0.1-5
 
-  o fix C code problems reported by clang under OS X
+  o Fix C code problems reported by clang under OS X.
 
 
 Changes in Version 0.1-4

@@ -621,11 +621,6 @@ node_surv <- function(obj, col = "black", ylines = 2,
     y <- obj$fitted[["(response)"]]
     stopifnot(inherits(y, "Surv"))
 
-    ## helper functions
-    mysurvfit <- function(y, weights, ...) structure(
-        survival:::survfitKM(x = gl(1, NROW(y)), y = y, casewt = weights, ...),
-	class = "survfit")
-
     dostep <- function(x, y) {
         ### create a step function based on x, y coordinates
         ### modified from `survival:print.survfit'
@@ -667,7 +662,7 @@ node_surv <- function(obj, col = "black", ylines = 2,
 	if(is.null(wn)) wn <- rep(1, NROW(yn))
 
         ## get Kaplan-Meier curver in node
-        km <- mysurvfit(yn, weights = wn, ...)
+        km <- .pred_Surv(yn, w = wn)
         a <- dostep(km$time, km$surv)
 
         ## set up plot
