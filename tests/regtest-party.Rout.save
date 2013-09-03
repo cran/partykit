@@ -1,8 +1,7 @@
 
-R version 2.13.1 (2011-07-08)
-Copyright (C) 2011 The R Foundation for Statistical Computing
-ISBN 3-900051-07-0
-Platform: x86_64-pc-linux-gnu (64-bit)
+R Under development (unstable) (2013-09-02 r63805) -- "Unsuffered Consequences"
+Copyright (C) 2013 The R Foundation for Statistical Computing
+Platform: x86_64-unknown-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -19,6 +18,8 @@ Type 'q()' to quit R.
 > ## load package and fix seed
 > library("partykit")
 Loading required package: grid
+> library("survival")
+Loading required package: splines
 > set.seed(1)
 > 
 > ## rpart: kyphosis data
@@ -44,7 +45,7 @@ Loading required package: grid
 [1] "names for current but not for target"
 > 
 > ## rpart/J48: GlaucomaM data
-> data("GlaucomaM", package = "ipred")
+> data("GlaucomaM", package = "TH.data")
 > w <- runif(nrow(GlaucomaM))
 > fit <- rpart(Class ~ ., data = GlaucomaM, weights = w)
 > pfit <- as.party(fit)
@@ -71,9 +72,8 @@ Loading required package: grid
 [1] TRUE
 > 
 > ## rpart: GBSG2 data
-> data("GBSG2", package = "ipred")
+> data("GBSG2", package = "TH.data")
 > library("survival")
-Loading required package: splines
 > fit <- rpart(Surv(time, cens) ~ ., data = GBSG2)
 > pfit <- as.party(fit)
 > pfit$fitted
@@ -1400,3 +1400,6 @@ records   n.max n.start  events  median 0.95LCL 0.95UCL
 10  742 0.5108953
 > 
 > 
+> proc.time()
+   user  system elapsed 
+  1.708   0.208   1.682 

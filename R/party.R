@@ -319,7 +319,7 @@ predict_party.constparty <- function(party, id, newdata = NULL,
 
 ### functions for node prediction based on fitted / response
 .pred_Surv <- function(y, w)
-    survival:::survfit(y ~ 1, weights = w, subset = w > 0)
+    survfit(y ~ 1, weights = w, subset = w > 0)
 
 .pred_Surv_response <- function(y, w)
     .median_survival_time(.pred_Surv(y, w))

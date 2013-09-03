@@ -1,5 +1,6 @@
 useDynLib("partykit")
-importFrom("survival", "survfit")
+importFrom("survival", "survfit", "Surv")
+importFrom("RWeka", "parse_Weka_digraph")
 
 export(
   ## core infrastructure

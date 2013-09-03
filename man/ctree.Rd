@@ -122,8 +122,8 @@ ctree(formula, data, weights, subset, na.action = na.pass,
     tr <- predict(irisct, newdata = iris[1:10,], type = "prob")
 
     ### survival analysis
-    if (require("ipred")) {
-        data("GBSG2", package = "ipred")
+    if (require("TH.data") && require("survival")) {
+        data("GBSG2", package = "TH.data")
         GBSG2ct <- ctree(Surv(time, cens) ~ .,data = GBSG2)
         predict(GBSG2ct, newdata = GBSG2[1:2,], type = "response")        
         plot(GBSG2ct)
