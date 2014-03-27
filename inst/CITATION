@@ -1,0 +1,55 @@
+citHeader("To cite partykit in publications use:")
+
+citEntry(entry = "TechReport",
+  title        = "{partykit}: A Modular Toolkit for Recursive Partytioning in {R}",
+  author       = personList(as.person("Torsten Hothorn"), 
+		   as.person("Achim Zeileis")),
+  institution  = "Working Papers in Economics and Statistics, Research Platform Empirical
+  		  and Experimental Economics, Universit\\\"at Innsbruck",
+  year         = "2014",
+  type         = "Working Paper",
+  number       = "2014-10",
+  month        = "March",
+  url	       = "http://EconPapers.RePEc.org/RePEc:inn:wpaper:2014-10",
+  
+  textVersion  = 
+  paste("Torsten Hothorn, Achim Zeileis (2014).",
+	"partykit: A Modular Toolkit for Recursive Partytioning in R.",
+ 	"Working Paper 2014-10.",
+ 	"Working Papers in Economics and Statistics, Research Platform Empirical and Experimental Economics, Universitaet Innsbruck.",
+	"URL http://EconPapers.RePEc.org/RePEc:inn:wpaper:2014-10")
+)
+
+citEntry(entry="Article",
+         title = "Unbiased Recursive Partitioning: A Conditional Inference Framework",
+         author = personList(as.person("Torsten Hothorn"), as.person("Kurt Hornik"), 
+                             as.person("Achim Zeileis")),
+         journal      = "Journal of Computational and Graphical Statistics",
+         year         = "2006",
+         volume       = "15",
+         number       = "3",
+         pages        = "651--674",
+
+         textVersion =
+         paste("Torsten Hothorn, Kurt Hornik and Achim Zeileis (2006).",
+               "Unbiased Recursive Partitioning: A Conditional Inference Framework.",
+               "Journal of Computational and Graphical Statistics, 15(3), 651--674."),
+	 header = "If ctree() is used additionally cite:"
+)
+
+citEntry(entry="Article",
+         title = "Model-Based Recursive Partitioning",
+         author = personList(as.person("Achim Zeileis"), as.person("Torsten Hothorn"),
+	                     as.person("Kurt Hornik")),
+         journal      = "Journal of Computational and Graphical Statistics",
+         year         = "2008",
+         volume       = "17",
+         number       = "2",
+         pages        = "492--514",
+
+         textVersion =
+         paste("Achim Zeileis, Torsten Hothorn and Kurt Hornik (2008).",
+               "Model-Based Recursive Partitioning.",
+               "Journal of Computational and Graphical Statistics, 17(2), 492--514."),
+	 header = "If mob() is used additionally cite:"
+)

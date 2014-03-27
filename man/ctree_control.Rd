@@ -11,7 +11,7 @@ ctree_control(teststat = c("quad", "max"),
     testtype = c("Bonferroni", "Univariate", "Teststatistic"),
     mincriterion = 0.95, minsplit = 20L, minbucket = 7L, 
     minprob = 0.01, stump = FALSE, maxsurrogate = 0L, mtry = Inf, 
-    maxdepth = Inf, multiway = FALSE, splittry = 2L)
+    maxdepth = Inf, multiway = FALSE, splittry = 2L, majority = FALSE)
 }
 \arguments{
   \item{teststat}{ a character specifying the type of the test statistic
@@ -38,6 +38,10 @@ ctree_control(teststat = c("quad", "max"),
                    are implemented for unordered factors.}
   \item{splittry}{ number of variables that are inspected for admissible splits
                    if the best split doesn't meet the sample size constraints.}
+  \item{majority}{ if \code{FALSE}, observations which can't be classified to a
+                   daughter node because of missing information are randomly
+                   assigned (following the node distribution). If \code{FALSE},
+                   they go with the majority (the default in \code{\link[party]{ctree}}).}
 }
 \details{
 
@@ -66,7 +70,8 @@ ctree_control(teststat = c("quad", "max"),
   (regardless of any missing values in the learning sample). Factors
   in test samples whose levels were empty in the learning sample 
   are treated as missing when computing predictions (in contrast
-  to \code{\link[party]{ctree}}.
+  to \code{\link[party]{ctree}}. Note also the different behaviour of
+  \code{majority} in the two implementations.
 
 }
 \value{

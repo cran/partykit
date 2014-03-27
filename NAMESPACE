@@ -1,6 +1,8 @@
 useDynLib("partykit")
-importFrom("survival", "survfit", "Surv")
-importFrom("RWeka", "parse_Weka_digraph")
+import("stats")
+import("graphics")
+import("grid")
+importFrom("survival", "survfit")
 
 export(
   ## core infrastructure
@@ -11,6 +13,15 @@ export(
   ## new ctree implementation
   "ctree",
   "ctree_control",
+  "sctest.constparty",
+
+  ## new mob implementation
+  "mob",
+  "mob_control",
+  "refit.modelparty",
+  "sctest.modelparty",
+  "lmtree",
+  "glmtree",
 
   ## as/is class generics
   "as.party",  
@@ -27,10 +38,15 @@ export(
   "nodeapply",
   "nodeids",
   "width",
+  "nodeprune",
 
   ## exported methods (to facilitate re-use)
   "plot.party",
   "print.party",
+  "plot.modelparty",
+  "predict.modelparty",
+  "print.modelparty",
+  "nodeprune.party",
 
   ## workhorse infrastructure
   "breaks_split",
@@ -57,14 +73,17 @@ export(
 
   ## visualization tools
   "node_barplot",
+  "node_bivplot",
   "node_boxplot",
   "node_surv",
+  "node_ecdf",
+  "node_mvar",
   "node_inner",
   "node_party",
   "node_terminal",
 
   ## coercion methods for (non-imported) external classes
-  "as.party.J48",
+  "as.party.Weka_tree",
   "as.party.rpart",
   "as.party.XMLNode",
   "as.simpleparty.XMLNode",
@@ -86,6 +105,8 @@ S3method("nodeapply", "party")
 S3method("nodeids", "party")
 S3method("predict", "party")
 S3method("width", "party")
+S3method("nodeprune", "party")
+S3method("nodeprune", "partynode")
 
 ## methods for class partynode
 S3method("[", "partynode")
@@ -111,6 +132,29 @@ S3method("as.simpleparty", "simpleparty")
 S3method("plot", "simpleparty")
 S3method("predict_party", "simpleparty")
 S3method("print", "simpleparty")
+
+## methods for class modelparty
+S3method("coef", "modelparty")
+S3method("deviance", "modelparty")
+S3method("fitted", "modelparty")
+S3method("formula", "modelparty")
+S3method("getCall", "modelparty")
+S3method("logLik", "modelparty")
+S3method("model.frame", "modelparty")
+S3method("nobs", "modelparty")
+S3method("residuals", "modelparty")
+S3method("summary", "modelparty")
+S3method("weights", "modelparty")
+
+## methods for class lmtree
+S3method("plot", "lmtree")
+S3method("predict", "lmtree")
+S3method("print", "lmtree")
+
+## methods for class glmtree
+S3method("plot", "glmtree")
+S3method("predict", "glmtree")
+S3method("print", "glmtree")
 
 ## misc methods
 S3method("as.partynode", "list")

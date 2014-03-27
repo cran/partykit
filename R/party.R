@@ -19,8 +19,15 @@ party <- function(node, data, fitted = NULL, terms = NULL, names = NULL, info = 
     
     if(!is.null(fitted)) {
         stopifnot(inherits(fitted, "data.frame"))
-        stopifnot("(fitted)" == names(fitted)[1])
-        stopifnot(nrow(data) == 0 | nrow(data) == nrow(fitted))
+        stopifnot(nrow(data) == 0L | nrow(data) == nrow(fitted))
+        
+	# try to provide default variable "(fitted)"
+	if(nrow(data) > 0L) {
+          if(!("(fitted)" %in% names(fitted))) 
+            fitted[["(fitted)"]] <- fitted_node(node, data = data)
+	} else {
+	  stopifnot("(fitted)" == names(fitted)[1L])
+	}
 
         nt <- nodeids(node, terminal = TRUE)
         stopifnot(all(fitted[["(fitted)"]] %in% nt))
@@ -30,6 +37,10 @@ party <- function(node, data, fitted = NULL, terms = NULL, names = NULL, info = 
         fitted[["(fitted)"]] <- nt2[match(fitted[["(fitted)"]], nt)]
     } else {
         node <- as.partynode(node, from = 1L)
+	# default "(fitted)"
+	if(nrow(data) > 0L & missing(fitted)) 
+          fitted <- data.frame("(fitted)" = fitted_node(node, 
+            data = data), check.names = FALSE)
     }
     
     party <- list(node = node, data = data, fitted = fitted, 
@@ -85,6 +96,19 @@ is.constparty <- function(party) {
 }
 
 as.constparty <- function(obj, ...) {
+    if(!inherits(obj, "party")) obj <- as.party(obj)
+    if (!is.constparty(obj)) {
+        if(is.null(obj$fitted))
+	  obj$fitted <- data.frame("(fitted)" = predict(obj, type = "node"), check.names = FALSE)
+	if(!("(fitted)" %in% names(obj$fitted)))
+	  obj$fitted["(fitted)"] <- predict(obj, type = "node")
+	if(!("(response)" %in% names(obj$fitted)))
+	  obj$fitted["(response)"] <- model.response(model.frame(obj))
+	if(!("(weights)" %in% names(obj$fitted))) {
+	  w <- model.weights(model.frame(obj))
+	  if(is.null(w) && any(w != 1L)) obj$fitted["(weights)"] <- w
+	}
+    }
     if (is.constparty(obj)) {
         ret <- obj
         class(ret) <- c("constparty", class(obj))
@@ -243,8 +267,13 @@ predict.party <- function(object, newdata = NULL, ...)
         vclass <- structure(lapply(object$data, class), .Names = vnames)
         ndnames <- names(newdata)
         ndclass <- structure(lapply(newdata, class), .Names = ndnames)
-        if(all(unames %in% ndnames) &&
-           all(unlist(lapply(unames, function(x) vclass[[x]] == ndclass[[x]])))) {
+        checkclass <- all(sapply(unames, function(x) 
+          isTRUE(all.equal(vclass[[x]], ndclass[[x]]))))
+        factors <- sapply(unames, function(x) inherits(object$data[[x]], "factor"))
+        checkfactors <- all(sapply(unames[factors], function(x) 
+          isTRUE(all.equal(levels(object$data[[x]]), levels(newdata[[x]])))))
+        ## FIXME: inform about wrong classes / factor levels?
+        if(all(unames %in% ndnames) && checkclass && checkfactors) {
             vmatch <- match(vnames, ndnames)
             fitted_node(node_party(object), newdata, vmatch)
         } else {
@@ -263,22 +292,32 @@ predict_party <- function(party, id, newdata = NULL, ...)
     UseMethod("predict_party")
 
 ### do nothing expect returning the fitted ids
-predict_party.default <- function(party, id, newdata = NULL, ...) {
+predict_party.default <- function(party, id, newdata = NULL, FUN = NULL, ...) {
 
     if (length(list(...)) > 1) 
         warning("argument(s)", " ", sQuote(names(list(...))), " ", "have been ignored")
 
     ## get observation names: either node names or
     ## observation names from newdata
-    nam <- if(is.null(newdata)) names(party)[id] else rownames(newdata)
+    nam <- if(is.null(newdata)) {
+      if(is.null(rnam <- rownames(data_party(party)))) names(party)[id] else rnam      
+    } else {
+      rownames(newdata)
+    }
     if(length(nam) != length(id)) nam <- NULL
+
+    if (!is.null(FUN))
+        return(.simplify_pred(nodeapply(party, 
+            nodeids(party, terminal = TRUE), FUN, by_node = TRUE), id, nam))
 
     ## special case: fitted ids
     return(structure(id, .Names = nam))
 }
 
 predict_party.constparty <- function(party, id, newdata = NULL,
-    type = c("response", "prob", "node"), FUN = NULL, simplify = TRUE, ...)
+    type = c("response", "prob", "quantile", "density", "node"),
+    at = if (type == "quantile") c(0.1, 0.5, 0.9),
+    FUN = NULL, simplify = TRUE, ...)
 {
     ## extract fitted information
     response <- party$fitted[["(response)"]]
@@ -302,7 +341,7 @@ predict_party.constparty <- function(party, id, newdata = NULL,
     if (is.data.frame(response)) {
         ret <- lapply(response, function(r) {
             ret <- .predict_party_constparty(node_party(party), fitted = fitted, 
-                response = r, weights, id = id, type = type, FUN = FUN, ...)
+                response = r, weights, id = id, type = type, at = at, FUN = FUN, ...)
             if (simplify) .simplify_pred(ret, id, nam) else ret
         })
         if (all(sapply(ret, is.atomic)))
@@ -313,17 +352,21 @@ predict_party.constparty <- function(party, id, newdata = NULL,
 
     ### univariate response
     ret <- .predict_party_constparty(node_party(party), fitted = fitted, response = response, 
-        weights = weights, id = id, type = type, FUN = FUN, ...)
+        weights = weights, id = id, type = type, at = at, FUN = FUN, ...)
     if (simplify) .simplify_pred(ret, id, nam) else ret[as.character(id)]
 }
 
 ### functions for node prediction based on fitted / response
-.pred_Surv <- function(y, w)
+.pred_Surv <- function(y, w) {
+    if (length(y) == 0) return(NA)
     survfit(y ~ 1, weights = w, subset = w > 0)
+}
 
-.pred_Surv_response <- function(y, w)
+.pred_Surv_response <- function(y, w) {
+    if (length(y) == 0) return(NA)
     .median_survival_time(.pred_Surv(y, w))
-                    
+}
+ 
 .pred_factor <- function(y, w) {
     lev <- levels(y)
     sumw <- tapply(w, y, sum)
@@ -341,26 +384,54 @@ predict_party.constparty <- function(party, id, newdata = NULL,
     return(prob) 
 }
                     
-.pred_numeric <- function(y, w) weighted.mean(y, w, na.rm = TRUE)
+.pred_numeric_response <- function(y, w) 
+    weighted.mean(y, w, na.rm = TRUE)
+
+.pred_ecdf <- function(y, w) {
+    if (length(y) == 0) return(NA)
+    iw <- as.integer(round(w))
+    if (max(abs(w - iw)) < sqrt(.Machine$double.eps)) {
+        y <- rep(y, w)
+        return(ecdf(y))
+    } else {
+        stop("cannot compute empirical distribution function with non-integer weights")
+    }
+}
+
+.pred_quantile <- function(y, w) {
+    y <- rep(y, w)
+    function(p, ...) quantile(y, probs = p, ...)
+}
+
+.pred_density <- function(y, w) {
+    d <- density(y, weights = w / sum(w))
+    approxfun(d[1:2], rule = 2)
+}
 
 ### workhorse: compute predictions based on fitted / response data
 .predict_party_constparty <- function(node, fitted, response, weights,
-    id = id, type = c("response", "prob"), FUN = NULL, ...) {
+    id = id, type = c("response", "prob", "quantile", "density"),
+    at = if (type == "quantile") c(0.1, 0.5, 0.9), FUN = NULL, ...) {
 
+    type <- match.arg(type)
     if (is.null(FUN)) {
 
         rtype <- class(response)[1]
         if (rtype == "ordered") rtype <- "factor"    
         if (rtype == "integer") rtype <- "numeric"
 
+        if (type %in% c("quantile", "density") && rtype != "numeric")
+            stop("quantile and density estimation currently only implemented for numeric responses")
+
         FUN <- switch(rtype,
             "Surv" = if (type == "response") .pred_Surv_response else .pred_Surv,
             "factor" = if (type == "response") .pred_factor_response else .pred_factor,
-            "numeric" = {
-                if (type == "prob")
-                    stop(sQuote("type = \"prob\""), " ", "is not available")
-                .pred_numeric
-           })
+            "numeric" = switch(type,
+                "response" = .pred_numeric_response,
+                "prob" = .pred_ecdf,
+                "quantile" = .pred_quantile, 
+                "density" = .pred_density) 
+       )
     }
       
     ## empirical distribution in each leaf
@@ -371,10 +442,15 @@ predict_party.constparty <- function(party, id, newdata = NULL,
         ### id may also refer to inner nodes
         tab <- as.array(lapply(sort(unique(id)), function(i) {
             index <- fitted %in% nodeids(node, i, terminal = TRUE)
-            FUN(response[index], weights[index])
+            ret <- FUN(response[index], weights[index])
+            ### no information about i in fitted
+            if (all(!index)) ret[1] <- NA
+            return(ret)
         }))
         names(tab) <- as.character(sort(unique(id)))
     }
+    if (inherits(tab[[1]], "function") && !is.null(at))
+        tab <- lapply(tab, function(f) f(at))
     tn <- names(tab)
     dim(tab) <- NULL
     names(tab) <- tn
@@ -443,6 +519,89 @@ width.party <- function(x, ...) {
 depth.party <- function(x, root = FALSE, ...) {
   depth(node_party(x), root = root, ...)
 }
+
+nodeprune <- function(x, ids, ...)
+    UseMethod("nodeprune")
+
+nodeprune.party <- function(x, ids, ...) {
+
+    ### map names to nodeids
+    if (!is.numeric(ids))
+        ids <- match(ids, names(x))
+    stopifnot(ids %in% nodeids(x))
+
+    ### compute indices path to each node
+    ### to be pruned off
+    idxs <- lapply(ids, .get_path, obj = node_party(x))
+
+    ### [[.party is NOT [[.list
+    cls <- class(x)
+    x <- unclass(x)
+    ni <- which(names(x) == "node")
+
+    for (i in 1:length(idxs)) {
+    
+        idx <- c(ni, idxs[[i]])
+        ### check if we already pruned-off this node
+        tmp <- try(x[[idx]], silent = TRUE)
+        if (inherits(tmp, "try-error"))
+            next()
+
+        ### node ids of off-pruned daugther nodes
+        idrm <- nodeids(x[[idx]])[-1]
+
+        ### prune node by introducing a "new" terminal node
+        x[[idx]] <- partynode(id = id_node(x[[idx]]),
+                              info = info_node(x[[idx]]))
+
+        ### constparty only: make sure the node ids in
+        ### fitted are corrected
+        if (length(idrm) > 0) {
+             if(!is.null(x$fitted) && 
+                 "(fitted)" %in% names(x$fitted)) {
+                     j <- x$fitted[["(fitted)"]] %in% idrm
+                     x$fitted[["(fitted)"]][j] <- ids[i]
+             }
+        }
+    }
+
+    ### reindex to 1:max(nodeid)
+    class(x) <- cls
+    nodeids(x) <- 1:length(nodeids(x))
+    return(x)
+}
+
+nodeprune.partynode <- function(x, ids, ...) {
+
+    stopifnot(ids %in% nodeids(x))
+
+    ### compute indices path to each node
+    ### to be pruned off
+    idxs <- lapply(ids, .get_path, obj = x)
+
+    ### [[.partynode is NOT [[.list
+    cls <- class(x)
+    x <- unclass(x)
+
+    for (i in 1:length(idxs)) {
+    
+        idx <- idxs[[i]]
+        ### check if we already pruned-off this node
+        tmp <- try(x[[idx]], silent = TRUE)
+        if (inherits(tmp, "try-error"))
+            next()
+
+        ### prune node by introducing a "new" terminal node
+        x[[idx]] <- partynode(id = id_node(x[[idx]]),
+                              info = info_node(x[[idx]]))
+    }
+
+    class(x) <- cls
+    return(as.partynode(x, from = 1L))
+}
+
+nodeprune.default <- function(x, ids, ...)
+    stop("No", sQuote("nodeprune"), "method for class", class(x), "implemented")
 
 .list.rules.party <- function(x, i = NULL, ...) {
     if (is.null(i)) i <- nodeids(x, terminal = TRUE)

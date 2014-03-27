@@ -1,11 +1,13 @@
 
-R Under development (unstable) (2013-09-02 r63805) -- "Unsuffered Consequences"
-Copyright (C) 2013 The R Foundation for Statistical Computing
+R version 3.0.3 (2014-03-06) -- "Warm Puppy"
+Copyright (C) 2014 The R Foundation for Statistical Computing
 Platform: x86_64-unknown-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
 Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
 
 R is a collaborative project with many contributors.
 Type 'contributors()' for more information and
@@ -18,8 +20,6 @@ Type 'q()' to quit R.
 > ## load package and fix seed
 > library("partykit")
 Loading required package: grid
-> library("survival")
-Loading required package: splines
 > set.seed(1)
 > 
 > ## rpart: kyphosis data
@@ -74,6 +74,7 @@ Loading required package: splines
 > ## rpart: GBSG2 data
 > data("GBSG2", package = "TH.data")
 > library("survival")
+Loading required package: splines
 > fit <- rpart(Surv(time, cens) ~ ., data = GBSG2)
 > pfit <- as.party(fit)
 > pfit$fitted
@@ -1399,7 +1400,364 @@ records   n.max n.start  events  median 0.95LCL 0.95UCL
 9   500 0.4823559
 10  742 0.5108953
 > 
+> ### pruning
+> ## create party
+> data("WeatherPlay", package = "partykit")
+> py <- party(
++   partynode(1L,
++     split = partysplit(1L, index = 1:3),
++     kids = list(
++       partynode(2L,
++         split = partysplit(3L, breaks = 75),
++         kids = list(
++           partynode(3L, info = "yes"),
++           partynode(4L, info = "no"))),
++       partynode(5L, 
++         split = partysplit(3L, breaks = 20),
++         kids = list(
++           partynode(6L, info = "no"),
++           partynode(7L, info = "yes"))),
++       partynode(8L,
++         split = partysplit(4L, index = 1:2),
++         kids = list(
++           partynode(9L, info = "yes"),
++           partynode(10L, info = "no"))))),
++   WeatherPlay)
+> names(py) <- LETTERS[nodeids(py)]
+> 
+> ## print
+> print(py)
+[A] root
+|   [B] outlook in sunny
+|   |   [C] humidity <= 75: yes
+|   |   [D] humidity > 75: no
+|   [E] outlook in overcast
+|   |   [F] humidity <= 20: no
+|   |   [G] humidity > 20: yes
+|   [H] outlook in rainy
+|   |   [I] windy in false: yes
+|   |   [J] windy in true: no
+> (py5 <- nodeprune(py, 5))
+[A] root
+|   [B] outlook in sunny
+|   |   [C] humidity <= 75: yes
+|   |   [D] humidity > 75: no
+|   [E] outlook in overcast: *
+|   [H] outlook in rainy
+|   |   [I] windy in false: yes
+|   |   [J] windy in true: no
+> nodeids(py5)
+[1] 1 2 3 4 5 6 7 8
+> (pyH <- nodeprune(py5, "H"))
+[A] root
+|   [B] outlook in sunny
+|   |   [C] humidity <= 75: yes
+|   |   [D] humidity > 75: no
+|   [E] outlook in overcast: *
+|   [H] outlook in rainy: *
+> nodeids(pyH)
+[1] 1 2 3 4 5 6
+> 	
+> ct <- ctree(Species ~ ., data = iris)
+Loading required package: Formula
+> nt <- node_party(ctree(Species ~ ., data = iris))
+> (ctp <- nodeprune(ct, 4)) ### party method
+
+Model formula:
+Species ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width
+
+Fitted party:
+[1] root
+|   [2] Petal.Length <= 1.9: setosa (n = 50, err = 0.0%)
+|   [3] Petal.Length > 1.9
+|   |   [4] Petal.Width <= 1.7: versicolor (n = 54, err = 9.3%)
+|   |   [5] Petal.Width > 1.7: virginica (n = 46, err = 2.2%)
+
+Number of inner nodes:    2
+Number of terminal nodes: 3
+> (ntp <- nodeprune(nt, 4)) ### partynode method
+[1] root
+|   [2] V4 <= 1.9 *
+|   [3] V4 > 1.9
+|   |   [4] V5 <= 1.7 *
+|   |   [5] V5 > 1.7 *
+> 
+> ### check if both methods do the same
+> p1 <- predict(party(ntp, 
++     data = model.frame(terms(ct), data = iris)), type = "node")
+> p2 <- predict(ctp, type = "node")
+> stopifnot(max(abs(p1 - p2)) == 0)
+> 
+> names(ct) <- LETTERS[nodeids(ct)]
+> (ctp <- nodeprune(ct, "D"))
+
+Model formula:
+Species ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width
+
+Fitted party:
+[A] root
+|   [B] Petal.Length <= 1.9: setosa (n = 50, err = 0.0%)
+|   [C] Petal.Length > 1.9
+|   |   [D] Petal.Width <= 1.7: versicolor (n = 54, err = 9.3%)
+|   |   [G] Petal.Width > 1.7: virginica (n = 46, err = 2.2%)
+
+Number of inner nodes:    2
+Number of terminal nodes: 3
+> 
+> table(predict(ct, type = "node"), 
++       predict(ctp, type = "node"))
+   
+     2  4  5
+  2 50  0  0
+  5  0 46  0
+  6  0  8  0
+  7  0  0 46
+> 
+> (ct <- nodeprune(ct, names(ct)[names(ct) != "A"]))
+
+Model formula:
+Species ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width
+
+Fitted party:
+[A] root
+|   [B] Petal.Length <= 1.9: setosa (n = 50, err = 0.0%)
+|   [C] Petal.Length > 1.9: versicolor (n = 100, err = 50.0%)
+
+Number of inner nodes:    1
+Number of terminal nodes: 2
+> table(predict(ct, type = "node"))
+
+  2   3 
+ 50 100 
+> 
+> nodeprune(ct, "B")
+
+Model formula:
+Species ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width
+
+Fitted party:
+[A] root
+|   [B] Petal.Length <= 1.9: setosa (n = 50, err = 0.0%)
+|   [C] Petal.Length > 1.9: versicolor (n = 100, err = 50.0%)
+
+Number of inner nodes:    1
+Number of terminal nodes: 2
+> nodeprune(ct, "C")
+
+Model formula:
+Species ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width
+
+Fitted party:
+[A] root
+|   [B] Petal.Length <= 1.9: setosa (n = 50, err = 0.0%)
+|   [C] Petal.Length > 1.9: versicolor (n = 100, err = 50.0%)
+
+Number of inner nodes:    1
+Number of terminal nodes: 2
+> nodeprune(ct, "A")
+
+Model formula:
+Species ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width
+
+Fitted party:
+[A] root
+
+Number of inner nodes:    0
+Number of terminal nodes: 1
+> 
+> ### check different predict flavours for numeric responses
+> x <- runif(100)
+> dd <- data.frame(y = rnorm(length(x), mean = 2 * (x < .5)), x = x)
+> ct <- ctree(y ~ x, data = dd)
+> nd <- data.frame(x = (1:9) / 10)
+> predict(ct, newdata = nd, type = "node")
+1 2 3 4 5 6 7 8 9 
+2 2 2 2 2 4 4 4 5 
+> predict(ct, newdata = nd, type = "response")
+         1          2          3          4          5          6          7 
+ 2.1123074  2.1123074  2.1123074  2.1123074  2.1123074  0.3779526  0.3779526 
+         8          9 
+ 0.3779526 -0.5112136 
+> predict(ct, newdata = nd, type = "prob")
+$`1`
+Empirical CDF 
+Call: ecdf(y)
+ x[1:58] = -0.30626, -0.14847, 0.11198,  ..., 3.5936, 3.8115
+
+$`2`
+Empirical CDF 
+Call: ecdf(y)
+ x[1:58] = -0.30626, -0.14847, 0.11198,  ..., 3.5936, 3.8115
+
+$`3`
+Empirical CDF 
+Call: ecdf(y)
+ x[1:58] = -0.30626, -0.14847, 0.11198,  ..., 3.5936, 3.8115
+
+$`4`
+Empirical CDF 
+Call: ecdf(y)
+ x[1:58] = -0.30626, -0.14847, 0.11198,  ..., 3.5936, 3.8115
+
+$`5`
+Empirical CDF 
+Call: ecdf(y)
+ x[1:58] = -0.30626, -0.14847, 0.11198,  ..., 3.5936, 3.8115
+
+$`6`
+Empirical CDF 
+Call: ecdf(y)
+ x[1:26] = -1.416, -0.69778, -0.65081,  ..., 1.6409, 1.7415
+
+$`7`
+Empirical CDF 
+Call: ecdf(y)
+ x[1:26] = -1.416, -0.69778, -0.65081,  ..., 1.6409, 1.7415
+
+$`8`
+Empirical CDF 
+Call: ecdf(y)
+ x[1:26] = -1.416, -0.69778, -0.65081,  ..., 1.6409, 1.7415
+
+$`9`
+Empirical CDF 
+Call: ecdf(y)
+ x[1:16] = -2.0379, -1.6793, -1.6389,  ..., 0.69065,  1.245
+
+> predict(ct, newdata = nd, type = "quantile")
+         10%        50%      90%
+1  1.0641709  2.1259409 3.253851
+2  1.0641709  2.1259409 3.253851
+3  1.0641709  2.1259409 3.253851
+4  1.0641709  2.1259409 3.253851
+5  1.0641709  2.1259409 3.253851
+6 -0.5344305  0.3963687 1.361417
+7 -0.5344305  0.3963687 1.361417
+8 -0.5344305  0.3963687 1.361417
+9 -1.6591116 -0.3834531 0.485164
+> predict(ct, newdata = nd, type = "quantile", at = NULL)
+$`1`
+function (p, ...) 
+quantile(y, probs = p, ...)
+<environment: 0x40b9088>
+
+$`2`
+function (p, ...) 
+quantile(y, probs = p, ...)
+<environment: 0x40b9088>
+
+$`3`
+function (p, ...) 
+quantile(y, probs = p, ...)
+<environment: 0x40b9088>
+
+$`4`
+function (p, ...) 
+quantile(y, probs = p, ...)
+<environment: 0x40b9088>
+
+$`5`
+function (p, ...) 
+quantile(y, probs = p, ...)
+<environment: 0x40b9088>
+
+$`6`
+function (p, ...) 
+quantile(y, probs = p, ...)
+<environment: 0x40b8820>
+
+$`7`
+function (p, ...) 
+quantile(y, probs = p, ...)
+<environment: 0x40b8820>
+
+$`8`
+function (p, ...) 
+quantile(y, probs = p, ...)
+<environment: 0x40b8820>
+
+$`9`
+function (p, ...) 
+quantile(y, probs = p, ...)
+<environment: 0x3d35030>
+
+> predict(ct, newdata = nd, type = "density")
+$`1`
+function (v) 
+.approxfun(x, y, v, method, yleft, yright, f)
+<bytecode: 0x452d700>
+<environment: 0x44bf4a8>
+
+$`2`
+function (v) 
+.approxfun(x, y, v, method, yleft, yright, f)
+<bytecode: 0x452d700>
+<environment: 0x44bf4a8>
+
+$`3`
+function (v) 
+.approxfun(x, y, v, method, yleft, yright, f)
+<bytecode: 0x452d700>
+<environment: 0x44bf4a8>
+
+$`4`
+function (v) 
+.approxfun(x, y, v, method, yleft, yright, f)
+<bytecode: 0x452d700>
+<environment: 0x44bf4a8>
+
+$`5`
+function (v) 
+.approxfun(x, y, v, method, yleft, yright, f)
+<bytecode: 0x452d700>
+<environment: 0x44bf4a8>
+
+$`6`
+function (v) 
+.approxfun(x, y, v, method, yleft, yright, f)
+<bytecode: 0x452d700>
+<environment: 0x444b220>
+
+$`7`
+function (v) 
+.approxfun(x, y, v, method, yleft, yright, f)
+<bytecode: 0x452d700>
+<environment: 0x444b220>
+
+$`8`
+function (v) 
+.approxfun(x, y, v, method, yleft, yright, f)
+<bytecode: 0x452d700>
+<environment: 0x444b220>
+
+$`9`
+function (v) 
+.approxfun(x, y, v, method, yleft, yright, f)
+<bytecode: 0x452d700>
+<environment: 0x43f3918>
+
+> predict(ct, newdata = nd, type = "density", at = (1:9) / 10)
+        [,1]       [,2]       [,3]       [,4]       [,5]       [,6]      [,7]
+1 0.05020125 0.04935438 0.05087955 0.05661364 0.06796655 0.08560162 0.1092080
+2 0.05020125 0.04935438 0.05087955 0.05661364 0.06796655 0.08560162 0.1092080
+3 0.05020125 0.04935438 0.05087955 0.05661364 0.06796655 0.08560162 0.1092080
+4 0.05020125 0.04935438 0.05087955 0.05661364 0.06796655 0.08560162 0.1092080
+5 0.05020125 0.04935438 0.05087955 0.05661364 0.06796655 0.08560162 0.1092080
+6 0.53975912 0.57687027 0.59689413 0.59443918 0.56427527 0.50605792 0.4289844
+7 0.53975912 0.57687027 0.59689413 0.59443918 0.56427527 0.50605792 0.4289844
+8 0.53975912 0.57687027 0.59689413 0.59443918 0.56427527 0.50605792 0.4289844
+9 0.37075877 0.34250760 0.31088903 0.27813780 0.24612980 0.21627046 0.1894201
+       [,8]      [,9]
+1 0.1376954 0.1693900
+2 0.1376954 0.1693900
+3 0.1376954 0.1693900
+4 0.1376954 0.1693900
+5 0.1376954 0.1693900
+6 0.3508934 0.2908752
+7 0.3508934 0.2908752
+8 0.3508934 0.2908752
+9 0.1658930 0.1455540
 > 
 > proc.time()
    user  system elapsed 
-  1.708   0.208   1.682 
+  2.020   0.188   2.014 

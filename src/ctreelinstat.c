@@ -269,9 +269,9 @@ void C_ExpCovLinstat (const double *swx, const double *swx2, const int p, const 
 void C_LinstatExpCov (const SEXP x, const SEXP y, const SEXP weights, 
                       int *thisweights, SEXP ans) {
     
-    SEXP explinstat, covlinstat, linstat, dim, cx;
-    double *expinf, *covinf, *swx, *swx2, *dy, *dx;
-    int sw = 0, n, p, q, pq;
+    SEXP explinstat, covlinstat, linstat, dim, cx, sc;
+    double *expinf, *covinf, *swx, *swx2, *dy, *dx, *dsc;
+    int sw = 0, n, p, q, pq, i;
     int *ix;
 
     /* determine the dimensions and some checks */
@@ -314,7 +314,6 @@ void C_LinstatExpCov (const SEXP x, const SEXP y, const SEXP weights,
         C_swx_factor(ix, p, thisweights, n, swx, swx2);
         C_Linstat_factor(ix, p, dy, q, thisweights, n, REAL(linstat));
     }
-    /*  FIXME: implement scores for ordered */
     if (isInteger(x) || isOrdered(x)) {
         p = 1;
         pq = p * q;
@@ -323,6 +322,22 @@ void C_LinstatExpCov (const SEXP x, const SEXP y, const SEXP weights,
         swx2 = Calloc(p, double);
         PROTECT(cx = coerceVector(x, REALSXP));
         dx = REAL(cx);
+        
+        /* replace levels by scores if needed */
+        if (isOrdered(x)) {
+            PROTECT(sc = getAttrib(x, install("scores")));
+            if (sc != R_NilValue) {
+                dsc = REAL(sc);
+                ix = INTEGER(x);
+                for (i = 0; i < n; i++) {
+                    if (ix[i] > LENGTH(sc))
+                        error("incorrect scores attribute");
+                    dx[i] = dsc[ix[i] - 1];
+                }
+            }
+            UNPROTECT(1);
+        }
+
         SET_VECTOR_ELT(ans, 1, linstat = allocVector(REALSXP, pq));
 
         NA_weights_double(INTEGER(weights), dx, n, thisweights, &sw);                        

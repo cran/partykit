@@ -1,0 +1,126 @@
+<PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_1 http://www.dmg.org/v4-1/pmml-4-1.xsd">
+ <Header copyright="Copyright (c) 2014 zeileis" description="RPart Decision Tree Model">
+  <Extension name="user" value="zeileis" extender="Rattle/PMML"/>
+  <Application name="Rattle/PMML" version="1.4"/>
+  <Timestamp>2014-01-22 11:51:42</Timestamp>
+ </Header>
+ <DataDictionary numberOfFields="5">
+  <DataField name="Survived" optype="categorical" dataType="string">
+   <Value value="No"/>
+   <Value value="Yes"/>
+  </DataField>
+  <DataField name="Class" optype="categorical" dataType="string">
+   <Value value="1st"/>
+   <Value value="2nd"/>
+   <Value value="3rd"/>
+   <Value value="Crew"/>
+  </DataField>
+  <DataField name="Gender" optype="categorical" dataType="string">
+   <Value value="Male"/>
+   <Value value="Female"/>
+  </DataField>
+  <DataField name="Age" optype="categorical" dataType="string">
+   <Value value="Child"/>
+   <Value value="Adult"/>
+  </DataField>
+  <DataField name="First" optype="categorical" dataType="string">
+   <Value value="Male&amp;amp;Adult"/>
+   <Value value="Female|Child"/>
+  </DataField>
+ </DataDictionary>
+ <TreeModel modelName="RPart_Model" functionName="classification" algorithmName="rpart" splitCharacteristic="binarySplit" missingValueStrategy="defaultChild">
+  <MiningSchema>
+   <MiningField name="Survived" usageType="predicted"/>
+   <MiningField name="Class" usageType="active"/>
+   <MiningField name="Gender" usageType="active"/>
+   <MiningField name="Age" usageType="active"/>
+   <MiningField name="First" usageType="active"/>
+  </MiningSchema>
+  <Output>
+   <OutputField name="Predicted_Survived" optype="categorical" dataType="string" feature="predictedValue"/>
+   <OutputField name="Probability_No" optype="continuous" dataType="double" feature="probability" value="No"/>
+   <OutputField name="Probability_Yes" optype="continuous" dataType="double" feature="probability" value="Yes"/>
+  </Output>
+  <Node id="1" score="No" recordCount="2201" defaultChild="2">
+   <True/>
+   <ScoreDistribution value="No" recordCount="1490" confidence="0.676965015901863"/>
+   <ScoreDistribution value="Yes" recordCount="711" confidence="0.323034984098137"/>
+   <Node id="2" score="No" recordCount="1731" defaultChild="4">
+    <CompoundPredicate booleanOperator="surrogate">
+     <SimpleSetPredicate field="Gender" booleanOperator="isIn">
+      <Array n="1" type="string">&quot;Male&quot;</Array>
+     </SimpleSetPredicate>
+     <SimpleSetPredicate field="First" booleanOperator="isIn">
+      <Array n="1" type="string">&quot;Male&amp;Adult&quot;</Array>
+     </SimpleSetPredicate>
+    </CompoundPredicate>
+    <ScoreDistribution value="No" recordCount="1364" confidence="0.787983824378972"/>
+    <ScoreDistribution value="Yes" recordCount="367" confidence="0.212016175621028"/>
+    <Node id="4" score="No" recordCount="1667">
+     <SimpleSetPredicate field="Age" booleanOperator="isIn">
+      <Array n="1" type="string">&quot;Adult&quot;</Array>
+     </SimpleSetPredicate>
+     <ScoreDistribution value="No" recordCount="1329" confidence="0.797240551889622"/>
+     <ScoreDistribution value="Yes" recordCount="338" confidence="0.202759448110378"/>
+    </Node>
+    <Node id="5" score="No" recordCount="64" defaultChild="10">
+     <SimpleSetPredicate field="Age" booleanOperator="isIn">
+      <Array n="1" type="string">&quot;Child&quot;</Array>
+     </SimpleSetPredicate>
+     <ScoreDistribution value="No" recordCount="35" confidence="0.546875"/>
+     <ScoreDistribution value="Yes" recordCount="29" confidence="0.453125"/>
+     <Node id="10" score="No" recordCount="48">
+      <SimpleSetPredicate field="Class" booleanOperator="isIn">
+       <Array n="1" type="string">&quot;3rd&quot;</Array>
+      </SimpleSetPredicate>
+      <ScoreDistribution value="No" recordCount="35" confidence="0.729166666666667"/>
+      <ScoreDistribution value="Yes" recordCount="13" confidence="0.270833333333333"/>
+     </Node>
+     <Node id="11" score="Yes" recordCount="16">
+      <SimpleSetPredicate field="Class" booleanOperator="isIn">
+       <Array n="2" type="string">&quot;1st&quot; &quot;2nd&quot;</Array>
+      </SimpleSetPredicate>
+      <ScoreDistribution value="No" recordCount="0" confidence="0"/>
+      <ScoreDistribution value="Yes" recordCount="16" confidence="1"/>
+     </Node>
+    </Node>
+   </Node>
+   <Node id="3" score="Yes" recordCount="470" defaultChild="6">
+    <CompoundPredicate booleanOperator="surrogate">
+     <SimpleSetPredicate field="Gender" booleanOperator="isIn">
+      <Array n="1" type="string">&quot;Female&quot;</Array>
+     </SimpleSetPredicate>
+     <SimpleSetPredicate field="First" booleanOperator="isIn">
+      <Array n="1" type="string">&quot;Female|Child&quot;</Array>
+     </SimpleSetPredicate>
+    </CompoundPredicate>
+    <ScoreDistribution value="No" recordCount="126" confidence="0.268085106382979"/>
+    <ScoreDistribution value="Yes" recordCount="344" confidence="0.731914893617021"/>
+    <Node id="6" score="No" recordCount="196">
+     <CompoundPredicate booleanOperator="surrogate">
+      <SimpleSetPredicate field="Class" booleanOperator="isIn">
+       <Array n="1" type="string">&quot;3rd&quot;</Array>
+      </SimpleSetPredicate>
+      <SimpleSetPredicate field="Age" booleanOperator="isIn">
+       <Array n="1" type="string">&quot;Child&quot;</Array>
+      </SimpleSetPredicate>
+     </CompoundPredicate>
+     <ScoreDistribution value="No" recordCount="106" confidence="0.540816326530612"/>
+     <ScoreDistribution value="Yes" recordCount="90" confidence="0.459183673469388"/>
+    </Node>
+    <Node id="7" score="Yes" recordCount="274">
+     <CompoundPredicate booleanOperator="surrogate">
+      <SimpleSetPredicate field="Class" booleanOperator="isIn">
+       <Array n="3" type="string">&quot;1st&quot; &quot;2nd&quot; &quot;Crew&quot;</Array>
+      </SimpleSetPredicate>
+      <SimpleSetPredicate field="Age" booleanOperator="isIn">
+       <Array n="1" type="string">&quot;Adult&quot;</Array>
+      </SimpleSetPredicate>
+     </CompoundPredicate>
+     <ScoreDistribution value="No" recordCount="20" confidence="0.072992700729927"/>
+     <ScoreDistribution value="Yes" recordCount="254" confidence="0.927007299270073"/>
+    </Node>
+   </Node>
+  </Node>
+ </TreeModel>
+</PMML>

@@ -1,8 +1,45 @@
+Changes in Version 0.8-0
+
+  o Major improved version of "partykit". The previously existing functions
+    in the package were tested and enhanced, new functions and
+    extensive vignettes added.
+
+  o Extended and improved introductory documentation. The basic classes
+    and class constructors partynode/partysplit/party are introduced in 
+    much more detail now in vignette("partykit", package = "partykit").
+    
+  o The class constparty (inheriting from party) for representing party
+    objects with constant fits in the nodes (along with coercion methods
+    for rpart, J48, etc.) is now described in more detail in the new
+    vignette("constparty", package = "partykit").
+
+  o The package now includes a reimplementation of the model-based
+    recursive partitioning algorithm (MOB) using "partykit" infrastructure.
+    The generic algorithm, the corresponding convenience interfaces
+    lmtree() and glmtree() as well as various illustrations and possible
+    extensions are described in detail in the new
+    vignette("mob", package = "partykit").
+
+  o Improved implementation of conditional inference trees (CTree), see
+    the new vignette("ctree", package = "partykit") for details.
+
+  o New nodeprune() generic for pruning nodes in all "party" trees and
+    "partynode" objects.
+
+  o Deal with empty levels in ctree() for teststat = "quad"
+    (bug reported by Wei-Yin Loh <loh@stat.wisc.edu>).
+
+  o In predict() method for "constparty" objects, type = "prob" now returns
+    ECDF for numeric responses and type = "response" the (weighted) mean.
+
+  o New panel function node_ecdf for plotting empirical cumulative
+    distribution functions in the terminal leaves of "constparty" trees.
+
+
 Changes in Version 0.1-6
 
   o Bug fix in as.party() method for J48 trees with ordered factors.
 
-  o data now in TH.data and not ipred
 
 Changes in Version 0.1-5
 

@@ -1,0 +1,651 @@
+\documentclass[nojss]{jss}
+
+%\VignetteIndexEntry{partykit: A Toolkit for Recursive Partytioning}
+%\VignetteDepends{partykit, rpart, RWeka, pmml, datasets}
+%\VignetteKeywords{recursive partitioning, regression trees, classification trees, decision trees}
+%\VignettePackage{partykit}
+
+%% packages
+\usepackage{amstext}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{thumbpdf}
+\usepackage{rotating}
+%% need no \usepackage{Sweave}
+
+%% additional commands
+\newcommand{\squote}[1]{`{#1}'}
+\newcommand{\dquote}[1]{``{#1}''}
+\newcommand{\fct}[1]{{\texttt{#1()}}}
+\newcommand{\class}[1]{\dquote{\texttt{#1}}}
+\newcommand{\fixme}[1]{\emph{\marginpar{FIXME} (#1)}}
+
+%% further commands
+\renewcommand{\Prob}{\mathbb{P} }
+\renewcommand{\E}{\mathbb{E}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Var}{\mathbb{V}}
+
+\hyphenation{Qua-dra-tic}
+
+\title{Constant Partying: Growing and Handling Trees with Constant Fits}
+\author{Torsten Hothorn\\Universit\"at Z\"urich
+   \And Achim Zeileis\\Universit\"at Innsbruck}
+\Plainauthor{Torsten Hothorn, Achim Zeileis}
+
+\Abstract{
+This vignette describes infrastructure for regression and classification trees with simple 
+constant fits in each of the terminal nodes. Thus, all observations that are
+predicted to be in the same terminal node also receive the same prediction,
+e.g., a mean for numeric responses or proportions for categorical responses.
+This class of trees is very common and includes all traditional tree variants
+(AID, CHAID, CART, C4.5, FACT, QUEST) and also more recent approaches like CTree.
+Trees inferred by any of these algorithms could in principle be represented
+by objects of class \class{constparty} in \pkg{partykit} that then provides
+unified methods for printing, plotting, and predicting. Here, we describe
+how one can create \class{constparty} objects by (a)~coercion from other \proglang{R}
+classes, (b)~parsing of XML descriptions of trees learned in other software systems,
+(c)~learning a tree using one's own algorithm.
+}
+
+\Keywords{recursive partitioning, regression trees, classification trees, decision trees}
+
+\Address{
+  Torsten Hothorn\\
+  Institut f\"ur Sozial- und Pr\"aventivmedizin, Abteilung Biostatistik \\
+  Universit\"at Z\"urich \\
+  Hirschengraben 84\\
+  CH-8001 Z\"urich, Switzerland \\
+  E-mail: \email{Torsten.Hothorn@R-project.org}\\
+  URL: \url{http://user.math.uzh.ch/hothorn/}\\
+
+  Achim Zeileis\\
+  Department of Statistics \\
+  Faculty of Economics and Statistics \\
+  Universit\"at Innsbruck \\
+  Universit\"atsstr.~15 \\
+  6020 Innsbruck, Austria \\
+  E-mail: \email{Achim.Zeileis@R-project.org}\\
+  URL: \url{http://eeecon.uibk.ac.at/~zeileis/}
+}
+
+
+\begin{document}
+
+\setkeys{Gin}{width=\textwidth}
+
+\SweaveOpts{engine=R, eps=FALSE, keep.source=TRUE, eval=TRUE}
+
+<<setup, echo = FALSE, results = hide>>=
+options(width = 70)
+library("partykit")
+set.seed(290875)
+@
+
+\section{Classes and methods} \label{sec:classes}
+
+This vignette describes the handling of trees with constant fits in the
+terminal nodes.  This class of regression models includes most classical
+tree algorithms like AID \citep{Morgan+Sonquist:1963}, 
+CHAID \citep{Kass:1980}, CART \citep{Breiman+Friedman+Olshen:1984}, 
+FACT \citep{Loh+Vanichsetakul1:988}, QUEST \citep{Loh+Shih:1997}, 
+C4.5 \citep{Quinlan:1993}, CTree \citep{Hothorn+Hornik+Zeileis:2006} etc.  In this
+class of tree models, one can compute simple predictions for new observations,
+such as the conditional mean in a regression setup, from the responses of
+those learning sample observations in the same terminal node. Therefore,
+such predictions can easily be computed if the following pieces of information
+are available: the observed responses in the learning sample, the terminal
+node IDs assigned to the observations in the learning sample, and potentially
+associated weights (if any).
+
+In \pkg{partykit} it is easy to create a \class{party} object that contains
+these pieces of information, yielding a \class{constparty} object. The technical
+details of the \class{party} class are discussed in detail in Section~3.4 of
+\code{vignette("partykit", package = "partykit")}. In addition to the
+elements required for any \class{party}, a \class{constparty} needs to have:
+variables \code{(fitted)} and \code{(response)} (and \code{(weights)} if
+applicable) in the \code{fitted} data frame along with the \code{terms}
+for the model. If such a \class{party} has been created, its properties
+can be checked and coerced to class \class{constparty} by the \fct{as.constparty}
+function.
+
+Note that with such a \class{constparty} object it is possible to compute
+all kinds of predictions from the subsample in a given terminal node. For example,
+instead the mean response the median (or any other quantile) could be employed.
+Similarly, for a categorical response the predicted probabilities (i.e.,
+relative frequencies) can be computed or the corresponding mode or a ranking
+of the levels etc.
+
+In case the full response from the learning sample is not available but only
+the constant fit from each terminal node, then a \class{constparty} cannot
+be set up. Specifically, this is the case for trees saved in the XML format
+PMML \citep[Predictive Model Markup Language,][]{DMG:2014} that does not provide the full learning
+sample. To also support such constant-fit trees based on
+simpler information \pkg{partykit} provides the \class{simpleparty} class.
+Inspired by the PMML format, this requires that the \code{info} of every node
+in the tree provides list elements \code{prediction}, \code{n}, \code{error},
+and \code{distribution}. For classification trees these should contain the
+following node-specific information: the predicted single predicted factor,
+the learning sample size, the misclassification error (in \%), and the absolute
+frequencies of all levels. For regression trees the contents should be:
+the predicted mean, the learning sample size, the error sum of squares,
+and \code{NULL}. The function \fct{as.simpleparty} can also coerce
+\class{constparty} trees to \class{simpleparty} trees by computing the
+above summary statistics from the full response associated with each node of
+the tree.
+
+The remainder of this vignette consists of the following parts:
+In Section~\ref{sec:coerce} we assume that the trees
+were fitted using some other software (either within or outside of \proglang{R})
+and we describe how these models can be coerced to \class{party} objects 
+using either the \class{constparty} or \class{simpleparty} class. Emphasize is given to
+displaying such trees in textual and graphical ways.
+Subsequently, in Section~\ref{sec:mytree}, we show a simple classification
+tree algorithm can be easily implemented using the \pkg{partykit} tools, yielding
+a \class{constparty} object. Section~\ref{sec:prediction} shows how to compute
+predictions in both scenarios before Section~\ref{sec:conclusion} finally gives a
+brief conclusion.
+
+\section{Coercing  tree objects} \label{sec:coerce}
+
+For the illustrations, we use the Titanic data set from package \pkg{datasets}, consisting of
+four variables on each of the $2201$ Titanic passengers: gender (male, female), age (child, adult), 
+and class (1st, 2nd, 3rd, or crew) set up as follows:
+<<Titanic>>=
+data("Titanic", package = "datasets")
+ttnc <- as.data.frame(Titanic)
+ttnc <- ttnc[rep(1:nrow(ttnc), ttnc$Freq), 1:4]
+names(ttnc)[2] <- "Gender"
+@
+The response variable describes whether or not the passenger survived the sinking of the ship.
+
+\subsection{Coercing rpart objects}
+
+We first fit a classification tree by means of the the \fct{rpart} function 
+from package \pkg{rpart} \citep{rpart} to this data set:
+<<rpart>>=
+library("rpart")
+(rp <- rpart(Survived ~ ., data = ttnc))
+@
+The \class{rpart} object \code{rp} can be coerced to
+a \class{constparty} by \fct{as.party}. Internally, this transforms
+the tree structure of the \class{rpart} tree to a \class{partynode} and combines
+it with the associated learning sample as described in Section~\ref{sec:classes}.
+All of this is done automatically by
+<<rpart-party>>=
+(party_rp <- as.party(rp))
+@
+Now, instead of the print method for \class{rpart} objects the print method
+for \code{constparty} objects creates a textual display of the tree
+structure.  In a similar way, the corresponding \fct{plot} method 
+produces a graphical representation of this tree, see Figure~\ref{party_plot}.
+
+\begin{figure}[p!]
+\centering
+<<rpart-plot-orig, fig = TRUE, width = 10, height = 6>>=
+plot(rp)
+text(rp)
+@
+
+<<rpart-plot, fig = TRUE, width = 10, height = 6>>=
+plot(party_rp)
+@
+\caption{\class{rpart} tree of Titanic data plotted using \pkg{rpart} (top)
+and \pkg{partykit} (bottom) infrastructure. \label{party_plot}}
+\end{figure}
+
+By default, the \fct{predict} method for \class{rpart} objects computes conditional
+class probabilities. The same numbers are returned by the \fct{predict} method
+for \Sexpr{class(party_rp)[1L]} objects with \code{type = "prob"} argument (see
+Section~\ref{sec:prediction} for more details):
+<<rpart-pred>>=
+all.equal(predict(rp), predict(party_rp, type = "prob"), 
+  check.attributes = FALSE)
+@
+Predictions are computed based on the \code{fitted} slot of a
+\class{constparty} object
+<<rpart-fitted>>=
+str(fitted(party_rp))
+@
+which contains the terminal node numbers and the response for each
+of the training samples. So, the conditional class probabilities for
+each terminal node can be computed via
+<<rpart-prob>>=
+prop.table(do.call("table", fitted(party_rp)), 1)
+@
+Optionally, weights can be stored in the \code{fitted} slot as well.
+
+\subsection{Coercing J48 objects}
+
+The \pkg{RWeka} package \citep{RWeka} provides an interface to the
+\pkg{Weka} machine learning library and we can use the \fct{J48} function to
+fit a J4.8 tree to the Titanic data
+<<J48>>=
+library("RWeka")
+(j48 <- J48(Survived ~ ., data = ttnc))
+@
+This object can be coerced to a \class{party} object using
+<<J48-party>>=
+(party_j48 <- as.party(j48))
+@
+and, again, the print method from the \pkg{partykit} package creates a
+textual display.  Note that, unlike the \class{rpart} trees, this tree
+includes multiway splits.  The \fct{plot} method draws this tree, see
+Figure~\ref{J48_plot}.
+
+\begin{sidewaysfigure}
+\centering
+<<J48-plot, fig = TRUE, width = 15, height = 9>>=
+plot(party_j48)
+@
+\caption{\class{J48} tree of Titanic data plotted using \pkg{partykit}
+         infrastructure. \label{J48_plot}}
+\end{sidewaysfigure}
+
+The conditional class probabilities computed by the \fct{predict} methods
+implemented in packages \pkg{RWeka} and \pkg{partykit} are equivalent:
+<<J48-pred>>=
+all.equal(predict(j48, type = "prob"), predict(party_j48, type = "prob"),
+  check.attributes = FALSE)
+@
+
+In addition to \fct{J48} \pkg{RWeka} provides several other tree learners,
+e.g., \fct{M5P} implementing M5' and \fct{LMT} implementing logistic model
+trees, respectively. These can also be coerced using \fct{as.party}. However,
+as these are not constant-fit trees this yields plain \class{party} trees
+with some character information stored in the \code{info} slot.
+
+\subsection{Importing trees from PMML files}
+
+The previous two examples showed how trees learned by other \proglang{R}
+packages can be handled in a unified way using \pkg{partykit}. Additionally,
+\pkg{partykit} can also be used to import trees from any other software
+package that supports the PMML (Predictive Model Markup Language) format.
+
+As an example, we used \proglang{SPSS} to fit a QUEST tree to the Titanic data
+and exported this from \proglang{SPSS} in PMML format. This file is shipped along
+with the \pkg{partykit} package and we can read it as follows:
+<<PMML-Titantic>>=
+ttnc_pmml <- file.path(system.file("pmml", package = "partykit"),
+  "ttnc.pmml")
+(ttnc_quest <- pmmlTreeModel(ttnc_pmml))
+@
+%
+\begin{figure}[t!]
+\centering
+<<PMML-Titanic-plot1, fig=TRUE, height=9, width=17>>=
+plot(ttnc_quest)
+@
+\caption{QUEST tree for Titanic data, fitted using \proglang{SPSS} and exported
+  via PMML. \label{PMML-Titanic-plot1}}
+\end{figure}
+%
+The object \code{ttnc_quest} is of class \class{simpleparty} and the corresponding
+graphical display is shown in Figure~\ref{PMML-Titanic-plot1}.
+As explained in Section~\ref{sec:classes}, the full learning data are not part of
+the PMML description and hence one can only obtain and display the summarized
+information provided by PMML.
+
+In this particular case, however, we have the learning data available in \proglang{R}
+because we had exported the data from \proglang{R} to begin with. Hence, for this
+tree we can augment the \class{simpleparty} with the full learning sample to create
+a \class{constparty}. As \proglang{SPSS} had reordered some factor levels we need
+to carry out this reordering as well"
+<<ttnc2-reorder>>=
+ttnc2 <- ttnc[, names(ttnc_quest$data)]
+for(n in names(ttnc2)) {
+  if(is.factor(ttnc2[[n]])) ttnc2[[n]] <- factor(
+    ttnc2[[n]], levels = levels(ttnc_quest$data[[n]]))
+}
+@
+%
+Using this data all information for a \class{constparty} can be easily computed:
+%
+<<PMML-Titanic-augmentation>>=
+ttnc_quest2 <- party(ttnc_quest$node,
+  data = ttnc2,
+  fitted = data.frame(
+    "(fitted)" = predict(ttnc_quest, ttnc2, type = "node"),
+    "(response)" = ttnc2$Survived,
+    check.names = FALSE),
+  terms = terms(Survived ~ ., data = ttnc2)
+)
+ttnc_quest2 <- as.constparty(ttnc_quest2)
+@
+This object is plotted in Figure~\ref{PMML-Titanic-plot2}.
+
+\begin{figure}[t!]
+\centering
+<<PMML-Titanic-plot2, fig=TRUE, height=8.5, width=14>>=
+plot(ttnc_quest2)
+@
+\caption{QUEST tree for Titanic data, fitted using \proglang{SPSS}, exported
+  via PMML, and transformed into a \class{constparty} object.
+  \label{PMML-Titanic-plot2}}
+\end{figure}
+
+Furthermore, we briefly point out that there is also the \proglang{R}
+package \pkg{pmml} \citep{pmml}, part of the \pkg{rattle} project
+\citep{rattle}, that allows to
+export PMML files for \pkg{rpart} trees from \proglang{R}. For example,
+for the \class{rpart} tree for the Titanic data:
+<<PMML-write>>=
+library("pmml")
+tfile <- tempfile()
+write(toString(pmml(rp)), file = tfile)
+@
+Then, we can simply read this file and inspect the resulting tree
+<<PMML-read>>=
+(party_pmml <- pmmlTreeModel(tfile))
+all.equal(predict(party_rp, newdata = ttnc, type = "prob"), 
+  predict(party_pmml, newdata = ttnc, type = "prob"),
+  check.attributes = FALSE)
+@
+Further example PMML files created with \pkg{rattle} are the Data Mining
+Group web page, e.g.,
+\url{http://www.dmg.org/pmml_examples/rattle_pmml_examples/AuditTree.xml} or
+\url{http://www.dmg.org/pmml_examples/rattle_pmml_examples/IrisTree.xml}.
+
+
+\section{Growing a simple classification tree} \label{sec:mytree}
+
+Although the \pkg{partykit} package offers an extensive toolbox for handling
+trees along with implementations of various tree algorithms, it does not offer
+unified infrastructure for \emph{growing} trees.  However, once you know how to estimate splits from data, it is
+fairly straightforward to implement trees.  Consider a very simple CHAID-style
+algorithm (in fact so simple that we would advise \emph{not to use it} for any real
+application).  We assume that both response and explanatory variables are
+factors, as for the Titanic data set.  First we determine the best
+explanatory variable by means of a global $\chi^2$ test, i.e., splitting
+up the response into all levels of each explanatory variable. Then,
+for the selected explanatory variable we search for the binary best split
+by means of $\chi^2$ tests, i.e., we cycle through all potential split
+points and assess the quality of the split by comparing the distributions
+of the response in the so-defined two groups.  In both cases, we select the
+split variable/point with lowest $p$-value from the $\chi^2$ test, however,
+only if the global test is significant at Bonferroni-corrected level $\alpha = 0.01$.
+
+This strategy can be implemented based on the data (response and explanatory
+variables) and some case weights as follows (\code{response} is just the
+name of the response and \code{data} is a data frame with all variables):
+<<mytree-1, echo = TRUE>>= 
+findsplit <- function(response, data, weights, alpha = 0.01) {
+
+  ## extract response values from data
+  y <- factor(rep(data[[response]], weights))
+
+  ## perform chi-squared test of y vs. x
+  mychisqtest <- function(x) {
+    x <- factor(x)
+    if(length(levels(x)) < 2) return(NA)
+    ct <- suppressWarnings(chisq.test(table(y, x), correct = FALSE))
+    pchisq(ct$statistic, ct$parameter, log = TRUE, lower.tail = FALSE)
+  }
+  xselect <- which(names(data) != response)
+  logp <- sapply(xselect, function(i) mychisqtest(rep(data[[i]], weights)))
+  names(logp) <- names(data)[xselect]
+
+  ## Bonferroni-adjusted p-value small enough?
+  if(all(is.na(logp))) return(NULL)
+  minp <- exp(min(logp, na.rm = TRUE))
+  minp <- 1 - (1 - minp)^sum(!is.na(logp))
+  if(minp > alpha) return(NULL)
+
+  ## for selected variable, search for split minimizing p-value  
+  xselect <- xselect[which.min(logp)]
+  x <- rep(data[[xselect]], weights)
+
+  ## set up all possible splits in two kid nodes
+  lev <- levels(x[drop = TRUE])
+  if(length(lev) == 2) {
+    splitpoint <- lev[1]
+  } else {
+    comb <- do.call("c", lapply(1:(length(lev) - 2),
+      function(x) combn(lev, x, simplify = FALSE)))
+    xlogp <- sapply(comb, function(q) mychisqtest(x %in% q))
+    splitpoint <- comb[[which.min(xlogp)]]
+  }
+
+  ## split into two groups (setting groups that do not occur to NA)
+  splitindex <- !(levels(data[[xselect]]) %in% splitpoint)
+  splitindex[!(levels(data[[xselect]]) %in% lev)] <- NA_integer_
+  splitindex <- splitindex - min(splitindex, na.rm = TRUE) + 1L
+
+  ## return split as partysplit object
+  return(partysplit(varid = as.integer(xselect),
+    index = splitindex,
+    info = list(p.value = 1 - (1 - exp(logp))^sum(!is.na(logp)))))
+}
+@
+
+In order to actually grow a tree on data, 
+we have to set up the recursion for growing a recursive 
+\class{partynode} structure:
+<<mytree-2, echo = TRUE>>=
+growtree <- function(id = 1L, response, data, weights, minbucket = 30) {
+
+  ## for less than 30 observations stop here
+  if (sum(weights) < minbucket) return(partynode(id = id))
+
+  ## find best split
+  sp <- findsplit(response, data, weights)
+  ## no split found, stop here
+  if (is.null(sp)) return(partynode(id = id))
+
+  ## actually split the data
+  kidids <- kidids_split(sp, data = data)
+
+  ## set up all daugther nodes
+  kids <- vector(mode = "list", length = max(kidids, na.rm = TRUE))
+  for (kidid in 1:length(kids)) {
+  ## select observations for current node
+  w <- weights
+  w[kidids != kidid] <- 0
+  ## get next node id
+  if (kidid > 1) {
+    myid <- max(nodeids(kids[[kidid - 1]]))
+  } else {
+    myid <- id
+  }
+  ## start recursion on this daugther node
+  kids[[kidid]] <- growtree(id = as.integer(myid + 1), response, data, w)
+  }
+
+  ## return nodes
+  return(partynode(id = as.integer(id), split = sp, kids = kids,
+    info = list(p.value = min(info_split(sp)$p.value, na.rm = TRUE))))
+}
+@
+
+A very rough sketch of a formula-based user-interface 
+sets-up the data and calls \fct{growtree}:
+<<mytree-3, echo = TRUE>>=
+mytree <- function(formula, data, weights = NULL) {
+
+  ## name of the response variable
+  response <- all.vars(formula)[1]
+  ## data without missing values, response comes last
+  data <- data[complete.cases(data), c(all.vars(formula)[-1], response)]
+  ## data is factors only
+  stopifnot(all(sapply(data, is.factor)))
+
+  if (is.null(weights)) weights <- rep(1L, nrow(data))
+  ## weights are case weights, i.e., integers
+  stopifnot(length(weights) == nrow(data) &
+    max(abs(weights - floor(weights))) < .Machine$double.eps)
+
+  ## grow tree
+  nodes <- growtree(id = 1L, response, data, weights)
+
+  ## compute terminal node number for each observation
+  fitted <- fitted_node(nodes, data = data)
+  ## return rich constparty object
+  ret <- party(nodes, data = data,
+    fitted = data.frame("(fitted)" = fitted,
+                        "(response)" = data[[response]],
+                        "(weights)" = weights,
+                        check.names = FALSE),
+    terms = terms(formula))
+  as.constparty(ret)
+}
+@
+The call to the constructor \fct{party} sets-up a \class{party} object with
+the tree structure contained in \code{nodes}, the training samples in
+\code{data} and the corresponding \code{terms} object.  Class
+\class{constparty} inherits all slots from class \class{party} and has an
+additional \code{fitted} slot for storing the terminal node numbers for each
+sample in the training data, the response variable(s) and case weights.  The
+\code{fitted} slot is a \class{data.frame} containing three variables: The
+fitted terminal node identifiers \code{"(fitted)"}, an integer vector of the
+same length as \code{data}; the response variables \code{"(response)"} as a
+vector (or \code{data.frame} for multivariate responses) with the same
+number of observations; and optionally a vector of weights
+\code{"(weights)"}.  The additional \code{fitted} slot allows to compute
+arbitrary summary measures for each terminal node by simply subsetting the
+\code{"(response)"} and \code{"(weights)"} slots by \code{"(fitted)"} before
+computing (weighted) means, medians, empirical cumulative distribution
+functions, Kaplan-Meier estimates or whatever summary statistic might be
+appropriate for a certain response. The \fct{print}, \fct{plot}, and \fct{predict}
+methods for class \class{constparty} work this way with suitable defaults for the
+summary statistics depending on the class of the response(s).
+
+We now can fit this tree to the Titanic data; the
+\fct{print} method provides us with a first overview on the 
+resulting model
+<<mytree-4, echo = TRUE>>=
+(myttnc <- mytree(Survived ~ Class + Age + Gender, data = ttnc))
+@
+%
+\begin{figure}[t!]
+\centering
+<<mytree-5, echo = FALSE, fig = TRUE, height=8.5, width=14>>=
+plot(myttnc)
+@
+\caption{Classification tree fitted by the \fct{mytree} function to the
+  \code{ttnc} data. \label{plottree}}
+\end{figure}
+%
+Of course, we can immediately use \code{plot(myttnc)} to obtain a
+graphical representation of this tree, the result is given in
+Figure~\ref{plottree}.  The default behavior for trees with categorical
+responses is simply inherited from \class{constparty} and hence we
+readily obtain bar plots in all terminal nodes.
+
+As the tree is fairly large, we might be interested in pruning the 
+tree to a more reasonable size. For this purpose the \pkg{partykit}
+package provides the \fct{nodeprune} function that can prune back
+to nodes with selected IDs. As \fct{nodeprune} (by design) does not
+provide a specific pruning criterion, we need to determine ourselves
+which nodes to prune. Here, one idea could be to impose significance
+at a higher level than the default $10^{-2}$ -- say $10^{-5}$ to obtain a strongly
+pruned tree. Hence we use \fct{nodeapply} to
+extract the minimal Bonferroni-corrected $p$-value from all inner nodes:
+%
+<<mytree-pval, echo = TRUE>>=
+nid <- nodeids(myttnc)
+iid <- nid[!(nid %in% nodeids(myttnc, terminal = TRUE))]
+(pval <- unlist(nodeapply(myttnc, ids = iid,
+  FUN = function(n) info_node(n)$p.value)))
+@
+Then, the pruning of the nodes with the larger $p$-values can be
+simply carried out by
+%
+<<mytree-nodeprune>>=
+myttnc2 <- nodeprune(myttnc, ids = iid[pval > 1e-5])
+@
+%
+The corresponding visualization is shown in Figure~\ref{prunetree}.
+
+\setkeys{Gin}{width=0.85\textwidth}
+\begin{figure}[t!]
+\centering
+<<mytree-nodeprune-plot, echo = FALSE, fig = TRUE, height=6, width=10>>=
+plot(myttnc2)
+@
+\caption{Pruned classification tree fitted by the \fct{mytree} function to the
+\code{ttnc} data. \label{prunetree}}
+\end{figure}
+\setkeys{Gin}{width=\textwidth}
+
+
+\section{Predictions} \label{sec:prediction}
+
+As argued in Section~\ref{sec:classes} arbitrary types of predictions can be
+computed from \class{constparty} objects because the full empirical distribution
+of the response in the learning sample nodes is available. All of these can
+be easily computed in the \fct{predict} method for \class{constparty} objects
+by supplying a suitable aggregation function. However, as certain
+types of predictions are much more commonly used, these are available even more easily
+by setting a \code{type} argument.
+
+\begin{table}[b!]
+\centering
+\begin{tabular}{llll}
+\hline
+Response class  & \code{type = "node"} & \code{type = "response"} & \code{type = "prob"} \\ \hline
+\class{factor}  & terminal node number & majority class           & class probabilities \\
+\class{numeric} & terminal node number & mean                     & ECDF \\
+\class{Surv}    & terminal node number & median survival time     & Kaplan-Meier \\ \hline
+\end{tabular}
+\caption{Overview on type of predictions computed by the \fct{predict}
+         method for \class{constparty} objects. For multivariate responses,
+         combinations thereof are returned. \label{predict-type}}
+\end{table}
+
+The prediction \code{type} can either be \code{"node"}, \code{"response"}, or
+\code{"prob"} (see Table~\ref{predict-type}). The idea is that \code{"response"} always
+returns a prediction of the same class as the original response and \code{"prob"}
+returns some object that characterizes the entire empirical distribution. Hence,
+for different response classes, different types of predictions are produced, see
+Table~\ref{predict-type} for an overview. Additionally, for \class{numeric} responses
+\code{type = "quantile"} and \code{type = "density"} is available. By default, these
+return functions for computing predicted quantiles and probability densities, respectively,
+but optionally these functions can be directly evaluated \code{at} given values and then
+return a vector/matrix.
+
+Here, we illustrate all different predictions for all possible combinations
+of the explanatory factor levels.
+<<mytree-node, echo = TRUE>>=
+nttnc <- expand.grid(Class = levels(ttnc$Class),
+  Gender = levels(ttnc$Gender), Age = levels(ttnc$Age))
+nttnc
+@
+The corresponding predicted nodes, modes, and probability distributions are:
+<<mytree-prob, echo = TRUE>>=
+predict(myttnc, newdata = nttnc, type = "node")
+predict(myttnc, newdata = nttnc, type = "response")
+predict(myttnc, newdata = nttnc, type = "prob")
+@
+Furthermore, the \fct{predict} method features a \code{FUN} argument that can be used to
+compute customized predictions. If we are, say, interested in the
+rank of the probabilities for the two classes, we can simply specify a
+function that implements this feature:
+<<mytree-FUN, echo = TRUE>>=
+predict(myttnc, newdata = nttnc, FUN = function(y, w)
+  rank(table(rep(y, w))))
+@
+The user-supplied function \code{FUN} takes two arguments, \code{y} is the
+response and \code{w} is a vector of weights (case weights in this situation). Of course,
+it would have been easier to do these computations directly on the 
+conditional class probabilities (\code{type = "prob"}), but the approach taken here
+for illustration generalizes to situations where this is not possible, especially
+for numeric responses.
+
+\section{Conclusion} \label{sec:conclusion}
+
+The classes \class{constparty} and \class{simpleparty} introduced here can
+be used to represent trees with constant fits in the terminal nodes,
+including most of the traditional tree variants.  For a number of
+implementations it is possible to convert the resulting trees to one of
+these classes, thus offering unified methods for handling constant-fit
+trees.  User-extensible methods for printing and plotting these trees are
+available.  Also, computing non-standard predictions, such as the median or
+empirical cumulative distribution functions, is easily possible within this
+framework. With the infrastructure provided in \pkg{partykit} it
+is rather straightforward to implement a new (or old) tree algorithm and therefore
+a prototype implementation of fancy ideas for improving trees is only a couple lines of
+\proglang{R} code away.
+
+\bibliography{party}
+    
+\end{document}

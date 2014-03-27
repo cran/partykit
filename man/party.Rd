@@ -97,18 +97,68 @@ is.simpleparty(party)
   \code{id}.
 }
 \examples{
+### data ###
+## artificial WeatherPlay data
+data("WeatherPlay", package = "partykit")
+str(WeatherPlay)
 
-    data("iris")
 
-    ## a stump defined by a binary split in Sepal.Length
-    stump <- partynode(id = 1L,
-        split = partysplit(which(names(iris) == "Sepal.Length"),
-            breaks = 5),
-        kids = lapply(2:3, partynode))
+### splits ###
+## split in overcast, humidity, and windy
+sp_o <- partysplit(1L, index = 1:3)
+sp_h <- partysplit(3L, breaks = 75)
+sp_w <- partysplit(4L, index = 1:2)
 
-    party(stump, iris, 
-        fitted = data.frame("(fitted)" = fitted_node(stump, data = iris), 
-            check.names = FALSE), names = c("root", "left", "right"))
+## query labels
+character_split(sp_o)
 
+
+### nodes ###
+## set up partynode structure
+pn <- partynode(1L, split = sp_o, kids = list(
+  partynode(2L, split = sp_h, kids = list(
+    partynode(3L, info = "yes"),
+    partynode(4L, info = "no"))),
+  partynode(5L, info = "yes"),
+  partynode(6L, split = sp_w, kids = list(
+    partynode(7L, info = "yes"),
+    partynode(8L, info = "no")))))
+pn
+
+
+### tree ###
+## party: associate recursive partynode structure with data
+py <- party(pn, WeatherPlay)
+py
+plot(py)
+
+
+### variations ###
+## tree stump
+n1 <- partynode(id = 1L, split = sp_o, kids = lapply(2L:4L, partynode))
+print(n1, data = WeatherPlay)
+
+## query fitted nodes and kids ids
+fitted_node(n1, data = WeatherPlay)
+kidids_node(n1, data = WeatherPlay)
+
+## tree with full data sets
+t1 <- party(n1, data = WeatherPlay)
+
+## tree with empty data set
+party(n1, data = WeatherPlay[0, ])
+
+## constant-fit tree
+t2 <- party(n1, 
+  data = WeatherPlay,
+  fitted = data.frame(
+    "(fitted)" = fitted_node(n1, data = WeatherPlay),
+    "(response)" = WeatherPlay$play,
+    check.names = FALSE),
+  terms = terms(play ~ ., data = WeatherPlay),
+)
+t2 <- as.constparty(t2)
+t2
+plot(t2)
 }
 \keyword{tree}

@@ -8,6 +8,8 @@
 \alias{[[.party}
 \alias{depth.party}
 \alias{width.party}
+\alias{nodeprune}
+\alias{nodeprune.party}
 \title{ Methods for Party Objects }
 \description{
 
@@ -32,6 +34,7 @@
 \method{[[}{party}(x, i, \dots)
 \method{depth}{party}(x, root = FALSE, \dots)
 \method{width}{party}(x, \dots)
+\method{nodeprune}{party}(x, ids, ...)
 }
 \arguments{
   \item{x}{ an object of class \code{\link{party}}.}
@@ -47,6 +50,7 @@
   \item{footer}{ footer to be printed.}
   \item{FUN}{ a function to be applied to nodes.}
   \item{root}{ a logical. Should the root count be counted in \code{depth}? }
+  \item{ids}{ a vector of node ids (or their names) to be pruned-off.}
   \item{\dots}{ additional arguments.}
 }
 \details{
@@ -57,7 +61,9 @@
   \code{depth} the depth of the tree and \code{width} 
   the number of terminal nodes. The subset methods extract subtrees
   and the \code{print} method generates a textual representation
-  of the tree.
+  of the tree. \code{nodeprune} prunes-off nodes and makes sure that
+  the node ids of the resulting tree are in pre-order starting with root node id 1.
+  For \code{constparty} objects, the \code{fitted} slot is also changed.
 
 }
 \examples{

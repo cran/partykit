@@ -25,8 +25,15 @@
         X2 <- ((lin - exp)^2) / cov
         df <- 1
     } else {
+        v <- diag(V <- matrix(cov, ncol = length(lin)))
+        ### remove elements with zero variance first
+        lin <- as.vector(lin)[v > 0]
+        exp <- as.vector(exp)[v > 0]
+        V <- V[v > 0, v > 0, drop = FALSE]
+        v <- v[v > 0]
+        if (length(v) == 0) return(c(-Inf, -Inf))
         tmp <- matrix(lin - exp, ncol = 1)
-        Xplus <- .MPinv(matrix(cov, ncol = length(lin)))
+        Xplus <- .MPinv(V)
         X2 <- crossprod(tmp, Xplus$Xplus) %*% tmp
         df <- Xplus$rank
     }
@@ -59,8 +66,8 @@
     }
     if (pval) 
         return(c(log(maxT), log(pmvnorm(lower = rep(-maxT, length(v)),
-                                upper = rep(maxT, length(v)),
-                                sigma = cov2cor(V)))))
+                                        upper = rep(maxT, length(v)),
+                                        sigma = cov2cor(V)))))
     return(c(log(maxT), NA))
 }
 
@@ -75,10 +82,13 @@
     storage.mode(response) <- "double"
 
     lin <- .Call("R_LinstatExpCov", data, inp, response, weights)
+    ### <FIXME> this is slow, chisq or even teststatistics might be better
     p <- sapply(lin[inp], function(x) do.call(".pX2", x[-1]))
+    ### </FIXME>
     colnames(p) <- colnames(data)[inp]
-    rownames(p) <- c("teststat", "pval")
-    crit <- p["pval",]
+    rownames(p) <- c("statistic", "p.value")
+    ### <FIXME> break ties? </FIXME>
+    crit <- p["p.value",,drop = TRUE]
 
     ret <- vector(mode = "list", length = min(sum(inp), ctrl$maxsurrogate))
 
@@ -132,7 +142,13 @@
     } 
     lin <- .Call("R_LinstatExpCov", data, inp, response, weights)
     p <- sapply(lin[inp], function(x) do.call(ctrl$cfun, x[-1]))
-    crit <- p[1,,drop = FALSE]
+    crit <- p[1,,drop = TRUE]
+    ### crit is maximised, but there might be ties
+    ties <- which(abs(crit - max(crit)) < .Machine$double.eps)
+    if (length(ties) > 1) {
+        ### add a small value (< 1/1000) to crit derived from order of teststats
+        crit[ties] <- crit[ties] + order(p["statistic", ties]) / (sum(ties) * 1000)
+    }
     p <- p[-1,,drop = FALSE]
     colnames(p) <- colnames(data)[inp]
 
@@ -140,14 +156,22 @@
     mp <- ctrl$minprob
     storage.mode(mb) <- "integer"
 
+    ### format p values
+    fmP <- function(p) {
+        if (all(is.na(p["p.value",]))) return(NA)
+        1 - exp(p["p.value",])
+    }
+
     count <- 1
     thissplit <- NULL
     while(count <= ctrl$splittry) {
         if (any(crit > ctrl$mincriterion)) {
-            isel <- which.max(crit)
+            isel <- iselp <- which.max(crit)
             isel <- which(inp)[isel]
         } else {
-            return(partynode(as.integer(id), info = exp(p)))
+            return(partynode(as.integer(id), 
+                             info = list(criterion = p,
+                                         p.value = min(fmP(p), na.rm = TRUE))))
         }
         x <- data[[isel]]
         swp <- ceiling(sum(weights) * mp)
@@ -176,13 +200,19 @@
         count <- count + 1
     }
     if (is.null(thissplit))
-        return(partynode(as.integer(id), info = exp(p)))
+        return(partynode(as.integer(id), 
+                         info = list(criterion = p,
+                                     p.value = min(fmP(p), na.rm = TRUE))))           
 
     ret <- partynode(as.integer(id))
     ret$split <- thissplit
-    ret$info <- exp(p)
+    ret$info <- list(criterion = p, p.value = fmP(p)[iselp])
     thissurr <- NULL
     kidids <- kidids_node(ret, data)
+    prob <- prop.table(table(kidids))
+    if (ctrl$majority)  ### go with majority
+        prob <- numeric(0) + 1:length(prob) %in% which.max(prob)
+    ret$prob <- prob
 
     if (ctrl$maxsurrogate > 0) {
         inp <- inputs
@@ -212,7 +242,7 @@ ctree_control <- function(teststat = c("quad", "max"),
     testtype = c("Bonferroni", "Univariate", "Teststatistic"),
     mincriterion = 0.95, minsplit = 20L, minbucket = 7L, minprob = 0.01,
     stump = FALSE, maxsurrogate = 0L, mtry = Inf, maxdepth = Inf, 
-    multiway = FALSE, splittry = 2L) {
+    multiway = FALSE, splittry = 2L, majority = FALSE) {
 
     teststat <- match.arg(teststat)
     if (teststat == "max") stopifnot(require("mvtnorm"))
@@ -222,11 +252,12 @@ ctree_control <- function(teststat = c("quad", "max"),
          minsplit = minsplit, minbucket = minbucket, 
          minprob = minprob, stump = stump, mtry = mtry, 
          maxdepth = maxdepth, multiway = multiway, splittry = splittry,
-         maxsurrogate = maxsurrogate)
+         maxsurrogate = maxsurrogate, majority = majority)
 }
 
 ctree <- function(formula, data, weights, subset, na.action = na.pass, 
-                  control = ctree_control(...), ...) {
+                  control = ctree_control(...), ytrafo = NULL, 
+                  scores = NULL, ...) {
 
     if (missing(data))
         data <- environment(formula)
@@ -256,50 +287,73 @@ ctree <- function(formula, data, weights, subset, na.action = na.pass,
         response <- names(model.part(formula, mf, lhs = 1))
     weights <- model.weights(mf)
     dat <- mf[, colnames(mf) != "(weights)"]
-    ret <- .ctree_fit(dat, response, weights = weights, ctrl = control)
+    if (!is.null(scores)) {
+        for (n in names(scores)) {
+            sc <- scores[[n]]
+            if (is.ordered(dat[[n]]) && 
+                nlevels(dat[[n]]) == length(sc)) {
+                attr(dat[[n]], "scores") <- as.numeric(sc)
+            } else {
+                warning("scores for variable ", sQuote(n), " ignored")
+            }
+        }
+    }
+
+    if (is.null(weights))
+        weights <- rep(1, nrow(mf))
+    storage.mode(weights) <- "integer"
+
+    nvar <- sum(!(colnames(dat) %in% response))
+
+    control$cfun <- function(...) {
+        if (control$teststat == "quad")
+            p <- .pX2(..., pval = (control$testtype != "Teststatistic"))
+        if (control$teststat == "max")
+            p <- .pmaxT(..., pval = (control$testtype != "Teststatistic"))
+        names(p) <- c("statistic", "p.value")
+
+        if (control$testtype == "Bonferroni")
+            p["p.value"] <- p["p.value"] * min(nvar, control$mtry)
+        crit <-  p["statistic"]
+        if (control$testtype != "Teststatistic")
+        crit <- p["p.value"]
+        c(crit, p)
+    }
+
+    tree <- .ctree_fit(dat, response, weights = weights, ctrl = control, 
+                       ytrafo = ytrafo)
+
+    fitted <- data.frame("(fitted)" = fitted_node(tree, dat), 
+                         "(weights)" = weights,
+                         check.names = FALSE)
+    fitted[[3]] <- dat[, response, drop = length(response) == 1]
+    names(fitted)[3] <- "(response)"
+    ret <- party(tree, data = dat, fitted = fitted)
+    class(ret) <- c("constparty", class(ret))
+
     ### doesn't work for Surv objects
     # ret$terms <- terms(formula, data = mf)
     ret$terms <- terms(mf)
     ### need to adjust print and plot methods
     ### for multivariate responses
-    if (length(response) > 1) class(ret) <- "party"
+    ### if (length(response) > 1) class(ret) <- "party"
     return(ret)
 }
 
-.ctree_fit <- function(data, response, weights = NULL, 
-                      ctrl = ctree_control()) {
+.ctree_fit <- function(data, response, weights = NULL,
+                       ctrl, ytrafo = NULL) {
 
     inputs <- !(colnames(data) %in% response)
-
-    infl <- .y2infl(data, response)
 
     if (is.null(weights))
         weights <- rep(1, nrow(data))
     storage.mode(weights) <- "integer"
 
-    ctrl$cfun <- function(...) {
-        if (ctrl$teststat == "quad")
-            p <- .pX2(..., pval = (ctrl$testtype != "Teststatistic"))
-        if (ctrl$teststat == "max")
-            p <- .pmaxT(..., pval = (ctrl$testtype != "Teststatistic"))
-        names(p) <- c("teststat", "pval")
+    infl <- .y2infl(data, response, ytrafo = ytrafo) ### weights???
 
-        if (ctrl$testtype == "Bonferroni")
-            p["pval"] <- p["pval"] * min(sum(inputs), ctrl$mtry)
-        crit <-  p["teststat"]
-        if (ctrl$testtype != "Teststatistic")
-        crit <- p["pval"]
-        c(crit, p)
-    }
     tree <- .cnode(1L, data, infl, inputs, weights, ctrl)
-    fitted <- data.frame("(fitted)" = fitted_node(tree, data), 
-                         "(weights)" = weights,
-                         check.names = FALSE)
-    fitted[[3]] <- data[, response, drop = length(response) == 1]
-    names(fitted)[3] <- "(response)"
-    ret <- party(tree, data = data, fitted = fitted)
-    class(ret) <- c("constparty", class(ret))
-    return(ret)
+
+    return(tree)
 }
 
 .logrank_trafo <- function(x, ties.method = c("logrank", "HL")) {
@@ -317,20 +371,31 @@ ctree <- function(formula, data, weights, subset, na.action = na.pass,
 }
 
 ### convert response y to influence function h(y)
-.y2infl <- function(data, response) {
+.y2infl <- function(data, response, ytrafo = NULL) {
 
     if (length(response) == 1) {
+        if (!is.null(ytrafo[[response]])) {
+            yfun <- ytrafo[[response]]
+            rtype <- "user-defined"
+        } else {
+            rtype <- class(data[[response]])[1]
+            if (rtype == "integer") rtype <- "numeric"
+        }
         response <- data[[response]]
-        rtype <- class(response)[1]
-        if (rtype == "integer") rtype <- "numeric"
 
         infl <- switch(rtype,
+            "user-defined" = yfun(response),
             "factor" = { 
                 X <- model.matrix(~ response - 1)
                 if (nlevels(response) > 2) return(X)
                 return(X[,-1, drop = FALSE])
             },
-            "ordered" = (1:nlevels(response))[as.integer(response)],
+            "ordered" = {
+                sc <- attr(response, "scores")
+                if (is.null(sc)) sc <- 1:nlevels(response)
+                sc <- as.numeric(sc)
+                return(sc[as.integer(response)])
+            },
             "numeric" = response,
             "Surv" = .logrank_trafo(response)
         )
@@ -343,4 +408,26 @@ ctree <- function(formula, data, weights, subset, na.action = na.pass,
     }
     storage.mode(infl) <- "double"
     return(infl)
+}
+
+sctest.constparty <- function(object, node = NULL, ...)
+{
+
+    if(is.null(node)) {
+        ids <- nodeids(object, terminal = FALSE) ### all nodes
+    } else {
+        ids <- node
+    }
+
+    rval <- nodeapply(object, ids, function(n) {
+        crit <- info_node(n)$criterion
+        if (is.null(crit)) return(NULL)
+        ret <- exp(crit)
+        ret["p.value",] <- 1 - ret["p.value",]
+        ret
+    })
+    names(rval) <- ids
+    if(length(ids) == 1L)
+        return(rval[[1L]])
+    return(rval)
 }

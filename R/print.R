@@ -2,9 +2,11 @@ print.partynode <- function(x, data = NULL, names = NULL,
   inner_panel = function(node) "", terminal_panel = function(node) " *",
   prefix = "", first = TRUE, digits = getOption("digits") - 2, ...)
 {
+  ids <- nodeids(x)
+  
   if(first) {
-    if(is.null(names)) names <- as.character(nodeids(x)) 
-    cat(paste(prefix, "[", names[id_node(x)], "] root\n", sep = ""))
+    if(is.null(names)) names <- as.character(ids)
+    cat(paste(prefix, "[", names[which(ids == id_node(x))], "] root\n", sep = ""))
   }
 
   if (length(x) > 0) {
@@ -19,7 +21,7 @@ print.partynode <- function(x, data = NULL, names = NULL,
 
     ## kid labels
     knodes <- kids_node(x)    
-    knam <- sapply(knodes, function(z) names[id_node(z)])
+    knam <- sapply(knodes, function(z) names[which(ids == id_node(z))])
     klabs <- sapply(knodes, function(z)
       if(is.terminal(z)) {
         char <- terminal_panel(z)
@@ -38,7 +40,7 @@ print.partynode <- function(x, data = NULL, names = NULL,
     labs <- paste("|   ", prefix, "[", knam, "] ", slabs, klabs, "\n", sep = "")          
     for (i in 1:length(x)) {
       cat(labs[i])
-      print.partynode(x[i], data = data, names = names,
+      print.partynode(x[i], data = data, names = names[match(nodeids(x[i]), ids)],
         inner_panel = inner_panel, terminal_panel = terminal_panel,
         prefix = nextprefix,  first = FALSE, digits = digits, ...)
     }
@@ -111,7 +113,7 @@ print.constparty <- function(x,
   
   if(is.null(FUN)) FUN <- switch(yclass,
     "numeric" = function(y, w, digits) {
-      yhat <- .pred_numeric(y, w)
+      yhat <- .pred_numeric_response(y, w)
       yerr <- sum(w * (y - yhat)^2)
       digits2 <- max(c(0, digits - 2))
       paste(format(round(yhat, digits = digits), nsmall = digits),

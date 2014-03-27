@@ -32,31 +32,39 @@ for f in ./tests/*.ps; do
     rm -f $f
 done
 
-for f in ./inst/doc/*~; do
+for f in ./vignettes/*~; do
     rm -f $f
 done
 
-for f in ./inst/doc/*.log; do
+for f in ./vignettes/*.log; do
     rm -f $f
 done
 
-for f in ./inst/doc/*.out; do
+for f in ./vignettes/*.out; do
     rm -f $f
 done
 
-for f in ./inst/doc/*.bbl; do
+for f in ./vignettes/*.bbl; do
     rm -f $f
 done
 
-for f in ./inst/doc/*.blg; do
+for f in ./vignettes/*.blg; do
     rm -f $f
 done
 
-for f in ./inst/doc/*.brf; do
+for f in ./vignettes/*.brf; do
     rm -f $f
 done
 
-for f in ./inst/doc/*.aux; do
+for f in ./vignettes/*.aux; do
+    rm -f $f
+done
+
+for f in ./vignettes/*.tpt; do
+    rm -f $f
+done
+
+for f in ./vignettes/Rplots*; do
     rm -f $f
 done
 
