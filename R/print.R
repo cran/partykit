@@ -6,7 +6,20 @@ print.partynode <- function(x, data = NULL, names = NULL,
   
   if(first) {
     if(is.null(names)) names <- as.character(ids)
-    cat(paste(prefix, "[", names[which(ids == id_node(x))], "] root\n", sep = ""))
+    cat(paste(prefix, "[", names[which(ids == id_node(x))], "] root", sep = ""))
+
+    if(is.terminal(x)) {
+      char <- terminal_panel(x)
+      if(length(char) > 1L) {
+        cat(paste(char[1L], "\n",
+          paste(prefix, "    ", char[-1L], sep = "", collapse = "\n"),
+          sep = ""), "\n")
+      } else {
+        cat(char, "\n")
+      }
+    } else {
+      cat("\n")
+    }
   }
 
   if (length(x) > 0) {

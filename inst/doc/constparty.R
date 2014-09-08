@@ -306,7 +306,38 @@ plot(myttnc2)
 
 
 ###################################################
-### code chunk number 29: mytree-node
+### code chunk number 29: mytree-glm
+###################################################
+logLik(glm(Survived ~ Class + Age + Gender, data = ttnc, 
+           family = binomial()))
+
+
+###################################################
+### code chunk number 30: mytree-bs
+###################################################
+bs <- rmultinom(25, nrow(ttnc), rep(1, nrow(ttnc)) / nrow(ttnc))
+
+
+###################################################
+### code chunk number 31: mytree-ll
+###################################################
+bloglik <- function(prob, weights)
+    sum(weights * dbinom(ttnc$Survived == "Yes", size = 1, 
+                         prob[,"Yes"], log = TRUE))
+
+
+###################################################
+### code chunk number 32: mytree-bsll
+###################################################
+f <- function(w) {
+    tr <- mytree(Survived ~ Class + Age + Gender, data = ttnc, weights = w)
+    bloglik(predict(tr, newdata = ttnc, type = "prob"), as.numeric(w == 0))
+}
+apply(bs, 2, f)
+
+
+###################################################
+### code chunk number 33: mytree-node
 ###################################################
 nttnc <- expand.grid(Class = levels(ttnc$Class),
   Gender = levels(ttnc$Gender), Age = levels(ttnc$Age))
@@ -314,7 +345,7 @@ nttnc
 
 
 ###################################################
-### code chunk number 30: mytree-prob
+### code chunk number 34: mytree-prob
 ###################################################
 predict(myttnc, newdata = nttnc, type = "node")
 predict(myttnc, newdata = nttnc, type = "response")
@@ -322,7 +353,7 @@ predict(myttnc, newdata = nttnc, type = "prob")
 
 
 ###################################################
-### code chunk number 31: mytree-FUN
+### code chunk number 35: mytree-FUN
 ###################################################
 predict(myttnc, newdata = nttnc, FUN = function(y, w)
   rank(table(rep(y, w))))

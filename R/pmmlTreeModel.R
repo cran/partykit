@@ -1,11 +1,11 @@
 pmmlTreeModel <- function(file, ...) {
-  stopifnot(require("XML"))
-  as.party(xmlRoot(xmlTreeParse(file)))
+  stopifnot(requireNamespace("XML"))
+  as.party(XML::xmlRoot(XML::xmlTreeParse(file)))
 }
 
 as.party.XMLNode <- function(obj, ...) {
 
-  stopifnot(require("XML"))
+  stopifnot(requireNamespace("XML"))
   ## check whether XML specifies a TreeModel
   stopifnot(c("DataDictionary", "TreeModel") %in% names(obj))
   if(any(warnx <- c("MiningBuildTask", "TransformationDictionary", "Extension") %in% names(obj)))
@@ -14,11 +14,11 @@ as.party.XMLNode <- function(obj, ...) {
   ## process header information
   if("Header" %in% names(obj)) {
     hdr <- obj[["Header"]]
-    h_info <- c(Header = paste(as.character(xmlAttrs(hdr)), collapse = ", "))
+    h_info <- c(Header = paste(as.character(XML::xmlAttrs(hdr)), collapse = ", "))
     if(length(hdr) > 0L) {
       h_info <- c(h_info,
-        xmlSApply(hdr, function(x)
-	  paste(c(as.character(xmlAttrs(x)), xmlValue(x)), collapse = ", ")
+        XML::xmlSApply(hdr, function(x)
+	  paste(c(as.character(XML::xmlAttrs(x)), XML::xmlValue(x)), collapse = ", ")
 	)
       )
     }
@@ -36,27 +36,27 @@ as.party.XMLNode <- function(obj, ...) {
     if(!all(names(dd) == "DataField")) warning("data specifications other than DataField are not yet implemented")
   
     ## check columns
-    nc <- as.numeric(xmlAttrs(dd)["numberOfFields"])
+    nc <- as.numeric(XML::xmlAttrs(dd)["numberOfFields"])
     if(!is.na(nc)) stopifnot(nc == length(dd))
 
     ## set up data frame (only numeric variables)
     mf <- as.data.frame(rep(list(1), nc))[0,]
-    names(mf) <- xmlSApply(dd, function(x) xmlAttrs(x)["name"])
+    names(mf) <- XML::xmlSApply(dd, function(x) XML::xmlAttrs(x)["name"])
 
     ## modify class if necessary
     for(i in 1:nc) {
-      optype <- xmlAttrs(dd[[i]])["optype"]
+      optype <- XML::xmlAttrs(dd[[i]])["optype"]
       switch(optype,
         "categorical" = {
            mf[[i]] <- factor(integer(0),
-	     levels = xmlSApply(dd[[i]], function(x) gsub("&amp;", "&", xmlAttrs(x)["value"], fixed = TRUE)))
+	     levels = XML::xmlSApply(dd[[i]], function(x) gsub("&amp;", "&", XML::xmlAttrs(x)["value"], fixed = TRUE)))
         },
         "ordinal" = {
            mf[[i]] <- factor(integer(0), ordered = TRUE,
-	     levels = xmlSApply(dd[[i]], function(x) gsub("&amp;", "&", xmlAttrs(x)["value"], fixed = TRUE)))
+	     levels = XML::xmlSApply(dd[[i]], function(x) gsub("&amp;", "&", XML::xmlAttrs(x)["value"], fixed = TRUE)))
         },
         "continuous" = {
-          dataType <- xmlAttrs(dd[[i]])["dataType"]
+          dataType <- XML::xmlAttrs(dd[[i]])["dataType"]
           if(dataType == "integer") mf[[i]] <- integer(0)
         }
       )
@@ -80,7 +80,7 @@ as.party.XMLNode <- function(obj, ...) {
     if(!all(names(ms) == "MiningField")) warning("MiningField not yet implemented")
     
     ## extract variable info
-    vars <- t(xmlSApply(ms, xmlAttrs))
+    vars <- t(XML::xmlSApply(ms, XML::xmlAttrs))
     if(sum(vars[,2] == "predicted") > 1) stop("multivariate responses not yet implemented")
     if(!all(vars[,2] %in% c("predicted", "active", "supplementary"))) warning("not yet implemented")
     
@@ -94,7 +94,7 @@ as.party.XMLNode <- function(obj, ...) {
   
   ## parse TreeModel
   tm <- obj[["TreeModel"]]
-  tm_info <- c(xmlAttrs(tm), h_info)
+  tm_info <- c(XML::xmlAttrs(tm), h_info)
 
   ## check response
   stopifnot(tm_info["functionName"] %in% c("classification", "regression"))
@@ -106,12 +106,12 @@ as.party.XMLNode <- function(obj, ...) {
   is_terminal <- function(xnode) !("Node" %in% names(xnode))
   is_root <- function(xnode) "True" %in% names(xnode)
   n_kids <- function(xnode) sum("Node" == names(xnode))
-  n_obs <- function(xnode) as.numeric(xmlAttrs(xnode)["recordCount"])
+  n_obs <- function(xnode) as.numeric(XML::xmlAttrs(xnode)["recordCount"])
   has_surrogates <- function(x) {
     ns <- sum(c("SimplePredicate", "SimpleSetPredicate", "CompoundPredicate") %in% names(x))
     if(ns != 1) stop("invalid PMML")
     if("CompoundPredicate" %in% names(x)) {
-      if(identical(as.vector(xmlAttrs(x[["CompoundPredicate"]])["booleanOperator"]), "surrogate")) return(TRUE)
+      if(identical(as.vector(XML::xmlAttrs(x[["CompoundPredicate"]])["booleanOperator"]), "surrogate")) return(TRUE)
         else return(FALSE)
     } else {
       return(FALSE)
@@ -121,7 +121,7 @@ as.party.XMLNode <- function(obj, ...) {
     wi <- which(names(x) %in% c("SimplePredicate", "SimpleSetPredicate", "CompoundPredicate"))
     sapply(wi, function(i) {
       if(names(x)[i] %in% c("SimplePredicate", "SimpleSetPredicate")) return(TRUE)
-      if(identical(as.vector(xmlAttrs(x[[i]])["booleanOperator"]), "or")) return(TRUE)
+      if(identical(as.vector(XML::xmlAttrs(x[[i]])["booleanOperator"]), "or")) return(TRUE)
       stop("CompoundPredicate not yet implemented")
     })
   }
@@ -139,11 +139,11 @@ as.party.XMLNode <- function(obj, ...) {
   kid_ids <- function(xnode) {
     wi <- which("Node" == names(xnode))
     rval <- sapply(wi, function(j) {
-      as.vector(xmlAttrs(xnode[[j]])["id"])
+      as.vector(XML::xmlAttrs(xnode[[j]])["id"])
     })  
   }
   get_pred <- function(xnode) {
-    pred <- as.vector(xmlAttrs(xnode)["score"])
+    pred <- as.vector(XML::xmlAttrs(xnode)["score"])
     if(is.na(pred)) return(NULL)
     if(is.numeric(mf_response)) as.numeric(pred)
       else factor(pred, levels = levels(mf_response))
@@ -151,8 +151,8 @@ as.party.XMLNode <- function(obj, ...) {
   get_dist <- function(xnode) {
     wi <- which("ScoreDistribution" == names(xnode))
     if(length(wi) < 1) return(NULL)
-    rval <- sapply(wi, function(i) as.numeric(xmlAttrs(xnode[[i]])["recordCount"]))
-    names(rval) <- sapply(wi, function(i) xmlAttrs(xnode[[i]])["value"])
+    rval <- sapply(wi, function(i) as.numeric(XML::xmlAttrs(xnode[[i]])["recordCount"]))
+    names(rval) <- sapply(wi, function(i) XML::xmlAttrs(xnode[[i]])["value"])
     if(inherits(mf_response, "factor")) rval <- rval[levels(mf_response)]
     return(rval)
   }
@@ -165,7 +165,7 @@ as.party.XMLNode <- function(obj, ...) {
   get_extension <- function(xnode) {
     if(!("Extension" %in% names(xnode))) return(NULL)
     if(length(xnode[["Extension"]]) > 1) warning("currently only one Extension allowed")
-    rval <- xmlApply(xnode[["Extension"]][[1]], xmlAttrs)
+    rval <- XML::xmlApply(xnode[["Extension"]][[1]], XML::xmlAttrs)
     names(rval) <- NULL
     rval <- unlist(rval)
     to_numeric <- function(x) {
@@ -178,7 +178,7 @@ as.party.XMLNode <- function(obj, ...) {
     error = get_error(xnode), distribution = get_dist(xnode), extension = get_extension(xnode))
   get_split_prob <- function(xnode) {
     rval <- rep(0, n_kids(xnode))
-    wi <- xmlAttrs(xnode)["defaultChild"]
+    wi <- XML::xmlAttrs(xnode)["defaultChild"]
     if(is.na(wi)) rval <- NULL
       else rval[which(kid_ids(xnode) == wi)] <- 1
     return(rval)
@@ -189,14 +189,14 @@ as.party.XMLNode <- function(obj, ...) {
       nj <- if(surrogates) xnode[[j]][["CompoundPredicate"]] else xnode[[j]]
       if(any(c("SimplePredicate", "SimpleSetPredicate") %in% names(nj))) {
         wii <- which(names(nj) %in% c("SimplePredicate", "SimpleSetPredicate"))[i]
-        c("predicateType" = as.vector(names(nj)[wii]), xmlAttrs(nj[[wii]]))
+        c("predicateType" = as.vector(names(nj)[wii]), XML::xmlAttrs(nj[[wii]]))
       } else {
         wii <- which(names(nj) == "CompoundPredicate")[i]
 	nj <- nj[[wii]]
-	if(!identical(as.vector(xmlAttrs(nj)["booleanOperator"]), "or")) stop("not yet implemented")
+	if(!identical(as.vector(XML::xmlAttrs(nj)["booleanOperator"]), "or")) stop("not yet implemented")
 	if(any(names(nj) %in% c("SimpleSetPredicate", "CompoundPredicate"))) stop("not yet implemented")
 	rvali <- sapply(which(names(nj) == "SimplePredicate"), function(j)
-	  c("predicateType" = as.vector(names(nj)[j]), xmlAttrs(nj[[j]])))
+	  c("predicateType" = as.vector(names(nj)[j]), XML::xmlAttrs(nj[[j]])))
 	if(is.null(dim(rvali))) rvali <- matrix(rvali, ncol = 1)
 	stopifnot(length(unique(rvali["predicateType",])) == 1)
 	stopifnot(length(unique(rvali["field",])) == 1)
@@ -231,19 +231,19 @@ as.party.XMLNode <- function(obj, ...) {
         if(any(names(nj) %in% c("SimplePredicate", "SimpleSetPredicate"))) {
           wii <- which(names(nj) %in% c("SimplePredicate", "SimpleSetPredicate"))[i]      
           ar <- nj[[wii]][["Array"]]
-	  stopifnot(xmlAttrs(ar)["type"] == "string")
-	  rv <- xmlValue(ar)
+	  stopifnot(XML::xmlAttrs(ar)["type"] == "string")
+	  rv <- XML::xmlValue(ar)
 	  rv <- gsub("&quot;", "\"", rv, fixed = TRUE)
 	  rv <- if(substr(rv, 1, 1) == "\"" & substr(rv, nchar(rv), nchar(rv)) == "\"") {
 	    strsplit(substr(rv, 2, nchar(rv) - 1), "\" \"")[[1]]
 	  } else {
 	    strsplit(rv, " ")[[1]]
 	  }
-	  stopifnot(length(rv) == as.numeric(xmlAttrs(ar)["n"]))
+	  stopifnot(length(rv) == as.numeric(XML::xmlAttrs(ar)["n"]))
 	  return(rv)
 	} else {
           wii <- which(names(nj) == "CompoundPredicate")[i]	
-	  as.vector(xmlSApply(nj[[wii]], function(z) xmlAttrs(z)["value"]))
+	  as.vector(XML::xmlSApply(nj[[wii]], function(z) XML::xmlAttrs(z)["value"]))
 	}
       })
       for(j in 1:ncol(rval)) {

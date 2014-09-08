@@ -1267,7 +1267,7 @@ gbsg2node <- function(mobobj,
 {
   ## obtain dependent variable
   mf <- model.frame(mobobj)
-  y <- model.part(mobobj$info$Formula, mf, lhs = 1L, rhs = 0L)
+  y <- Formula::model.part(mobobj$info$Formula, mf, lhs = 1L, rhs = 0L)
   if(isTRUE(ylab)) ylab <- names(y)[1L]
   if(identical(ylab, FALSE)) ylab <- ""
   if(is.null(ylines)) ylines <- ifelse(identical(ylab, ""), 0, 2)
@@ -1281,7 +1281,7 @@ gbsg2node <- function(mobobj,
   if(jitter) y <- jitter(y)
 
   ## obtain explanatory variables
-  x <- model.part(mobobj$info$Formula, mf, lhs = 0L, rhs = 1L)
+  x <- Formula::model.part(mobobj$info$Formula, mf, lhs = 0L, rhs = 1L)
   xnam <- colnames(x)
   z <- seq(from = min(x[,2]), to = max(x[,2]), length = 51)
   z <- data.frame(a = rep(sort(x[,1])[c(1, NROW(x))], c(51, 51)), b = z)

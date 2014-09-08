@@ -33,7 +33,6 @@ export(
   "is.simpleparty",
 
   ## new generics
-  "depth",
   "is.terminal",
   "nodeapply",
   "nodeids",

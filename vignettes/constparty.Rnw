@@ -1,6 +1,6 @@
 \documentclass[nojss]{jss}
 
-%\VignetteIndexEntry{partykit: A Toolkit for Recursive Partytioning}
+%\VignetteIndexEntry{Constant Partying: Growing and Handling Trees with Constant Fits}
 %\VignetteDepends{partykit, rpart, RWeka, pmml, datasets}
 %\VignetteKeywords{recursive partitioning, regression trees, classification trees, decision trees}
 %\VignettePackage{partykit}
@@ -567,6 +567,39 @@ plot(myttnc2)
 \end{figure}
 \setkeys{Gin}{width=\textwidth}
 
+The accuracy of the tree built using the default options could be assessed
+by the bootstrap, for example.  Here, we want to compare our tree for the
+Titanic survivor data with a simple logistic regression model.
+First, we fit this simple GLM and compute the (in-sample) log-likelihood:
+<<mytree-glm, echo = TRUE>>=
+logLik(glm(Survived ~ Class + Age + Gender, data = ttnc, 
+           family = binomial()))
+@
+For our tree, we set-up $25$ bootstrap samples
+<<mytree-bs, echo = TRUE>>=
+bs <- rmultinom(25, nrow(ttnc), rep(1, nrow(ttnc)) / nrow(ttnc))
+@
+and implement the log-likelihood of a binomal model
+<<mytree-ll, echo = TRUE>>=
+bloglik <- function(prob, weights)
+    sum(weights * dbinom(ttnc$Survived == "Yes", size = 1, 
+                         prob[,"Yes"], log = TRUE))
+@
+What remains to be done is to iterate over all bootstrap samples, to refit
+the tree on the bootstrap sample and to evaluate the log-likelihood on the
+out-of-bootstrap samples based on the trees' predictions (details on how
+to compute predictions are given in the next section):
+<<mytree-bsll, echo = TRUE>>=
+f <- function(w) {
+    tr <- mytree(Survived ~ Class + Age + Gender, data = ttnc, weights = w)
+    bloglik(predict(tr, newdata = ttnc, type = "prob"), as.numeric(w == 0))
+}
+apply(bs, 2, f)
+@
+We see that the in-sample log-likelihood of the linear logistic regression
+model is much smaller than the out-of-sample log-likelihood found for our
+tree and thus we can conclude that our tree-based approach fits data the
+better than the linear model.
 
 \section{Predictions} \label{sec:prediction}
 

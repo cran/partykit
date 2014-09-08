@@ -271,7 +271,7 @@ void C_LinstatExpCov (const SEXP x, const SEXP y, const SEXP weights,
     
     SEXP explinstat, covlinstat, linstat, dim, cx, sc;
     double *expinf, *covinf, *swx, *swx2, *dy, *dx, *dsc;
-    int sw = 0, n, p, q, pq, i;
+    int sw = 0, n, p, q, pq, i, j;
     int *ix;
 
     /* determine the dimensions and some checks */
@@ -298,8 +298,14 @@ void C_LinstatExpCov (const SEXP x, const SEXP y, const SEXP weights,
         SET_VECTOR_ELT(ans, 1, linstat = allocVector(REALSXP, pq));
         
         NA_weights_double(INTEGER(weights), dx, n, thisweights, &sw);
-        C_swx_numeric(dx, thisweights, n, swx, swx2);
-        C_Linstat_numeric(dx, dy, q, thisweights, n, REAL(linstat));
+        if (sw <= 1) {
+            for (j = 0; j < pq; j++) {
+                REAL(linstat)[j] = 0.0;
+            }
+        } else {
+            C_swx_numeric(dx, thisweights, n, swx, swx2);
+            C_Linstat_numeric(dx, dy, q, thisweights, n, REAL(linstat));
+        }
     } 
     if (isFactor(x) && !isOrdered(x)) { 
         p = C_nlevels(x);
@@ -311,8 +317,14 @@ void C_LinstatExpCov (const SEXP x, const SEXP y, const SEXP weights,
         SET_VECTOR_ELT(ans, 1, linstat = allocVector(REALSXP, pq));
 
         NA_weights_factor(INTEGER(weights), ix, n, thisweights, &sw);                        
-        C_swx_factor(ix, p, thisweights, n, swx, swx2);
-        C_Linstat_factor(ix, p, dy, q, thisweights, n, REAL(linstat));
+        if (sw <= 1) {
+            for (j = 0; j < pq; j++) {
+                REAL(linstat)[j] = 0.0;
+            }
+        } else {
+            C_swx_factor(ix, p, thisweights, n, swx, swx2);
+            C_Linstat_factor(ix, p, dy, q, thisweights, n, REAL(linstat));
+        }
     }
     if (isInteger(x) || isOrdered(x)) {
         p = 1;
@@ -340,9 +352,15 @@ void C_LinstatExpCov (const SEXP x, const SEXP y, const SEXP weights,
 
         SET_VECTOR_ELT(ans, 1, linstat = allocVector(REALSXP, pq));
 
-        NA_weights_double(INTEGER(weights), dx, n, thisweights, &sw);                        
-        C_swx_numeric(dx, thisweights, n, swx, swx2);
-        C_Linstat_numeric(dx, dy, q, thisweights, n, REAL(linstat));
+        NA_weights_double(INTEGER(weights), dx, n, thisweights, &sw);
+        if (sw <= 1) {
+            for (j = 0; j < pq; j++) {
+                 REAL(linstat)[j] = 0.0;
+            }
+        } else {
+            C_swx_numeric(dx, thisweights, n, swx, swx2); 
+            C_Linstat_numeric(dx, dy, q, thisweights, n, REAL(linstat)); 
+        }
         UNPROTECT(1);
     }
 
@@ -352,10 +370,15 @@ void C_LinstatExpCov (const SEXP x, const SEXP y, const SEXP weights,
     SET_VECTOR_ELT(ans, 2, explinstat = allocVector(REALSXP, pq));
     SET_VECTOR_ELT(ans, 3, covlinstat = allocVector(REALSXP, pq * pq));
 
-    C_ExpInf(dy, q, thisweights, sw, n, expinf);
-    C_CovInf(dy, q, thisweights, sw, n, expinf,  covinf);
-    C_ExpCovLinstat(swx, swx2, p, q, sw, expinf, covinf, REAL(explinstat), 
-                    REAL(covlinstat));
+    if (sw <= 1) {
+        for (j = 0; j < pq; j++) REAL(explinstat)[j] = 0.0;
+        for (j = 0; j < pq * pq; j++) REAL(covlinstat)[j] = 0.0;
+    } else {
+        C_ExpInf(dy, q, thisweights, sw, n, expinf);
+        C_CovInf(dy, q, thisweights, sw, n, expinf,  covinf);
+        C_ExpCovLinstat(swx, swx2, p, q, sw, expinf, covinf, REAL(explinstat), 
+                        REAL(covlinstat));
+    }
 
     Free(swx);
     Free(swx2);

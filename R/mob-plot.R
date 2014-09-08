@@ -5,17 +5,17 @@ node_bivplot <- function(mobobj, which = NULL, id = TRUE, pop = TRUE,
   cdplot = FALSE, fivenum = TRUE, breaks = NULL,
   ylines = NULL, xlab = FALSE, ylab = FALSE, margins = rep(1.5, 4),
   mainlab = NULL, ...)
-{  
+{
   ## obtain dependent variable
   mf <- model.frame(mobobj)
-  y <- model.part(mobobj$info$Formula, mf, lhs = 1L, rhs = 0L)
+  y <- Formula::model.part(mobobj$info$Formula, mf, lhs = 1L, rhs = 0L)
   if(isTRUE(ylab)) ylab <- names(y)
   if(identical(ylab, FALSE)) ylab <- ""
   if(is.null(ylines)) ylines <- ifelse(identical(ylab, ""), 0, 2)
   y <- y[[1L]]
 
   ## obtain explanatory variables
-  X <- model.part(mobobj$info$Formula, mf, lhs = 0L, rhs = 1L)
+  X <- Formula::model.part(mobobj$info$Formula, mf, lhs = 0L, rhs = 1L)
   
   ## fitted node ids
   fitted <- mobobj$fitted[["(fitted)"]]
@@ -44,10 +44,10 @@ node_bivplot <- function(mobobj, which = NULL, id = TRUE, pop = TRUE,
   if(is.factor(y)) {
     ## CD plots and spine plots
     ## re-use implementation from vcd package
-    if(!require("vcd")) stop(sprintf("Package %s is required for spine/CD plots", sQuote("vcd")))
+    if(!requireNamespace("vcd")) stop(sprintf("Package %s is required for spine/CD plots", sQuote("vcd")))
     if(cdplot) {
       num_fun <- function(x, y, yfit, i, name, ...) {
-	cd_plot(x, y, xlab = xlab[i], ylab = ylab, name = name, newpage = FALSE,
+	vcd::cd_plot(x, y, xlab = xlab[i], ylab = ylab, name = name, newpage = FALSE,
           margins = margins, pop = FALSE, ...)
 	if(fitmean) {
           #FIXME# downViewport(name = name)
@@ -66,7 +66,7 @@ node_bivplot <- function(mobobj, which = NULL, id = TRUE, pop = TRUE,
         if(is.list(breaks)) breaks else list(breaks)
       }
       num_fun <- function(x, y, yfit, i, name, ...) {
-	spine(x, y, xlab = xlab[i], ylab = ylab, name = name, newpage = FALSE,
+	vcd::spine(x, y, xlab = xlab[i], ylab = ylab, name = name, newpage = FALSE,
           margins = margins, pop = FALSE, breaks = xscale[[i]], ...)
 	if(fitmean) {
           #FIXME# downViewport(name = name)
@@ -85,7 +85,7 @@ node_bivplot <- function(mobobj, which = NULL, id = TRUE, pop = TRUE,
       }
     }
     cat_fun <- function(x, y, yfit, i, name, ...) {
-      spine(x, y, xlab = xlab[i], ylab = ylab, name = name, newpage = FALSE,
+      vcd::spine(x, y, xlab = xlab[i], ylab = ylab, name = name, newpage = FALSE,
         margins = margins, pop = FALSE, ...)
       if(fitmean) {
         #FIXME# downViewport(name = name)

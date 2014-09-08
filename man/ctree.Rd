@@ -26,7 +26,11 @@ ctree(formula, data, weights, subset, na.action = na.pass,
   \item{ytrafo}{an optional named list of functions to be applied to the response 
                 variable(s) before testing their association with the explanatory 
                 variables. Note that this transformation is only
-                performed once for the root node and does not take weights into account.}
+                performed once for the root node and does not take weights into account.
+                Alternatively, \code{ytrafo} can be a function of \code{data} and
+                \code{weights}. In this case, the transformation is computed for
+                every node. This feature is experimental and the user interface 
+                likely to change.}
   \item{scores}{an optional named list of scores to be attached to ordered
                 factors.}
   \item{\dots}{arguments passed to \code{\link{ctree_control}}.}
@@ -62,8 +66,12 @@ ctree(formula, data, weights, subset, na.action = na.pass,
   specified in \code{\link{ctree_control}}. For example, when 
   \code{mincriterion = 0.95}, the p-value must be smaller than
   $0.05$ in order to split this node. This statistical approach ensures that
-  the right sized tree is grown and no form of pruning or cross-validation
-  or whatsoever is needed. The selection of the input variable to split in
+  the right-sized tree is grown without additional (post-)pruning or cross-validation.
+  The level of \code{mincriterion} can either be specified to be appropriate
+  for the size of the data set (and \code{0.95} is typically appropriate for
+  small to moderately-sized data sets) or could potentially be treated like a
+  hyperparameter (see Section~3.4 in Hothorn, Hornik and Zeileis, 2006).
+  The selection of the input variable to split in
   is based on the univariate p-values avoiding a variable selection bias
   towards input variables with many possible cutpoints. The test statistics
   in each of the nodes can be extracted with the \code{sctest} method.
@@ -125,13 +133,27 @@ table(predict(irisct), iris$Species)
 tr <- predict(irisct, newdata = iris[1:10,], type = "prob")
 
 ### survival analysis
-if (require("TH.data") && require("survival")) {
+if (require("TH.data") && require("survival") && require("coin")) {
 
-data("GBSG2", package = "TH.data")
-GBSG2ct <- ctree(Surv(time, cens) ~ ., data = GBSG2)
-predict(GBSG2ct, newdata = GBSG2[1:2,], type = "response")	  
-plot(GBSG2ct)
+  data("GBSG2", package = "TH.data")
+  GBSG2ct <- ctree(Surv(time, cens) ~ ., data = GBSG2)
+  predict(GBSG2ct, newdata = GBSG2[1:2,], type = "response")	  
+  plot(GBSG2ct)
 
+  ### with weight-dependent log-rank scores
+  ctree(Surv(time, cens) ~ ., data = GBSG2)
+
+  ### log-rank trafo for observations in this node only (= weights > 0)
+  h <- function(data, weights) {
+    s <- data[, "Surv(time, cens)"]
+    s <- logrank_trafo(s[weights > 0,])
+    r <- rep(0, nrow(data))
+    r[weights > 0] <- s
+    matrix(as.double(r), ncol = 1)
+  }
+
+  ### very much the same tree
+  ctree(Surv(time, cens) ~ ., data = GBSG2, ytrafo = h) 
 }
 
 ### multivariate responses

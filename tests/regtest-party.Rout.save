@@ -1560,7 +1560,7 @@ Model formula:
 Species ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width
 
 Fitted party:
-[A] root
+[A] root: setosa (n = 150, err = 66.7%) 
 
 Number of inner nodes:    0
 Number of terminal nodes: 1

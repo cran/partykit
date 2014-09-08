@@ -1,9 +1,6 @@
 mob <- function(formula, data, subset, na.action, weights, offset,
   fit, control = mob_control(), ...)
 {
-  ## required packages
-  stopifnot(require("Formula"))
-  
   ## check fitting function
   fitargs <- names(formals(fit))
   if(!all(c("y", "x", "start", "weights", "offset") %in% fitargs)) {
@@ -12,7 +9,6 @@ mob <- function(formula, data, subset, na.action, weights, offset,
 
   ## augment fitting function (if necessary)
   if(!all(c("estfun", "object") %in% fitargs)) {
-    stopifnot(require("sandwich"))
     afit <- function(y,
       x = NULL, start = NULL, weights = NULL, offset = NULL, ...,
       estfun = FALSE, object = FALSE)
@@ -21,7 +17,7 @@ mob <- function(formula, data, subset, na.action, weights, offset,
       list(
         coefficients = coef(obj),
         objfun = -as.numeric(logLik(obj)),
-        estfun = if(estfun) estfun(obj) else NULL,
+        estfun = if(estfun) sandwich::estfun(obj) else NULL,
         object = if(object) obj else NULL
       )
     }
@@ -39,13 +35,13 @@ mob <- function(formula, data, subset, na.action, weights, offset,
 
   ## formula FIXME: y ~ . or y ~ x | .
   oformula <- as.formula(formula)
-  formula <- as.Formula(formula)
+  formula <- Formula::as.Formula(formula)
   if(length(formula)[2L] < 2L) {
-    formula <- Formula(formula(as.Formula(formula(formula), ~ 0), rhs = 2L:1L))
+    formula <- Formula::Formula(formula(Formula::as.Formula(formula(formula), ~ 0), rhs = 2L:1L))
     xreg <- FALSE
   } else {
     if(length(formula)[2L] > 2L) {
-      formula <- Formula(formula(formula, rhs = 1L:2L))
+      formula <- Formula::Formula(formula(formula, rhs = 1L:2L))
       warning("Formula must not have more than two RHS parts")
     }
     xreg <- TRUE
@@ -61,13 +57,13 @@ mob <- function(formula, data, subset, na.action, weights, offset,
   mtY <- terms(formula, data = data, rhs = if(xreg) 1L else 0L)
   mtZ <- delete.response(terms(formula, data = data, rhs = 2L))
   Y <- switch(control$ytype,
-    "vector" = model.part(formula, mf, lhs = 1L)[[1L]],
-    "matrix" = model.matrix(~ 0 + ., model.part(formula, mf, lhs = 1L)),
-    "data.frame" = model.part(formula, mf, lhs = 1L)
+    "vector" = Formula::model.part(formula, mf, lhs = 1L)[[1L]],
+    "matrix" = model.matrix(~ 0 + ., Formula::model.part(formula, mf, lhs = 1L)),
+    "data.frame" = Formula::model.part(formula, mf, lhs = 1L)
   )
   X <- if(!xreg) NULL else switch(control$xtype,
     "matrix" = model.matrix(mtY, mf),
-    "data.frame" = model.part(formula, mf, rhs = 1L)
+    "data.frame" = Formula::model.part(formula, mf, rhs = 1L)
   )
   if(!is.null(X) && ncol(X) < 1L) {
     X <- NULL
@@ -77,7 +73,7 @@ mob <- function(formula, data, subset, na.action, weights, offset,
     attr(X, "formula") <- formula(formula, rhs = 1L)
     attr(X, "terms") <- mtY
   }
-  Z <- model.part(formula, mf, rhs = 2L)
+  Z <- Formula::model.part(formula, mf, rhs = 2L)
   n <- nrow(Z)
   nyx <- length(mf) - length(Z) - as.numeric("(weights)" %in% names(mf)) - as.numeric("(offset)" %in% names(mf))
 
@@ -291,7 +287,6 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL,
           proci <- apply(proci, 2L, cumsum)
           tt <- head(cumsum(segweights), -1L)
           if(control$ordinal == "max") {
-	    stopifnot(require("mvtnorm"))
   	    stat[i] <- max(abs(proci[round(tt * n), ] / sqrt(tt * (1-tt))))
 	    pval[i] <- log(as.numeric(1 - mvtnorm::pmvnorm(
 	      lower = -stat[i], upper = stat[i],
@@ -300,7 +295,6 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL,
 	        sqrt(pmin(x, y) * (1 - pmax(x, y)) / ((pmax(x, y) * (1 - pmin(x, y))))))
 	      )^k))
 	  } else {
-	    stopifnot(require("strucchange"))
 	    proci <- rowSums(proci^2)
   	    stat[i] <- max(proci[round(tt * n)] / (tt * (1-tt)))
 	    pval[i] <- log(strucchange::ordL2BB(segweights, nproc = k, nrep = control$nrep)$computePval(stat[i], nproc = k))
@@ -720,7 +714,7 @@ model.frame.modelparty <- function(formula, ...)
   mf[[1L]] <- as.name("model.frame")
   mf[names(nargs)] <- nargs
   if(is.null(env <- environment(formula$info$terms))) env <- parent.frame()
-  mf$formula <- Formula(as.formula(mf$formula))
+  mf$formula <- Formula::Formula(as.formula(mf$formula))
   eval(mf, env)
 }
 
@@ -756,13 +750,13 @@ refit.modelparty <- function(object, node = NULL, drop = TRUE, ...)
 
   ## response variables
   Y <- switch(object$info$control$ytype,
-    "vector" = model.part(object$info$Formula, mf, lhs = 1L)[[1L]],
-    "matrix" = model.matrix(~ 0 + ., model.part(object$info$Formula, mf, lhs = 1L)),
-    "data.frame" = model.part(object$info$Formula, mf, lhs = 1L)
+    "vector" = Formula::model.part(object$info$Formula, mf, lhs = 1L)[[1L]],
+    "matrix" = model.matrix(~ 0 + ., Formula::model.part(object$info$Formula, mf, lhs = 1L)),
+    "data.frame" = Formula::model.part(object$info$Formula, mf, lhs = 1L)
   )
   X <- if(object$info$nreg < 1L) NULL else switch(object$info$control$xtype,
     "matrix" = model.matrix(object$info$terms$response, mf),
-    "data.frame" = model.part(object$info$Formula, mf, rhs = 1L)
+    "data.frame" = Formula::model.part(object$info$Formula, mf, rhs = 1L)
   )
   if(!is.null(X)) {
     attr(X, "formula") <- formula(object$info$Formula, rhs = 1L)

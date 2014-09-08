@@ -241,8 +241,9 @@ is.terminal.partynode <- function(x, ...) {
     kids
 }
 
-depth <- function(x, ...)
-    UseMethod("depth")
+## ## depth generic now taken from package 'grid'
+## depth <- function(x, ...)
+##     UseMethod("depth")
 
 depth.partynode <- function(x, root = FALSE, ...) {
     if (is.terminal(x)) return(as.integer(root))

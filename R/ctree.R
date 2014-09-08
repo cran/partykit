@@ -65,7 +65,7 @@
         if (is.na(maxT)) return(c(-Inf, -Inf))
     }
     if (pval) 
-        return(c(log(maxT), log(pmvnorm(lower = rep(-maxT, length(v)),
+        return(c(log(maxT), log(mvtnorm::pmvnorm(lower = rep(-maxT, length(v)),
                                         upper = rep(maxT, length(v)),
                                         sigma = cov2cor(V)))))
     return(c(log(maxT), NA))
@@ -140,6 +140,11 @@
         inp <- logical(length(inp))
         inp[s] <- TRUE
     } 
+
+    response_arg <- response
+    if (is.function(response))
+        response <- response(data, weights)
+
     lin <- .Call("R_LinstatExpCov", data, inp, response, weights)
     p <- sapply(lin[inp], function(x) do.call(ctrl$cfun, x[-1]))
     crit <- p[1,,drop = TRUE]
@@ -230,7 +235,7 @@
         w <- weights
         w[kidids != k] <- 0
         assign("depth", depth + 1, envir = cenv)
-        kids[[k]] <- .cnode(nextid, data, response, inputs, w, ctrl, cenv)
+        kids[[k]] <- .cnode(nextid, data, response_arg, inputs, w, ctrl, cenv)
         nextid <- max(nodeids(kids[[k]])) + 1
     }
     ret$kids <- kids
@@ -245,7 +250,6 @@ ctree_control <- function(teststat = c("quad", "max"),
     multiway = FALSE, splittry = 2L, majority = FALSE) {
 
     teststat <- match.arg(teststat)
-    if (teststat == "max") stopifnot(require("mvtnorm"))
     testtype <- match.arg(testtype)
     list(teststat = teststat,
          testtype = testtype, mincriterion = log(mincriterion),
@@ -268,23 +272,14 @@ ctree <- function(formula, data, weights, subset, na.action = na.pass,
     
     ### only necessary for extended model formulae 
     ### e.g. multivariate responses
-    if (require("Formula")) {
-        formula <- Formula(formula)
-    } else {
-        if (length(formula[[2]]) > 1)
-            stop("Package ", sQuote("Formula"),
-                 " not available for handling extended model formula ",
-                 sQuote("formula"))
-    }
+    formula <- Formula::Formula(formula)
     mf$formula <- formula
     mf$drop.unused.levels <- FALSE
     mf$na.action <- na.action
     mf[[1]] <- as.name("model.frame")
     mf <- eval(mf, parent.frame())
 
-    response <- names(mf)[1]
-    if (inherits(formula, "Formula"))
-        response <- names(model.part(formula, mf, lhs = 1))
+    response <- names(Formula::model.part(formula, mf, lhs = 1))
     weights <- model.weights(mf)
     dat <- mf[, colnames(mf) != "(weights)"]
     if (!is.null(scores)) {
@@ -349,7 +344,14 @@ ctree <- function(formula, data, weights, subset, na.action = na.pass,
         weights <- rep(1, nrow(data))
     storage.mode(weights) <- "integer"
 
-    infl <- .y2infl(data, response, ytrafo = ytrafo) ### weights???
+    ### <FIXME> this interface has to change; we need to be
+    ### closer to mob() with y ~ x | z formulae and probably a `fit'
+    ### argument </FIXME>
+    if (!is.function(ytrafo)) {
+        infl <- .y2infl(data, response, ytrafo = ytrafo)
+    } else {
+        infl <- ytrafo ### will be updated with weights in every node
+    }
 
     tree <- .cnode(1L, data, infl, inputs, weights, ctrl)
 

@@ -96,7 +96,7 @@ model.frame.rpart <- function(formula, ...) {
   ## otherwise reevaluate model.frame using original call
   mf <- formula$call
   mf <- mf[c(1L, match(c("formula", "data", "subset", "na.action", "weights"), names(mf), 0L))]
-  if (is.null(mf$na.action)) mf$na.action <- na.rpart
+  if (is.null(mf$na.action)) mf$na.action <- rpart::na.rpart
   mf$drop.unused.levels <- TRUE
   mf[[1L]] <- as.name("model.frame")
   

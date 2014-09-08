@@ -1,3 +1,30 @@
+Changes in Version 0.8-1
+
+  o partykit now depends on R version >= 3.1.0 in order to import the
+    depth() generic from the "grid" package.
+
+  o The print methods for party/partynode objects with only a root node
+    was modified. Now, the terminal panel function is also applied
+    if there is only a root node (while previously it was not).
+
+  o ctree() now catches sum(weights) <= 1 situations before they 
+    lead to an error.
+
+  o Code from suggested packages is included by using :: syntax as
+    required by recent R versions.
+    
+  o Argument ytrafo of ctree() can now be a function which will be
+    updated in every node.
+    
+  o A small demo briefly illustrating some memory and speed properties
+    has been added. It can be run interactively via
+    demo("memory-speed", package = "partykit").
+    
+  o Section 3 of the "constparty" vignette now shows how properties of
+    a new tree algorithm can be assessed by using partykit building
+    blocks.
+
+
 Changes in Version 0.8-0
 
   o Major improved version of "partykit". The previously existing functions

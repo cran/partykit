@@ -654,7 +654,7 @@ nodeprune.default <- function(x, ids, ...)
                     paste(svar, ifelse(right, ">", ">="), sbreak[1]))
             if (is.finite(sbreak[2]))
                 srule <- c(srule, 
-                    paste(svar, ifelse(right, "<=", ">"), sbreak[2]))
+                    paste(svar, ifelse(right, "<=", "<"), sbreak[2]))
             srule <- paste(srule, collapse = " & ")
         }
         rule <<- c(rule, srule)
