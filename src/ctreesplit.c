@@ -120,7 +120,7 @@ void C_split_factor (SEXP x, SEXP y, int *iweights, int minbucket,
         sw += iweights[i];
     }
 
-    for (l = 1; l < p; l++) ans[l] = NA_INTEGER;
+    for (l = 0; l < p; l++) ans[l] = NA_INTEGER;
 
     if (p == 2) {
 
