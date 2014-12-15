@@ -9,6 +9,18 @@ require("partykit")
 require("coin")
 require("strucchange")
 set.seed(290875)
+### mvpart was archived 2014-12-15; so grab spider dataset from the archive
+tmpdir <- tempdir()
+wd <- setwd(tmpdir) 
+download.file("http://cran.r-project.org/src/contrib/Archive/mvpart/mvpart_1.6-2.tar.gz", 
+              destfile = "mvpart_1.6-2.tar.gz")
+untar("mvpart_1.6-2.tar.gz", compressed = "gzip")
+s <- gzfile("mvpart/data/spider.tab.gz")      
+sx <- readLines(s)
+close(s) 
+writeLines(sx, con = "tmp.csv")          
+spider <- read.csv("tmp.csv", sep = "\t")
+setwd(wd)
 
 
 ###################################################
@@ -229,7 +241,6 @@ plot(mtree)
 ###################################################
 ### code chunk number 34: spider-ctree
 ###################################################
-data("spider", package = "mvpart")
 sptree <- ctree(arct.lute + pard.lugu + zora.spin + pard.nigr + pard.pull +
     aulo.albi + troc.terr + alop.cune + pard.mont + alop.acce +
     alop.fabr + arct.peri ~ herbs + reft + moss + sand + twigs+water,
