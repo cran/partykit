@@ -1,0 +1,362 @@
+
+> options(width = 70)
+
+> library("partykit")
+Loading required package: grid
+
+> set.seed(290875)
+
+> data("WeatherPlay", package = "partykit")
+
+> WeatherPlay
+    outlook temperature humidity windy play
+1     sunny          85       85 false   no
+2     sunny          80       90  true   no
+3  overcast          83       86 false  yes
+4     rainy          70       96 false  yes
+5     rainy          68       80 false  yes
+6     rainy          65       70  true   no
+7  overcast          64       65  true  yes
+8     sunny          72       95 false   no
+9     sunny          69       70 false  yes
+10    rainy          75       80 false  yes
+11    sunny          75       70  true  yes
+12 overcast          72       90  true  yes
+13 overcast          81       75 false  yes
+14    rainy          71       91  true   no
+
+> py <- party(partynode(1, split = partysplit(1, index = 1:3), 
++     kids = list(partynode(2, split = partysplit(3, breaks = 75), 
++         kids = l .... [TRUNCATED] 
+
+> plot(py)
+
+> sp_o <- partysplit(1, index = 1:3)
+
+> sp_h <- partysplit(3, breaks = 75)
+
+> sp_w <- partysplit(4, index = 1:2)
+
+> pn <- partynode(1, split = sp_o, kids = list(partynode(2, 
++     split = sp_h, kids = list(partynode(3, info = "yes"), partynode(4, 
++         info  .... [TRUNCATED] 
+
+> pn
+[1] root
+|   [2] V1 in (-Inf,1]
+|   |   [3] V3 <= 75 *
+|   |   [4] V3 > 75 *
+|   [5] V1 in (1,2] *
+|   [6] V1 in (2, Inf]
+|   |   [7] V4 <= 1 *
+|   |   [8] V4 > 1 *
+
+> py <- party(pn, WeatherPlay)
+
+> print(py)
+[1] root
+|   [2] outlook in sunny
+|   |   [3] humidity <= 75: yes
+|   |   [4] humidity > 75: no
+|   [5] outlook in overcast: yes
+|   [6] outlook in rainy
+|   |   [7] windy in false: yes
+|   |   [8] windy in true: no
+
+> predict(py, head(WeatherPlay))
+1 2 3 4 5 6 
+4 4 5 7 7 8 
+
+> length(py)
+[1] 8
+
+> width(py)
+[1] 5
+
+> depth(py)
+[1] 2
+
+> py[6]
+[6] root
+|   [7] windy in false: yes
+|   [8] windy in true: no
+
+> py2 <- py
+
+> names(py2)
+[1] "1" "2" "3" "4" "5" "6" "7" "8"
+
+> names(py2) <- LETTERS[1:8]
+
+> py2
+[A] root
+|   [B] outlook in sunny
+|   |   [C] humidity <= 75: yes
+|   |   [D] humidity > 75: no
+|   [E] outlook in overcast: yes
+|   [F] outlook in rainy
+|   |   [G] windy in false: yes
+|   |   [H] windy in true: no
+
+> nodeids(py)
+[1] 1 2 3 4 5 6 7 8
+
+> nodeids(py, terminal = TRUE)
+[1] 3 4 5 7 8
+
+> nodeapply(py, ids = c(1, 7), FUN = function(n) n$info)
+$`1`
+NULL
+
+$`7`
+[1] "yes"
+
+
+> nodeapply(py, ids = nodeids(py, terminal = TRUE), 
++     FUN = function(n) paste("Play decision:", n$info))
+$`3`
+[1] "Play decision: yes"
+
+$`4`
+[1] "Play decision: no"
+
+$`5`
+[1] "Play decision: yes"
+
+$`7`
+[1] "Play decision: yes"
+
+$`8`
+[1] "Play decision: no"
+
+
+> predict(py, FUN = function(n) paste("Play decision:", 
++     n$info))
+                   1                    2                    3 
+ "Play decision: no"  "Play decision: no" "Play decision: yes" 
+                   4                    5                    6 
+"Play decision: yes" "Play decision: yes"  "Play decision: no" 
+                   7                    8                    9 
+"Play decision: yes"  "Play decision: no" "Play decision: yes" 
+                  10                   11                   12 
+"Play decision: yes" "Play decision: yes" "Play decision: yes" 
+                  13                   14 
+"Play decision: yes"  "Play decision: no" 
+
+> print(py, terminal_panel = function(n) c(", then the play decision is:", 
++     toupper(n$info)))
+[1] root
+|   [2] outlook in sunny
+|   |   [3] humidity <= 75, then the play decision is:
+|   |       YES
+|   |   [4] humidity > 75, then the play decision is:
+|   |       NO
+|   [5] outlook in overcast, then the play decision is:
+|       YES
+|   [6] outlook in rainy
+|   |   [7] windy in false, then the play decision is:
+|   |       YES
+|   |   [8] windy in true, then the play decision is:
+|   |       NO
+
+> plot(py[6])
+
+> plot(py, tp_args = list(FUN = function(i) c("Play decision:", 
++     toupper(i))))
+
+> nodeprune(py, 2)
+[1] root
+|   [2] outlook in sunny: *
+|   [3] outlook in overcast: yes
+|   [4] outlook in rainy
+|   |   [5] windy in false: yes
+|   |   [6] windy in true: no
+
+> nodeprune(py, c(2, 6))
+[1] root
+|   [2] outlook in sunny: *
+|   [3] outlook in overcast: yes
+|   [4] outlook in rainy: *
+
+> sp_h <- partysplit(3, breaks = 75)
+
+> class(sp_h)
+[1] "partysplit"
+
+> unclass(sp_h)
+$varid
+[1] 3
+
+$breaks
+[1] 75
+
+$index
+NULL
+
+$right
+[1] TRUE
+
+$prob
+NULL
+
+$info
+NULL
+
+
+> character_split(sp_h, data = WeatherPlay)
+$name
+[1] "humidity"
+
+$levels
+[1] "<= 75" "> 75" 
+
+
+> kidids_split(sp_h, data = WeatherPlay)
+ [1] 2 2 2 2 2 1 1 2 1 2 1 2 1 2
+
+> as.numeric(!(WeatherPlay$humidity <= 75)) + 1
+ [1] 2 2 2 2 2 1 1 2 1 2 1 2 1 2
+
+> sp_o2 <- partysplit(1, index = c(1, 1, 2))
+
+> character_split(sp_o2, data = WeatherPlay)
+$name
+[1] "outlook"
+
+$levels
+[1] "sunny, overcast" "rainy"          
+
+
+> table(kidids_split(sp_o2, data = WeatherPlay), WeatherPlay$outlook)
+   
+    sunny overcast rainy
+  1     5        4     0
+  2     0        0     5
+
+> unclass(sp_o2)
+$varid
+[1] 1
+
+$breaks
+NULL
+
+$index
+[1] 1 1 2
+
+$right
+[1] TRUE
+
+$prob
+NULL
+
+$info
+NULL
+
+
+> sp_o <- partysplit(1, index = 1:3)
+
+> character_split(sp_o, data = WeatherPlay)
+$name
+[1] "outlook"
+
+$levels
+[1] "sunny"    "overcast" "rainy"   
+
+
+> sp_t <- partysplit(2, breaks = c(69.5, 78.8), index = c(1, 
++     2, 1))
+
+> character_split(sp_t, data = WeatherPlay)
+$name
+[1] "temperature"
+
+$levels
+[1] "(-Inf,69.5] | (78.8, Inf]" "(69.5,78.8]"              
+
+
+> table(kidids_split(sp_t, data = WeatherPlay), cut(WeatherPlay$temperature, 
++     breaks = c(-Inf, 69.5, 78.8, Inf)))
+   
+    (-Inf,69.5] (69.5,78.8] (78.8, Inf]
+  1           4           0           4
+  2           0           6           0
+
+> n1 <- partynode(id = 1)
+
+> is.terminal(n1)
+[1] TRUE
+
+> print(n1)
+[1] root * 
+
+> n1 <- partynode(id = 1, split = sp_o, kids = lapply(2:4, 
++     partynode))
+
+> print(n1, data = WeatherPlay)
+[1] root
+|   [2] outlook in sunny *
+|   [3] outlook in overcast *
+|   [4] outlook in rainy *
+
+> fitted_node(n1, data = WeatherPlay)
+ [1] 2 2 3 4 4 4 3 2 2 4 2 3 3 4
+
+> kidids_node(n1, data = WeatherPlay)
+ [1] 1 1 2 3 3 3 2 1 1 3 1 2 2 3
+
+> t1 <- party(n1, data = WeatherPlay)
+
+> t1
+[1] root
+|   [2] outlook in sunny: *
+|   [3] outlook in overcast: *
+|   [4] outlook in rainy: *
+
+> party(n1, data = WeatherPlay[0, ])
+[1] root
+|   [2] outlook in sunny: *
+|   [3] outlook in overcast: *
+|   [4] outlook in rainy: *
+
+> t2 <- party(n1, data = WeatherPlay, fitted = data.frame(`(fitted)` = fitted_node(n1, 
++     data = WeatherPlay), `(response)` = WeatherPlay$play, ch .... [TRUNCATED] 
+
+> t2 <- as.constparty(t2)
+
+> t2
+
+Model formula:
+play ~ outlook + temperature + humidity + windy
+
+Fitted party:
+[1] root
+|   [2] outlook in sunny: no (n = 5, err = 40.0%)
+|   [3] outlook in overcast: yes (n = 4, err = 0.0%)
+|   [4] outlook in rainy: yes (n = 5, err = 40.0%)
+
+Number of inner nodes:    1
+Number of terminal nodes: 3
+
+> plot(t2, tnex = 1.5)
+
+> nd <- data.frame(outlook = factor(c("overcast", "sunny"), 
++     levels = levels(WeatherPlay$outlook)))
+
+> predict(t2, newdata = nd, type = "response")
+  1   2 
+yes  no 
+Levels: yes no
+
+> predict(t2, newdata = nd, type = "prob")
+  yes  no
+1 1.0 0.0
+2 0.4 0.6
+
+> predict(t2, newdata = nd, type = "node")
+1 2 
+3 2 
+
+ *** Run successfully completed ***
+> proc.time()
+   user  system elapsed 
+  0.627   0.037   0.659 

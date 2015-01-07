@@ -545,11 +545,11 @@ extractor, see Section~\ref{sec:fit}.)
 All tests also require an estimate of the
 corresponding variance-covariance matrix of the estimating functions. The default
 is to compute this using an outer-product-of-gradients (OPG) estimator. Alternatively,
-the corrsponding information matrix can be used if: (a)~the estimating functions
+the corrsponding information matrix or sandwich matrix can be used if: (a)~the estimating functions
 are actually maximum likelihood scores, and (b)~a \code{vcov()} method (based on
 an estimate of the information) is provided for the fitted model objects. The corresponding
-option in \code{mob_control()} is to set \code{vcov = "info"} rather than
-\code{vcov = "opg"} (the default).
+option in \code{mob_control()} is to set \code{vcov = "info"} or \code{vcov = "sandwich"}
+rather than \code{vcov = "opg"} (the default).
 
 For each of the $j = 1, \dots, \ell$ partitioning variables in \code{z} the test selected
 in the control options is employed and the corresponding $p$-value $p_j$ is computed.

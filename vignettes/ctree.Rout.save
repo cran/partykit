@@ -1,0 +1,495 @@
+
+> options(width = 70, SweaveHooks = list(leftpar = function() par(mai = par("mai") * 
++     c(1, 1.1, 1, 1))))
+
+> require("partykit")
+Loading required package: partykit
+Loading required package: grid
+
+> require("coin")
+Loading required package: coin
+Loading required package: survival
+Loading required package: splines
+
+> require("strucchange")
+Loading required package: strucchange
+Loading required package: zoo
+
+Attaching package: ‘zoo’
+
+The following objects are masked from ‘package:base’:
+
+    as.Date, as.Date.numeric
+
+Loading required package: sandwich
+
+> set.seed(290875)
+
+> tmpdir <- tempdir()
+
+> wd <- setwd(tmpdir)
+
+> download.file("http://cran.r-project.org/src/contrib/Archive/mvpart/mvpart_1.6-2.tar.gz", 
++     destfile = "mvpart_1.6-2.tar.gz", quiet = TRUE)
+
+> untar("mvpart_1.6-2.tar.gz", compressed = "gzip") 
+
+> s <- gzfile("mvpart/data/spider.tab.gz")
+
+> sx <- readLines(s)
+
+> close(s)
+
+> writeLines(sx, con = "tmp.csv")
+
+> spider <- read.csv("tmp.csv", sep = "\t")
+
+> setwd(wd)
+
+> ctree_control(teststat = "max")
+$teststat
+[1] "max"
+
+$testtype
+[1] "Bonferroni"
+
+$mincriterion
+[1] -0.05129329
+
+$minsplit
+[1] 20
+
+$minbucket
+[1] 7
+
+$minprob
+[1] 0.01
+
+$stump
+[1] FALSE
+
+$mtry
+[1] Inf
+
+$maxdepth
+[1] Inf
+
+$multiway
+[1] FALSE
+
+$splittry
+[1] 2
+
+$maxsurrogate
+[1] 0
+
+$majority
+[1] FALSE
+
+$applyfun
+function (X, FUN, ...) 
+{
+    FUN <- match.fun(FUN)
+    if (!is.vector(X) || is.object(X)) 
+        X <- as.list(X)
+    .Internal(lapply(X, FUN))
+}
+<bytecode: 0xedf930>
+<environment: namespace:base>
+
+
+> ctree_control(teststat = "quad")
+$teststat
+[1] "quad"
+
+$testtype
+[1] "Bonferroni"
+
+$mincriterion
+[1] -0.05129329
+
+$minsplit
+[1] 20
+
+$minbucket
+[1] 7
+
+$minprob
+[1] 0.01
+
+$stump
+[1] FALSE
+
+$mtry
+[1] Inf
+
+$maxdepth
+[1] Inf
+
+$multiway
+[1] FALSE
+
+$splittry
+[1] 2
+
+$maxsurrogate
+[1] 0
+
+$majority
+[1] FALSE
+
+$applyfun
+function (X, FUN, ...) 
+{
+    FUN <- match.fun(FUN)
+    if (!is.vector(X) || is.object(X)) 
+        X <- as.list(X)
+    .Internal(lapply(X, FUN))
+}
+<bytecode: 0xedf930>
+<environment: namespace:base>
+
+
+> ctree_control(testtype = "Bonferroni")
+$teststat
+[1] "quad"
+
+$testtype
+[1] "Bonferroni"
+
+$mincriterion
+[1] -0.05129329
+
+$minsplit
+[1] 20
+
+$minbucket
+[1] 7
+
+$minprob
+[1] 0.01
+
+$stump
+[1] FALSE
+
+$mtry
+[1] Inf
+
+$maxdepth
+[1] Inf
+
+$multiway
+[1] FALSE
+
+$splittry
+[1] 2
+
+$maxsurrogate
+[1] 0
+
+$majority
+[1] FALSE
+
+$applyfun
+function (X, FUN, ...) 
+{
+    FUN <- match.fun(FUN)
+    if (!is.vector(X) || is.object(X)) 
+        X <- as.list(X)
+    .Internal(lapply(X, FUN))
+}
+<bytecode: 0xedf930>
+<environment: namespace:base>
+
+
+> ctree_control(minsplit = 20)
+$teststat
+[1] "quad"
+
+$testtype
+[1] "Bonferroni"
+
+$mincriterion
+[1] -0.05129329
+
+$minsplit
+[1] 20
+
+$minbucket
+[1] 7
+
+$minprob
+[1] 0.01
+
+$stump
+[1] FALSE
+
+$mtry
+[1] Inf
+
+$maxdepth
+[1] Inf
+
+$multiway
+[1] FALSE
+
+$splittry
+[1] 2
+
+$maxsurrogate
+[1] 0
+
+$majority
+[1] FALSE
+
+$applyfun
+function (X, FUN, ...) 
+{
+    FUN <- match.fun(FUN)
+    if (!is.vector(X) || is.object(X)) 
+        X <- as.list(X)
+    .Internal(lapply(X, FUN))
+}
+<bytecode: 0xedf930>
+<environment: namespace:base>
+
+
+> ctree_control(maxsurrogate = 3)
+$teststat
+[1] "quad"
+
+$testtype
+[1] "Bonferroni"
+
+$mincriterion
+[1] -0.05129329
+
+$minsplit
+[1] 20
+
+$minbucket
+[1] 7
+
+$minprob
+[1] 0.01
+
+$stump
+[1] FALSE
+
+$mtry
+[1] Inf
+
+$maxdepth
+[1] Inf
+
+$multiway
+[1] FALSE
+
+$splittry
+[1] 2
+
+$maxsurrogate
+[1] 3
+
+$majority
+[1] FALSE
+
+$applyfun
+function (X, FUN, ...) 
+{
+    FUN <- match.fun(FUN)
+    if (!is.vector(X) || is.object(X)) 
+        X <- as.list(X)
+    .Internal(lapply(X, FUN))
+}
+<bytecode: 0xedf930>
+<environment: namespace:base>
+
+
+> ls <- data.frame(y = gl(3, 50, labels = c("A", "B", 
++     "C")), x1 = rnorm(150) + rep(c(1, 0, 0), c(50, 50, 50)), 
++     x2 = runif(150))
+
+> library("partykit")
+
+> ctree(y ~ x1 + x2, data = ls)
+
+Model formula:
+y ~ x1 + x2
+
+Fitted party:
+[1] root
+|   [2] x1 <= 0.82552: C (n = 96, err = 57.3%)
+|   [3] x1 > 0.82552: A (n = 54, err = 42.6%)
+
+Number of inner nodes:    1
+Number of terminal nodes: 2
+
+> ct <- ctree(y ~ x1 + x2, data = ls)
+
+> ct
+
+Model formula:
+y ~ x1 + x2
+
+Fitted party:
+[1] root
+|   [2] x1 <= 0.82552: C (n = 96, err = 57.3%)
+|   [3] x1 > 0.82552: A (n = 54, err = 42.6%)
+
+Number of inner nodes:    1
+Number of terminal nodes: 2
+
+> plot(ct)
+
+> ct[1]
+
+Model formula:
+y ~ x1 + x2
+
+Fitted party:
+[1] root
+|   [2] x1 <= 0.82552: C (n = 96, err = 57.3%)
+|   [3] x1 > 0.82552: A (n = 54, err = 42.6%)
+
+Number of inner nodes:    1
+Number of terminal nodes: 2
+
+> class(ct[1])
+[1] "constparty" "party"     
+
+> predict(ct, newdata = ls)
+  1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17 
+  A   A   A   A   C   A   C   A   C   C   A   A   C   A   A   A   A 
+ 18  19  20  21  22  23  24  25  26  27  28  29  30  31  32  33  34 
+  C   A   C   A   A   A   C   A   A   A   C   C   A   A   C   A   A 
+ 35  36  37  38  39  40  41  42  43  44  45  46  47  48  49  50  51 
+  C   A   A   C   C   C   A   A   C   C   C   C   A   A   A   A   A 
+ 52  53  54  55  56  57  58  59  60  61  62  63  64  65  66  67  68 
+  A   C   C   C   C   A   C   C   A   C   C   C   C   C   C   A   A 
+ 69  70  71  72  73  74  75  76  77  78  79  80  81  82  83  84  85 
+  A   A   A   C   C   A   C   A   C   C   C   C   C   C   C   C   C 
+ 86  87  88  89  90  91  92  93  94  95  96  97  98  99 100 101 102 
+  C   C   C   A   C   A   C   A   C   C   C   C   C   C   C   C   A 
+103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 
+  C   C   C   A   C   C   A   C   C   C   C   C   C   C   A   C   C 
+120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 
+  C   C   C   C   C   C   C   C   C   C   C   C   C   C   C   C   C 
+137 138 139 140 141 142 143 144 145 146 147 148 149 150 
+  C   A   C   C   C   C   A   C   C   A   C   A   C   A 
+Levels: A B C
+
+> predict(ct, newdata = ls[c(1, 51, 101), ], type = "prob")
+            A         B         C
+1   0.5740741 0.2592593 0.1666667
+51  0.5740741 0.2592593 0.1666667
+101 0.1979167 0.3750000 0.4270833
+
+> predict(ct, newdata = ls[c(1, 51, 101), ], type = "node")
+  1  51 101 
+  3   3   2 
+
+> library("strucchange")
+
+> sctest(ct)
+$`1`
+                    x1        x2
+statistic 2.299131e+01 4.0971294
+p.value   2.034833e-05 0.2412193
+
+$`2`
+                 x1        x2
+statistic 2.6647107 4.3628130
+p.value   0.4580906 0.2130228
+
+$`3`
+                 x1        x2
+statistic 2.1170497 2.8275567
+p.value   0.5735483 0.4272879
+
+
+> data("treepipit", package = "coin")
+
+> tptree <- ctree(counts ~ ., data = treepipit)
+
+> plot(tptree, terminal_panel = node_barplot)
+
+> p <- info_node(node_party(tptree))$p.value
+
+> n <- table(predict(tptree, type = "node"))
+
+> data("GlaucomaM", package = "TH.data")
+
+> gtree <- ctree(Class ~ ., data = GlaucomaM)
+
+> sp <- split_node(node_party(gtree))$varID
+
+> plot(gtree)
+
+> plot(gtree, inner_panel = node_barplot, edge_panel = function(...) invisible(), 
++     tnex = 1)
+
+> table(predict(gtree), GlaucomaM$Class)
+          
+           glaucoma normal
+  glaucoma       74      5
+  normal         24     93
+
+> prob <- predict(gtree, type = "prob")[, 1] + runif(nrow(GlaucomaM), 
++     min = -0.01, max = 0.01)
+
+> splitvar <- character_split(split_node(node_party(gtree)), 
++     data = data_party(gtree))$name
+
+> plot(GlaucomaM[[splitvar]], prob, pch = as.numeric(GlaucomaM$Class), 
++     ylab = "Conditional Class Prob.", xlab = splitvar)
+
+> abline(v = split_node(node_party(gtree))$breaks, lty = 2)
+
+> legend(0.15, 0.7, pch = 1:2, legend = levels(GlaucomaM$Class), 
++     bty = "n")
+
+> data("GBSG2", package = "TH.data")
+
+> library("survival")
+
+> stree <- ctree(Surv(time, cens) ~ ., data = GBSG2)
+
+> plot(stree)
+
+> pn <- predict(stree, newdata = GBSG2[1:2, ], type = "node")
+
+> n <- predict(stree, type = "node")
+
+> survfit(Surv(time, cens) ~ 1, data = GBSG2, subset = (n == 
++     pn[1]))
+Call: survfit(formula = Surv(time, cens) ~ 1, data = GBSG2, subset = (n == 
+    pn[1]))
+
+records   n.max n.start  events  median 0.95LCL 0.95UCL 
+    248     248     248      88    2093    1814      NA 
+
+> survfit(Surv(time, cens) ~ 1, data = GBSG2, subset = (n == 
++     pn[2]))
+Call: survfit(formula = Surv(time, cens) ~ 1, data = GBSG2, subset = (n == 
+    pn[2]))
+
+records   n.max n.start  events  median 0.95LCL 0.95UCL 
+    166     166     166      77    1701    1174    2018 
+
+> data("mammoexp", package = "TH.data")
+
+> mtree <- ctree(ME ~ ., data = mammoexp)
+
+> plot(mtree)
+
+> sptree <- ctree(arct.lute + pard.lugu + zora.spin + 
++     pard.nigr + pard.pull + aulo.albi + troc.terr + alop.cune + 
++     pard.mont + alop.acce  .... [TRUNCATED] 
+
+> plot(sptree)
+
+ *** Run successfully completed ***
+> proc.time()
+   user  system elapsed 
+  3.531   0.083   3.828 

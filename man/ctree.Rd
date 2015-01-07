@@ -101,8 +101,8 @@ ctree(formula, data, weights, subset, na.action = na.pass,
 }
 \references{ 
 
-   Helmut Strasser and Christian Weber (1999). On the asymptotic theory of permutation
-   statistics. \emph{Mathematical Methods of Statistics}, \bold{8}, 220--250.
+   Helmut Strasser and Christian Weber (1999). On the Asymptotic Theory of Permutation
+   Statistics. \emph{Mathematical Methods of Statistics}, \bold{8}, 220--250.
 
    Torsten Hothorn, Kurt Hornik, Mark A. van de Wiel and Achim Zeileis (2006).
    A Lego System for Conditional Inference. \emph{The American Statistician},

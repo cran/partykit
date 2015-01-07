@@ -112,7 +112,7 @@ model.frame.rpart <- function(formula, ...) {
 as.party.Weka_tree <- function(obj, ...) {
 
   ## needs RWeka and rJava
-  stopifnot(require("RWeka"))
+  stopifnot(requireNamespace("RWeka"))
 
   ## J48 tree? (can be transformed to "constparty")
   j48 <- inherits(obj, "J48")

@@ -127,7 +127,7 @@ set.seed(290875)
 tmpdir <- tempdir()
 wd <- setwd(tmpdir) 
 download.file("http://cran.r-project.org/src/contrib/Archive/mvpart/mvpart_1.6-2.tar.gz", 
-              destfile = "mvpart_1.6-2.tar.gz")
+              destfile = "mvpart_1.6-2.tar.gz", quiet = TRUE)
 untar("mvpart_1.6-2.tar.gz", compressed = "gzip")
 s <- gzfile("mvpart/data/spider.tab.gz")      
 sx <- readLines(s)

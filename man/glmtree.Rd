@@ -12,7 +12,7 @@
 }
 
 \usage{
-glmtree(formula, data, subset, na.action, weights, offset,
+glmtree(formula, data, subset, na.action, weights, offset, cluster,
   family = gaussian, epsilon = 1e-8, maxit = 25, \dots)
 }
 
@@ -28,6 +28,9 @@ glmtree(formula, data, subset, na.action, weights, offset,
   \item{offset}{optional numeric vector with an a priori known component to be
     included in the model \code{y ~ x1 + \dots + xk} (i.e., only when
     \code{x} variables are specified).}
+  \item{cluster}{optional vector (typically numeric or factor) with a
+    cluster ID to be employed for clustered covariances in the parameter
+    stability tests.}
   \item{family}{specification of a family for \code{\link[stats]{glm}}.}
   \item{epsilon, maxit}{control parameters passed to
     \code{\link[stats]{glm.control}}.}
@@ -53,7 +56,7 @@ while growing the tree. Also, it provides a more elaborate plotting function.
 }
 
 \references{ 
-  Achim Zeileis, Torsten Hothorn, and Kurt Hornik (2008). Model-Based
+  Achim Zeileis, Torsten Hothorn, Kurt Hornik (2008). Model-Based
   Recursive Partitioning. \emph{Journal of Computational and Graphical Statistics}, 
   \bold{17}(2), 492--514.
 }

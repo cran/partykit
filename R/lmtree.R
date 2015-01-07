@@ -1,5 +1,5 @@
 ## simple wrapper function to specify fitter and return class
-lmtree <- function(formula, data, subset, na.action, weights, offset, ...)
+lmtree <- function(formula, data, subset, na.action, weights, offset, cluster, ...)
 {
   ## TODO: variance as model parameter
 
@@ -46,7 +46,7 @@ lmtree <- function(formula, data, subset, na.action, weights, offset, ...)
 }
 
 ## actual fitting function for mob()
-lmfit <- function(y, x, start = NULL, weights = NULL, offset = NULL, ...,
+lmfit <- function(y, x, start = NULL, weights = NULL, offset = NULL, cluster = NULL, ...,
   estfun = FALSE, object = FALSE)
 {
   ## call lm fitting function

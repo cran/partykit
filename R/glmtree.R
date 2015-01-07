@@ -1,5 +1,5 @@
 ## simple wrapper function to specify fitter and return class
-glmtree <- function(formula, data, subset, na.action, weights, offset,
+glmtree <- function(formula, data, subset, na.action, weights, offset, cluster,
   family = gaussian, epsilon = 1e-8, maxit = 25, ...)
 {
   ## use dots for setting up mob_control
@@ -36,7 +36,7 @@ glmtree <- function(formula, data, subset, na.action, weights, offset,
 }
 
 ## actual fitting function for mob()
-glmfit <- function(y, x, start = NULL, weights = NULL, offset = NULL, ...,
+glmfit <- function(y, x, start = NULL, weights = NULL, offset = NULL, cluster = NULL, ...,
   estfun = FALSE, object = FALSE)
 {
   ## catch control arguments

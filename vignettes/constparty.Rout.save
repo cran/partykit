@@ -1,0 +1,361 @@
+
+> options(width = 70)
+
+> library("partykit")
+Loading required package: grid
+
+> set.seed(290875)
+
+> data("Titanic", package = "datasets")
+
+> ttnc <- as.data.frame(Titanic)
+
+> ttnc <- ttnc[rep(1:nrow(ttnc), ttnc$Freq), 1:4]
+
+> names(ttnc)[2] <- "Gender"
+
+> library("rpart")
+
+> (rp <- rpart(Survived ~ ., data = ttnc))
+n= 2201 
+
+node), split, n, loss, yval, (yprob)
+      * denotes terminal node
+
+ 1) root 2201 711 No (0.6769650 0.3230350)  
+   2) Gender=Male 1731 367 No (0.7879838 0.2120162)  
+     4) Age=Adult 1667 338 No (0.7972406 0.2027594) *
+     5) Age=Child 64  29 No (0.5468750 0.4531250)  
+      10) Class=3rd 48  13 No (0.7291667 0.2708333) *
+      11) Class=1st,2nd 16   0 Yes (0.0000000 1.0000000) *
+   3) Gender=Female 470 126 Yes (0.2680851 0.7319149)  
+     6) Class=3rd 196  90 No (0.5408163 0.4591837) *
+     7) Class=1st,2nd,Crew 274  20 Yes (0.0729927 0.9270073) *
+
+> (party_rp <- as.party(rp))
+
+Model formula:
+Survived ~ Class + Gender + Age
+
+Fitted party:
+[1] root
+|   [2] Gender in Male
+|   |   [3] Age in Adult: No (n = 1667, err = 20.3%)
+|   |   [4] Age in Child
+|   |   |   [5] Class in 3rd: No (n = 48, err = 27.1%)
+|   |   |   [6] Class in 1st, 2nd: Yes (n = 16, err = 0.0%)
+|   [7] Gender in Female
+|   |   [8] Class in 3rd: No (n = 196, err = 45.9%)
+|   |   [9] Class in 1st, 2nd, Crew: Yes (n = 274, err = 7.3%)
+
+Number of inner nodes:    4
+Number of terminal nodes: 5
+
+> plot(rp)
+
+> text(rp)
+
+> plot(party_rp)
+
+> all.equal(predict(rp), predict(party_rp, type = "prob"), 
++     check.attributes = FALSE)
+[1] TRUE
+
+> str(fitted(party_rp))
+'data.frame':	2201 obs. of  2 variables:
+ $ (fitted)  : int  5 5 5 5 5 5 5 5 5 5 ...
+ $ (response): Factor w/ 2 levels "No","Yes": 1 1 1 1 1 1 1 1 1 1 ...
+
+> prop.table(do.call("table", fitted(party_rp)), 1)
+        (response)
+(fitted)        No       Yes
+       3 0.7972406 0.2027594
+       5 0.7291667 0.2708333
+       6 0.0000000 1.0000000
+       8 0.5408163 0.4591837
+       9 0.0729927 0.9270073
+
+> library("RWeka")
+
+> (j48 <- J48(Survived ~ ., data = ttnc))
+J48 pruned tree
+------------------
+
+Gender = Male
+|   Class = 1st
+|   |   Age = Child: Yes (5.0)
+|   |   Age = Adult: No (175.0/57.0)
+|   Class = 2nd
+|   |   Age = Child: Yes (11.0)
+|   |   Age = Adult: No (168.0/14.0)
+|   Class = 3rd: No (510.0/88.0)
+|   Class = Crew: No (862.0/192.0)
+Gender = Female
+|   Class = 1st: Yes (145.0/4.0)
+|   Class = 2nd: Yes (106.0/13.0)
+|   Class = 3rd: No (196.0/90.0)
+|   Class = Crew: Yes (23.0/3.0)
+
+Number of Leaves  : 	10
+
+Size of the tree : 	15
+
+
+> (party_j48 <- as.party(j48))
+
+Model formula:
+Survived ~ Class + Gender + Age
+
+Fitted party:
+[1] root
+|   [2] Gender in Male
+|   |   [3] Class in 1st
+|   |   |   [4] Age in Child: Yes (n = 5, err = 0.0%)
+|   |   |   [5] Age in Adult: No (n = 175, err = 32.6%)
+|   |   [6] Class in 2nd
+|   |   |   [7] Age in Child: Yes (n = 11, err = 0.0%)
+|   |   |   [8] Age in Adult: No (n = 168, err = 8.3%)
+|   |   [9] Class in 3rd: No (n = 510, err = 17.3%)
+|   |   [10] Class in Crew: No (n = 862, err = 22.3%)
+|   [11] Gender in Female
+|   |   [12] Class in 1st: Yes (n = 145, err = 2.8%)
+|   |   [13] Class in 2nd: Yes (n = 106, err = 12.3%)
+|   |   [14] Class in 3rd: No (n = 196, err = 45.9%)
+|   |   [15] Class in Crew: Yes (n = 23, err = 13.0%)
+
+Number of inner nodes:     5
+Number of terminal nodes: 10
+
+> plot(party_j48)
+
+> all.equal(predict(j48, type = "prob"), predict(party_j48, 
++     type = "prob"), check.attributes = FALSE)
+[1] TRUE
+
+> ttnc_pmml <- file.path(system.file("pmml", package = "partykit"), 
++     "ttnc.pmml")
+
+> (ttnc_quest <- pmmlTreeModel(ttnc_pmml))
+Loading required namespace: XML
+
+Model formula:
+Survived ~ Gender + Class + Age
+
+Fitted party:
+[1] root
+|   [2] Gender in Female
+|   |   [3] Class in 3rd, Crew: Yes (n = 219, err = 49.8%)
+|   |   [4] Class in 1st, 2nd
+|   |   |   [5] Class in 2nd: Yes (n = 106, err = 12.3%)
+|   |   |   [6] Class in 1st: Yes (n = 145, err = 2.8%)
+|   [7] Gender in Male
+|   |   [8] Class in 3rd, 2nd, Crew
+|   |   |   [9] Age in Child: No (n = 59, err = 40.7%)
+|   |   |   [10] Age in Adult
+|   |   |   |   [11] Class in 3rd, Crew
+|   |   |   |   |   [12] Class in Crew: No (n = 862, err = 22.3%)
+|   |   |   |   |   [13] Class in 3rd: No (n = 462, err = 16.2%)
+|   |   |   |   [14] Class in 2nd: No (n = 168, err = 8.3%)
+|   |   [15] Class in 1st: No (n = 180, err = 34.4%)
+
+Number of inner nodes:    7
+Number of terminal nodes: 8
+
+> plot(ttnc_quest)
+
+> ttnc2 <- ttnc[, names(ttnc_quest$data)]
+
+> for (n in names(ttnc2)) {
++     if (is.factor(ttnc2[[n]])) 
++         ttnc2[[n]] <- factor(ttnc2[[n]], levels = levels(ttnc_quest$data[[n]]))
++ }
+
+> ttnc_quest2 <- party(ttnc_quest$node, data = ttnc2, 
++     fitted = data.frame(`(fitted)` = predict(ttnc_quest, ttnc2, 
++         type = "node"), `( .... [TRUNCATED] 
+
+> ttnc_quest2 <- as.constparty(ttnc_quest2)
+
+> plot(ttnc_quest2)
+
+> library("pmml")
+Loading required package: XML
+
+> tfile <- tempfile()
+
+> write(toString(pmml(rp)), file = tfile)
+
+> (party_pmml <- pmmlTreeModel(tfile))
+
+Model formula:
+Survived ~ Class + Gender + Age
+
+Fitted party:
+[1] root
+|   [2] Gender in Male
+|   |   [3] Age in Adult: No (n = 1667, err = 20.3%)
+|   |   [4] Age in Child
+|   |   |   [5] Class in 3rd: No (n = 48, err = 27.1%)
+|   |   |   [6] Class in 1st, 2nd: Yes (n = 16, err = 0.0%)
+|   [7] Gender in Female
+|   |   [8] Class in 3rd: No (n = 196, err = 45.9%)
+|   |   [9] Class in 1st, 2nd, Crew: Yes (n = 274, err = 7.3%)
+
+Number of inner nodes:    4
+Number of terminal nodes: 5
+
+> all.equal(predict(party_rp, newdata = ttnc, type = "prob"), 
++     predict(party_pmml, newdata = ttnc, type = "prob"), check.attributes = FALSE)
+[1] TRUE
+
+> findsplit <- function(response, data, weights, alpha = 0.01) {
++     y <- factor(rep(data[[response]], weights))
++     mychisqtest <- function(x) {
+ .... [TRUNCATED] 
+
+> growtree <- function(id = 1, response, data, weights, 
++     minbucket = 30) {
++     if (sum(weights) < minbucket) 
++         return(partynode(id =  .... [TRUNCATED] 
+
+> mytree <- function(formula, data, weights = NULL) {
++     response <- all.vars(formula)[1]
++     data <- data[complete.cases(data), c(all.vars(formu .... [TRUNCATED] 
+
+> (myttnc <- mytree(Survived ~ Class + Age + Gender, 
++     data = ttnc))
+
+Model formula:
+Survived ~ Class + Age + Gender
+
+Fitted party:
+[1] root
+|   [2] Gender in Male
+|   |   [3] Class in 1st
+|   |   |   [4] Age in Child: Yes (n = 5, err = 0.0%)
+|   |   |   [5] Age in Adult: No (n = 175, err = 32.6%)
+|   |   [6] Class in 2nd, 3rd, Crew
+|   |   |   [7] Age in Child
+|   |   |   |   [8] Class in 2nd: Yes (n = 11, err = 0.0%)
+|   |   |   |   [9] Class in 3rd: No (n = 48, err = 27.1%)
+|   |   |   [10] Age in Adult
+|   |   |   |   [11] Class in Crew: No (n = 862, err = 22.3%)
+|   |   |   |   [12] Class in 2nd, 3rd: No (n = 630, err = 14.1%)
+|   [13] Gender in Female
+|   |   [14] Class in 3rd: No (n = 196, err = 45.9%)
+|   |   [15] Class in 1st, 2nd, Crew: Yes (n = 274, err = 7.3%)
+
+Number of inner nodes:    7
+Number of terminal nodes: 8
+
+> plot(myttnc)
+
+> nid <- nodeids(myttnc)
+
+> iid <- nid[!(nid %in% nodeids(myttnc, terminal = TRUE))]
+
+> (pval <- unlist(nodeapply(myttnc, ids = iid, FUN = function(n) info_node(n)$p.value)))
+           1            2            3            6            7 
+0.000000e+00 2.965383e-06 1.756527e-03 6.933623e-05 8.975754e-06 
+          10           13 
+2.992870e-05 0.000000e+00 
+
+> myttnc2 <- nodeprune(myttnc, ids = iid[pval > 1e-05])
+
+> plot(myttnc2)
+
+> logLik(glm(Survived ~ Class + Age + Gender, data = ttnc, 
++     family = binomial()))
+'log Lik.' -1105.031 (df=6)
+
+> bs <- rmultinom(25, nrow(ttnc), rep(1, nrow(ttnc))/nrow(ttnc))
+
+> bloglik <- function(prob, weights) sum(weights * dbinom(ttnc$Survived == 
++     "Yes", size = 1, prob[, "Yes"], log = TRUE))
+
+> f <- function(w) {
++     tr <- mytree(Survived ~ Class + Age + Gender, data = ttnc, 
++         weights = w)
++     bloglik(predict(tr, newdata = ttnc .... [TRUNCATED] 
+
+> apply(bs, 2, f)
+ [1] -390.2268 -410.8696 -377.7492 -416.7790 -396.5327 -383.9575
+ [7] -389.4972 -405.8401 -379.9248 -384.7071 -381.1303 -394.8712
+[13] -409.8711 -385.3753 -396.2723 -385.6372 -408.9187 -412.4585
+[19] -401.3972 -403.0548 -406.7881 -389.8507 -408.0418 -392.1441
+[25] -389.4687
+
+> nttnc <- expand.grid(Class = levels(ttnc$Class), Gender = levels(ttnc$Gender), 
++     Age = levels(ttnc$Age))
+
+> nttnc
+   Class Gender   Age
+1    1st   Male Child
+2    2nd   Male Child
+3    3rd   Male Child
+4   Crew   Male Child
+5    1st Female Child
+6    2nd Female Child
+7    3rd Female Child
+8   Crew Female Child
+9    1st   Male Adult
+10   2nd   Male Adult
+11   3rd   Male Adult
+12  Crew   Male Adult
+13   1st Female Adult
+14   2nd Female Adult
+15   3rd Female Adult
+16  Crew Female Adult
+
+> predict(myttnc, newdata = nttnc, type = "node")
+ 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 
+ 4  8  9  9 15 15 14 15  5 12 12 11 15 15 14 15 
+
+> predict(myttnc, newdata = nttnc, type = "response")
+  1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16 
+Yes Yes  No Yes Yes Yes  No Yes  No  No  No  No Yes Yes  No Yes 
+Levels: No Yes
+
+> predict(myttnc, newdata = nttnc, type = "prob")
+          No       Yes
+1  0.0000000 1.0000000
+2  0.0000000 1.0000000
+3  0.7291667 0.2708333
+4  0.0000000 1.0000000
+5  0.0729927 0.9270073
+6  0.0729927 0.9270073
+7  0.5408163 0.4591837
+8  0.0729927 0.9270073
+9  0.6742857 0.3257143
+10 0.8587302 0.1412698
+11 0.8587302 0.1412698
+12 0.7772622 0.2227378
+13 0.0729927 0.9270073
+14 0.0729927 0.9270073
+15 0.5408163 0.4591837
+16 0.0729927 0.9270073
+
+> predict(myttnc, newdata = nttnc, FUN = function(y, 
++     w) rank(table(rep(y, w))))
+   No Yes
+1   1   2
+2   1   2
+3   2   1
+4   1   2
+5   1   2
+6   1   2
+7   2   1
+8   1   2
+9   2   1
+10  2   1
+11  2   1
+12  2   1
+13  1   2
+14  1   2
+15  2   1
+16  1   2
+
+ *** Run successfully completed ***
+> proc.time()
+   user  system elapsed 
+  4.800   0.073   4.760 

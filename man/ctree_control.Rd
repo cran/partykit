@@ -11,7 +11,8 @@ ctree_control(teststat = c("quad", "max"),
     testtype = c("Bonferroni", "Univariate", "Teststatistic"),
     mincriterion = 0.95, minsplit = 20L, minbucket = 7L, 
     minprob = 0.01, stump = FALSE, maxsurrogate = 0L, mtry = Inf, 
-    maxdepth = Inf, multiway = FALSE, splittry = 2L, majority = FALSE)
+    maxdepth = Inf, multiway = FALSE, splittry = 2L, majority = FALSE,
+    applyfun = NULL, cores = NULL)
 }
 \arguments{
   \item{teststat}{ a character specifying the type of the test statistic
@@ -42,6 +43,13 @@ ctree_control(teststat = c("quad", "max"),
                    daughter node because of missing information are randomly
                    assigned (following the node distribution). If \code{FALSE},
                    they go with the majority (the default in \code{\link[party]{ctree}}).}
+  \item{applyfun}{an optional \code{\link[base]{lapply}}-style function with arguments
+                  \code{function(X, FUN, \dots)}. It is used for computing the variable selection criterion. 
+                  The default is to use the basic \code{lapply}
+                  function unless the \code{cores} argument is specified (see below).}
+  \item{cores}{numeric. If set to an integer the \code{applyfun} is set to
+               \code{\link[parallel]{mclapply}} with the desired number of \code{cores}.}
+
 }
 \details{
 

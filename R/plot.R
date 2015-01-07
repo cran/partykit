@@ -189,7 +189,7 @@ edge_simple <- function(obj, digits = 3, abbreviate = FALSE,
 
   ### panel function for simple edge labelling
   function(node, i) {
-    split <- character_split(split_node(node), meta)$levels
+    split <- character_split(split_node(node), meta, digits = digits)$levels
     y <- justfun(i, split)
     split <- split[i]
     # try() because the following won't work for split = "< 10 Euro", for example.

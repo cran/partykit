@@ -1,19 +1,23 @@
-mob <- function(formula, data, subset, na.action, weights, offset,
+mob <- function(formula, data, subset, na.action, weights, offset, cluster,
   fit, control = mob_control(), ...)
 {
   ## check fitting function
   fitargs <- names(formals(fit))
   if(!all(c("y", "x", "start", "weights", "offset") %in% fitargs)) {
-    stop("No fitting function")
+    stop("no suitable fitting function specified")
   }
 
   ## augment fitting function (if necessary)
   if(!all(c("estfun", "object") %in% fitargs)) {
     afit <- function(y,
-      x = NULL, start = NULL, weights = NULL, offset = NULL, ...,
+      x = NULL, start = NULL, weights = NULL, offset = NULL, cluster = NULL, ...,
       estfun = FALSE, object = FALSE)
     {
-      obj <- fit(y = y, x = x, start = start, weights = weights, offset = offset, ...)
+      obj <- if("cluster" %in% fitargs) {
+        fit(y = y, x = x, start = start, weights = weights, offset = offset, cluster = cluster, ...)
+      } else {
+        fit(y = y, x = x, start = start, weights = weights, offset = offset, ...)
+      }
       list(
         coefficients = coef(obj),
         objfun = -as.numeric(logLik(obj)),
@@ -22,14 +26,20 @@ mob <- function(formula, data, subset, na.action, weights, offset,
       )
     }
   } else {
-    afit <- fit
+    if("cluster" %in% fitargs) {
+      afit <- fit
+    } else {
+      afit <- function(y, x = NULL, start = NULL, weights = NULL, offset = NULL, cluster = NULL, ..., estfun = FALSE, object = FALSE) {
+        fit(y = y, x = x, start = start, weights = weights, offset = offset, ..., estfun = estfun, object = object)
+      }
+    }
   }
 
   ## call
   cl <- match.call()
   if(missing(data)) data <- environment(formula)
   mf <- match.call(expand.dots = FALSE)
-  m <- match(c("formula", "data", "subset", "na.action", "weights", "offset"), names(mf), 0L)
+  m <- match(c("formula", "data", "subset", "na.action", "weights", "offset", "cluster"), names(mf), 0L)
   mf <- mf[c(1L, m)]
   mf$drop.unused.levels <- TRUE
 
@@ -75,7 +85,8 @@ mob <- function(formula, data, subset, na.action, weights, offset,
   }
   Z <- Formula::model.part(formula, mf, rhs = 2L)
   n <- nrow(Z)
-  nyx <- length(mf) - length(Z) - as.numeric("(weights)" %in% names(mf)) - as.numeric("(offset)" %in% names(mf))
+  nyx <- length(mf) - length(Z) - as.numeric("(weights)" %in% names(mf)) - as.numeric("(offset)" %in% names(mf)) - as.numeric("(cluster)" %in% names(mf))
+  varindex <- match(names(Z), names(mf))
 
   ## weights and offset
   weights <- model.weights(mf)
@@ -83,6 +94,7 @@ mob <- function(formula, data, subset, na.action, weights, offset,
   if(length(weights) == 1L) weights <- rep.int(weights, n)
   weights <- as.vector(weights)
   offset <- if(xreg) model.offset(mf) else NULL
+  cluster <- mf[["(cluster)"]]
 
   ## process pruning options (done here because of "n")
   if(!is.null(control$prune)) {
@@ -105,8 +117,8 @@ mob <- function(formula, data, subset, na.action, weights, offset,
   }
 
   ## grow the actual tree
-  nodes <- mob_partynode(Y = Y, X = X, Z = Z, weights = weights, offset = offset,
-    fit = afit, control = control, nyx = nyx, ...)
+  nodes <- mob_partynode(Y = Y, X = X, Z = Z, weights = weights, offset = offset, cluster = cluster,
+    fit = afit, control = control, varindex = varindex, ...)
 
   ## compute terminal node number for each observation
   fitted <- fitted_node(nodes, data = mf)
@@ -117,6 +129,7 @@ mob <- function(formula, data, subset, na.action, weights, offset,
       row.names = rownames(mf))
   if(!identical(weights, rep.int(1L, n))) fitted[["(weights)"]] <- weights
   if(!is.null(offset)) fitted[["(offset)"]] <- offset
+  if(!is.null(cluster)) fitted[["(cluster)"]] <- cluster
 
   ## return party object
   rval <- party(nodes, 
@@ -138,8 +151,8 @@ mob <- function(formula, data, subset, na.action, weights, offset,
 }
 
 ## set up partynode object
-mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL,
-  fit, control = mob_control(), nyx = 0L, ...)
+mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL, cluster = NULL,
+  fit, control = mob_control(), varindex = 1L:NCOL(Z), ...)
 {
   ## are there regressors?
   if(missing(X)) X <- NULL
@@ -190,7 +203,7 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL,
 
   ## variable selection: given model scores, conduct
   ## all M-fluctuation tests for orderins in z
-  mob_grow_fluctests <- function(estfun, z, weights, obj = NULL)
+  mob_grow_fluctests <- function(estfun, z, weights, obj = NULL, cluster = NULL)
   {  
     ## set up return values
     m <- NCOL(z)
@@ -211,12 +224,25 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL,
 
     ## scale process
     process <- process/sqrt(n)
-    J12 <- if(control$vcov == "opg" | is.null(obj)) {
-      root.matrix(crossprod(process))
-    } else {
-      root.matrix(solve(vcov(obj) * n))
+    vcov <- control$vcov
+    if(is.null(obj)) vcov <- "opg"
+    if(vcov != "opg") {
+      bread <- vcov(obj) * n
     }
-    process <- t(chol2inv(chol(J12)) %*% t(process))  
+    if(vcov != "info") {
+      meat <- if(is.null(cluster)) {
+        crossprod(process)
+      } else {
+        ## nclus <- length(unique(cluster)) ## nclus / (nclus - 1L) * 
+        crossprod(as.matrix(aggregate(process, by = list(cluster), FUN = sum)[, -1L, drop = FALSE]))
+      }
+    }
+    J12 <- root.matrix(switch(vcov,
+      "opg" = chol2inv(chol(meat)),
+      "info" = bread,
+      "sandwich" = bread %*% meat %*% bread
+    ))
+    process <- t(J12 %*% t(process))  
 
     ## select parameters to test
     if(!is.null(control$parm)) process <- process[, control$parm, drop = FALSE]
@@ -337,7 +363,7 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL,
   }
 
   ### split in variable zselect, either ordered (numeric or ordinal) or nominal
-  mob_grow_findsplit <- function(y, x, zselect, weights, offset, ...)
+  mob_grow_findsplit <- function(y, x, zselect, weights, offset, cluster, ...)
   {
     ## process minsize (to minimal number of observations)
     if(minsize > 0.5 & minsize < 1) minsize <- 1 - minsize
@@ -347,30 +373,50 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL,
     ## for numerical variables
       uz <- sort(unique(zselect))
       if (length(uz) == 0L) stop("Cannot find admissible split point in partitioning variable")
-      dev <- vector(mode = "numeric", length = length(uz))
-
-      start_left <- NULL
-      start_right <- NULL
-
-      for(i in 1L:length(uz)) {
-        zs <- zselect <= uz[i]
-	if(control$restart ||
-	   !identical(names(start_left), names(start_right)) ||
-	   !identical(length(start_left), length(start_right)))
-	{
-	  start_left <- NULL
-	  start_right <- NULL
+      
+      ## if starting values are not reused then the applyfun() is used for determining the split
+      if(control$restart) {
+        get_dev <- function(i) {
+          zs <- zselect <= uz[i]
+          if(w2n(weights[zs]) < minsize || w2n(weights[!zs]) < minsize) {
+            return(Inf)
+          } else {
+            fit_left <- fit(y = suby(y, zs), x = subx(x, zs), start = NULL,
+	      weights = weights[zs], offset = offset[zs], cluster = cluster[zs], ...)
+            fit_right <- fit(y = suby(y, !zs), x = subx(x, !zs), start = NULL,
+	      weights = weights[!zs], offset = offset[!zs], cluster = cluster[!zs], ...)
+	    return(fit_left$objfun + fit_right$objfun)
+          }
 	}
-        if(w2n(weights[zs]) < minsize || w2n(weights[!zs]) < minsize) {
-          dev[i] <- Inf
-        } else {
-          fit_left <- fit(y = suby(y, zs), x = subx(x, zs), start = start_left,
-	    weights = weights[zs], offset = offset[zs], ...)
-          fit_right <- fit(y = suby(y, !zs), x = subx(x, !zs), start = start_right,
-	    weights = weights[!zs], offset = offset[!zs], ...)
-  	  start_left <- fit_left$coefficients
-	  start_right <- fit_right$coefficients
-	  dev[i] <- fit_left$objfun + fit_right$objfun
+        dev <- unlist(control$applyfun(1L:length(uz), get_dev))
+      } else {
+      ## alternatively use for() loop to go through all splits sequentially
+      ## and reuse previous parameters as starting values
+        dev <- vector(mode = "numeric", length = length(uz))
+
+        start_left <- NULL
+        start_right <- NULL
+
+        for(i in 1L:length(uz)) {
+          zs <- zselect <= uz[i]
+  	  if(control$restart ||
+	     !identical(names(start_left), names(start_right)) ||
+	     !identical(length(start_left), length(start_right)))
+	  {
+	    start_left <- NULL
+	    start_right <- NULL
+ 	  }
+          if(w2n(weights[zs]) < minsize || w2n(weights[!zs]) < minsize) {
+            dev[i] <- Inf
+          } else {
+            fit_left <- fit(y = suby(y, zs), x = subx(x, zs), start = start_left,
+	      weights = weights[zs], offset = offset[zs], cluster = cluster[zs], ...)
+            fit_right <- fit(y = suby(y, !zs), x = subx(x, !zs), start = start_right,
+	      weights = weights[!zs], offset = offset[!zs], cluster = cluster[!zs], ...)
+  	    start_left <- fit_left$coefficients
+	    start_right <- fit_right$coefficients
+	    dev[i] <- fit_left$objfun + fit_right$objfun
+          }
         }
       }
 
@@ -401,20 +447,23 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL,
       olevels <- levels(zselect) ## full set of original levels
       zselect <- factor(zselect) ## omit levels that do not occur in the data
       al <- mob_grow_getlevels(zselect)
-      dev <- apply(al, 1L, function(w) {
+
+      get_dev <- function(i) {
+        w <- al[i,]
         zs <- zselect %in% levels(zselect)[w]
         if(w2n(weights[zs]) < minsize || w2n(weights[!zs]) < minsize) {
           return(Inf)
         } else {
 	  if(nrow(al) == 1L) 1 else {
             fit_left <- fit(y = suby(y, zs), x = subx(x, zs), start = NULL,
-	      weights = weights[zs], offset = offset[zs], ...)
+	      weights = weights[zs], offset = offset[zs], cluster = cluster[zs], ...)
             fit_right <- fit(y = suby(y, !zs), x = subx(x, !zs), start = NULL,
-	      weights = weights[!zs], offset = offset[!zs], ...)
+	      weights = weights[!zs], offset = offset[!zs], cluster = cluster[zs], ...)
     	    fit_left$objfun + fit_right$objfun
 	  }
         }
-      })
+      }
+      dev <- unlist(control$applyfun(1L:nrow(al), get_dev))
 
       if(all(!is.finite(dev))) {
         split <- list(
@@ -446,7 +495,7 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL,
 
   ## grow tree by combining fluctuation tests for variable selection
   ## and split selection recursively
-  mob_grow <- function(id = 1L, y, x, z, weights, offset, ...)
+  mob_grow <- function(id = 1L, y, x, z, weights, offset, cluster, ...)
   {
     if(verbose) {
       if(id == 1L) cat("\n")
@@ -456,7 +505,7 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL,
     }
 
     ## fit model
-    mod <- fit(y, x, weights = weights, offset = offset, ...,
+    mod <- fit(y, x, weights = weights, offset = offset, cluster = cluster, ...,
       estfun = TRUE, object = terminal$object | control$vcov == "info")
     mod$test <- NULL
     mod$nobs <- w2n(weights)
@@ -480,7 +529,7 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL,
     }
 
     ## conduct all parameter instability tests
-    test <- if(is.null(mod$estfun)) NULL else try(mob_grow_fluctests(mod$estfun, z, weights, mod$object))
+    test <- if(is.null(mod$estfun)) NULL else try(mob_grow_fluctests(mod$estfun, z, weights, mod$object, cluster))
 
     if(!is.null(test) && !inherits(test, "try-error")) {
       if(control$bonferroni) {
@@ -512,7 +561,7 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL,
       return(partynode(id = id, info = mod))
     } else {
       zselect <- z[[best]]
-      sp <- mob_grow_findsplit(y, x, zselect, weights, offset, ...)
+      sp <- mob_grow_findsplit(y, x, zselect, weights, offset, cluster, ...)
     
       ## split successful?
       if(is.null(sp$breaks) & is.null(sp$index)) {
@@ -544,12 +593,12 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL,
 
       ## start recursion on this daugther node
       kids[[kidid]] <- mob_grow(id = myid + 1L,
-        suby(y, nxt), subx(x, nxt), subz(z, nxt), weights[nxt], offset[nxt], ...)
+        suby(y, nxt), subx(x, nxt), subz(z, nxt), weights[nxt], offset[nxt], cluster[nxt], ...)
     }
     depth <<- depth - 1L
 
     ## shift split varid from z to mf
-    sp$varid <- as.integer(sp$varid + nyx)
+    sp$varid <- as.integer(varindex[sp$varid])
     
     ## return nodes
     return(partynode(id = id, split = sp, kids = kids, info = mod))
@@ -610,7 +659,7 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL,
 
   ## grow tree
   depth <- 1L
-  nodes <- mob_grow(id = 1L, Y, X, Z, weights, offset, ...)
+  nodes <- mob_grow(id = 1L, Y, X, Z, weights, offset, cluster, ...)
 
   ## prune tree
   if(verbose && !is.null(control$prune)) cat("-- Post-pruning ---------------------------\n")
@@ -661,35 +710,50 @@ mob_control <- function(alpha = 0.05, bonferroni = TRUE, minsize = NULL, maxdept
   verbose = FALSE, caseweights = TRUE, ytype = "vector", xtype = "matrix",
   terminal = "object", inner = terminal, model = TRUE,
   numsplit = "left", catsplit = "binary", vcov = "opg", ordinal = "chisq", nrep = 10000,
-  minsplit = minsize, minbucket = minsize)
+  minsplit = minsize, minbucket = minsize,
+  applyfun = NULL, cores = NULL)
 {
   ## transform defaults
   if(missing(minsize) & !missing(minsplit))  minsize <- minsplit
   if(missing(minsize) & !missing(minbucket)) minsize <- minbucket
   
+  ## no mtry if infinite or non-positive
   if(is.finite(mtry)) {
     mtry <- if(mtry < 1L) Inf else as.integer(mtry)
   }
   
+  ## data types for formula processing
   ytype <- match.arg(ytype, c("vector", "data.frame", "matrix"))
   xtype <- match.arg(xtype, c("data.frame", "matrix"))
 
+  ## what to store in inner/terminal nodes
   if(!is.null(terminal)) terminal <- as.vector(sapply(terminal, match.arg, c("estfun", "object")))
   if(!is.null(inner))    inner    <- as.vector(sapply(inner,    match.arg, c("estfun", "object")))
 
+  ## how to split and how to select splitting variables
   numsplit <- match.arg(tolower(numsplit), c("left", "center", "centre"))
   if(numsplit == "centre") numsplit <- "center"
   catsplit <- match.arg(tolower(catsplit), c("binary", "multiway"))
-  vcov <- match.arg(tolower(vcov), c("opg", "info"))
+  vcov <- match.arg(tolower(vcov), c("opg", "info", "sandwich"))
   ordinal <- match.arg(tolower(ordinal), c("l2", "max", "chisq"))
 
+  ## apply infrastructure for determining split points
+  if(is.null(applyfun)) {
+    applyfun <- if(is.null(cores)) {
+      lapply
+    } else {
+      function(X, FUN, ...) parallel::mclapply(X, FUN, ..., mc.cores = cores)
+    }
+  }
+
+  ## return list with all options
   rval <- list(alpha = alpha, bonferroni = bonferroni, minsize = minsize, maxdepth = maxdepth,
     mtry = mtry, trim = ifelse(is.null(trim), minsize, trim),
     breakties = breakties, parm = parm, dfsplit = dfsplit, prune = prune, restart = restart,
     verbose = verbose, caseweights = caseweights, ytype = ytype, xtype = xtype,
     terminal = terminal, inner = inner, model = model,
     numsplit = numsplit, catsplit = catsplit, vcov = vcov,
-    ordinal = ordinal, nrep = nrep)
+    ordinal = ordinal, nrep = nrep, applyfun = applyfun)
   return(rval)
 }
 
@@ -744,6 +808,7 @@ refit.modelparty <- function(object, node = NULL, drop = TRUE, ...)
   mf <- model.frame(object)
   weights <- weights(object)
   offset <- model.offset(mf)
+  cluster <- mf[["(cluster)"]]
   
   ## fitted ids
   fitted <- object$fitted[["(fitted)"]]
@@ -786,7 +851,7 @@ refit.modelparty <- function(object, node = NULL, drop = TRUE, ...)
   rval <- lapply(seq_along(node), function(i) {
     ix <- fitted %in% nodeids(object, from = node[i], terminal = TRUE)
     args <- list(y = suby(Y, ix), x = subx(X, ix), start = cf[[i]],
-      weights = weights[ix], offset = offset[ix], object = TRUE)
+      weights = weights[ix], offset = offset[ix], cluster = cluster[ix], object = TRUE)
     args <- c(args, object$info$dots)
     do.call("afit", args)$object
   })
