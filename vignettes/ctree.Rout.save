@@ -32,7 +32,7 @@ Loading required package: sandwich
 > download.file("http://cran.r-project.org/src/contrib/Archive/mvpart/mvpart_1.6-2.tar.gz", 
 +     destfile = "mvpart_1.6-2.tar.gz", quiet = TRUE)
 
-> untar("mvpart_1.6-2.tar.gz", compressed = "gzip") 
+> untar("mvpart_1.6-2.tar.gz", compressed = "gzip")
 
 > s <- gzfile("mvpart/data/spider.tab.gz")
 
@@ -94,7 +94,7 @@ function (X, FUN, ...)
         X <- as.list(X)
     .Internal(lapply(X, FUN))
 }
-<bytecode: 0xedf930>
+<bytecode: 0x2102930>
 <environment: namespace:base>
 
 
@@ -146,7 +146,7 @@ function (X, FUN, ...)
         X <- as.list(X)
     .Internal(lapply(X, FUN))
 }
-<bytecode: 0xedf930>
+<bytecode: 0x2102930>
 <environment: namespace:base>
 
 
@@ -198,7 +198,7 @@ function (X, FUN, ...)
         X <- as.list(X)
     .Internal(lapply(X, FUN))
 }
-<bytecode: 0xedf930>
+<bytecode: 0x2102930>
 <environment: namespace:base>
 
 
@@ -250,7 +250,7 @@ function (X, FUN, ...)
         X <- as.list(X)
     .Internal(lapply(X, FUN))
 }
-<bytecode: 0xedf930>
+<bytecode: 0x2102930>
 <environment: namespace:base>
 
 
@@ -302,7 +302,7 @@ function (X, FUN, ...)
         X <- as.list(X)
     .Internal(lapply(X, FUN))
 }
-<bytecode: 0xedf930>
+<bytecode: 0x2102930>
 <environment: namespace:base>
 
 
@@ -467,7 +467,7 @@ Call: survfit(formula = Surv(time, cens) ~ 1, data = GBSG2, subset = (n ==
     pn[1]))
 
 records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    248     248     248      88    2093    1814      NA 
+     10      10      10      10    1814    1806      NA 
 
 > survfit(Surv(time, cens) ~ 1, data = GBSG2, subset = (n == 
 +     pn[2]))
@@ -475,7 +475,7 @@ Call: survfit(formula = Surv(time, cens) ~ 1, data = GBSG2, subset = (n ==
     pn[2]))
 
 records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+     10      10      10      10    2036    2018      NA 
 
 > data("mammoexp", package = "TH.data")
 
@@ -492,4 +492,4 @@ records   n.max n.start  events  median 0.95LCL 0.95UCL
  *** Run successfully completed ***
 > proc.time()
    user  system elapsed 
-  3.531   0.083   3.828 
+  5.518   0.095   7.718 

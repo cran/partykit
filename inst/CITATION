@@ -1,22 +1,17 @@
 citHeader("To cite partykit in publications use:")
 
-citEntry(entry = "TechReport",
+citEntry(entry = "Article",
   title        = "{partykit}: A Modular Toolkit for Recursive Partytioning in {R}",
   author       = personList(as.person("Torsten Hothorn"), 
 		   as.person("Achim Zeileis")),
-  institution  = "Working Papers in Economics and Statistics, Research Platform Empirical
-  		  and Experimental Economics, Universit\\\"at Innsbruck",
-  year         = "2014",
-  type         = "Working Paper",
-  number       = "2014-10",
-  month        = "March",
+  journal      = "Journal of Machine Learning Research",
+  year         = "2015",
   url	       = "http://EconPapers.RePEc.org/RePEc:inn:wpaper:2014-10",
   
   textVersion  = 
-  paste("Torsten Hothorn, Achim Zeileis (2014).",
+  paste("Torsten Hothorn, Achim Zeileis (2015).",
 	"partykit: A Modular Toolkit for Recursive Partytioning in R.",
- 	"Working Paper 2014-10.",
- 	"Working Papers in Economics and Statistics, Research Platform Empirical and Experimental Economics, Universitaet Innsbruck.",
+ 	"Journal of Machine Learning Research (accepted 2015-02-20).",
 	"URL http://EconPapers.RePEc.org/RePEc:inn:wpaper:2014-10")
 )
 

@@ -110,6 +110,10 @@ S3method("predict", "party")
 S3method("width", "party")
 S3method("nodeprune", "party")
 S3method("nodeprune", "partynode")
+S3method("print", "party")
+S3method("plot", "party")
+S3method("data_party", "default")
+S3method("predict_party", "default")
 
 ## methods for class partynode
 S3method("[", "partynode")
@@ -148,6 +152,9 @@ S3method("nobs", "modelparty")
 S3method("residuals", "modelparty")
 S3method("summary", "modelparty")
 S3method("weights", "modelparty")
+S3method("predict", "modelparty")
+S3method("print", "modelparty")
+S3method("plot", "modelparty")
 
 ## methods for class lmtree
 S3method("plot", "lmtree")
@@ -164,3 +171,8 @@ S3method("predict", "cforest")
 
 ## misc methods
 S3method("as.partynode", "list")
+S3method("as.party", "Weka_tree")
+S3method("as.party", "XMLNode")
+S3method("as.simpleparty", "XMLNode")
+S3method("as.party", "rpart")
+S3method("model.frame", "rpart")

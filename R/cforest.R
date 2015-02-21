@@ -32,7 +32,7 @@ constparties <- function(nodes, data, weights, fitted = NULL, terms = NULL, info
     ret
 }
 
-.perturb <- function(replace = TRUE, fraction = .632) {
+.perturb <- function(replace = FALSE, fraction = .632) {
     ret <- function(prob) {
         if (replace) {
             rw <- rmultinom(1, size = length(prob), prob = prob)
@@ -50,7 +50,7 @@ cforest <- function(formula, data, weights, subset, na.action = na.pass,
                     control = ctree_control(teststat = "quad",
                                             testtype = "Univ", mincriterion = 0, ...), 
                     ytrafo = NULL, scores = NULL,
-                    ntree = 500L, perturb = list(replace = TRUE, fraction = 0.632),
+                    ntree = 500L, perturb = list(replace = FALSE, fraction = 0.632),
                     mtry = ceiling(sqrt(nvar)), applyfun = NULL, cores = NULL, ...) {
 
     if (missing(data))
