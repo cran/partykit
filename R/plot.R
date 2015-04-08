@@ -425,20 +425,26 @@ node_barplot <- function(obj,
 {   
     ## extract response
     y <- obj$fitted[["(response)"]]
-    stopifnot(is.factor(y) || isTRUE(all.equal(round(y), y)))
+    stopifnot(is.factor(y) || isTRUE(all.equal(round(y), y)) || is.data.frame(y))
     
     ## FIXME: This could be avoided by
     ##   predict_party(obj, nodeids(obj, terminal = TRUE), type = "prob")
     ## but only for terminal nodes                  ^^^^
     probs_and_n <- function(x) {
       y1 <- x$fitted[["(response)"]]
-      if(!is.factor(y1)) y1 <- factor(y1, levels = min(y):max(y))
+      if(!is.factor(y1)) {
+        if(is.data.frame(y1)) {
+	  y1 <- t(as.matrix(y1))
+	} else {
+          y1 <- factor(y1, levels = min(y):max(y))
+	}
+      }
       w <- x$fitted[["(weights)"]]
       if(is.null(w)) w <- rep.int(1L, length(y1))
-      sumw <- tapply(w, y1, sum)
+      sumw <- if(is.factor(y1)) tapply(w, y1, sum) else drop(y1 %*% w)
       sumw[is.na(sumw)] <- 0
       prob <- c(sumw/sum(w), sum(w))
-      names(prob) <- c(levels(y1), "nobs")
+      names(prob) <- c(if(is.factor(y1)) levels(y1) else rownames(y1), "nobs")
       prob
     }
     probs <- do.call("rbind", nodeapply(obj, nodeids(obj), probs_and_n, by_node = FALSE))
@@ -447,15 +453,15 @@ node_barplot <- function(obj,
     
     if(is.factor(y)) {
         ylevels <- levels(y)
-	if(is.null(beside)) beside <- if(length(ylevels) < 3) FALSE else TRUE
+	if(is.null(beside)) beside <- if(length(ylevels) < 3L) FALSE else TRUE
         if(is.null(ymax)) ymax <- if(beside) 1.1 else 1
 	if(is.null(gap)) gap <- if(beside) 0.1 else 0
     } else {
-        if(is.null(beside)) beside <- FALSE
-        if(is.null(ymax)) ymax <- max(probs) * 1.1
-        ylevels <- seq(1:NCOL(probs))
+        if(is.null(beside)) beside <- TRUE
+        if(is.null(ymax)) ymax <- if(beside) max(probs) * 1.1 else max(probs)
+        ylevels <- colnames(probs)
         if(length(ylevels) < 2) ylevels <- ""
-	if(is.null(gap)) gap <- 1
+	if(is.null(gap)) gap <- if(beside) 0.1 else 0
     }
     if(is.null(reverse)) reverse <- !beside
     if(is.null(fill)) fill <- gray.colors(length(ylevels))

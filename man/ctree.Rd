@@ -2,15 +2,18 @@
 \alias{ctree}
 \alias{sctest.constparty}
 
-\title{ Conditional Inference Trees }
+\title{Conditional Inference Trees}
+
 \description{
   Recursive partitioning for continuous, censored, ordered, nominal and
   multivariate response variables in a conditional inference framework. 
 }
+
 \usage{
 ctree(formula, data, weights, subset, na.action = na.pass,
     control = ctree_control(\dots), ytrafo = NULL, scores = NULL, \dots)
 }
+
 \arguments{
   \item{formula}{ a symbolic description of the model to be fit. }
   \item{data}{ a data frame containing the variables in the model. }
@@ -35,8 +38,8 @@ ctree(formula, data, weights, subset, na.action = na.pass,
                 factors.}
   \item{\dots}{arguments passed to \code{\link{ctree_control}}.}
 }
-\details{
 
+\details{
   Function \code{partykit::ctree} is a reimplementation of (most of)
   \code{party::ctree} employing the new \code{\link{party}} infrastructure
   of the \pkg{partykit} infrastructure. Although the new code was already 
@@ -94,27 +97,26 @@ ctree(formula, data, weights, subset, na.action = na.pass,
 
   For a general description of the methodology see Hothorn, Hornik and
   Zeileis (2006) and Hothorn, Hornik, van de Wiel and Zeileis (2006).
-
 }
+
 \value{
   An object of class \code{\link{party}}.
 }
+
 \references{ 
+Strasser H, Weber C (1999).
+  On the Asymptotic Theory of Permutation Statistics.
+  \emph{Mathematical Methods of Statistics}, \bold{8}, 220--250.
 
-   Helmut Strasser and Christian Weber (1999). On the Asymptotic Theory of Permutation
-   Statistics. \emph{Mathematical Methods of Statistics}, \bold{8}, 220--250.
+Hothorn T, Hornik K, Van de Wiel MA, Zeileis A (2006).
+  A Lego System for Conditional Inference.
+  \emph{The American Statistician}, \bold{60}(3), 257--263.
 
-   Torsten Hothorn, Kurt Hornik, Mark A. van de Wiel and Achim Zeileis (2006).
-   A Lego System for Conditional Inference. \emph{The American Statistician},
-   \bold{60}(3), 257--263.
-
-   Torsten Hothorn, Kurt Hornik and Achim Zeileis (2006). Unbiased Recursive
-   Partitioning: A Conditional Inference Framework. \emph{Journal of
-   Computational and Graphical Statistics}, \bold{15}(3), 651--674. 
-   Preprint available from 
-   \url{http://eeecon.uibk.ac.at/~zeileis/papers/Hothorn+Hornik+Zeileis-2006.pdf}
-
+Hothorn T, Hornik K, Zeileis A (2006).
+  Unbiased Recursive Partitioning: A Conditional Inference Framework.
+  \emph{Journal of Computational and Graphical Statistics}, \bold{15}(3), 651--674. 
 }
+
 \examples{
 ### regression
 airq <- subset(airquality, !is.na(Ozone))

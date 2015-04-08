@@ -26,7 +26,7 @@ Table 1.3 in Witten and Frank (2011).
 }
 
 \references{
-I. H. Witten and E. Frank (2011).
+Witten IH, Frank E (2011).
   \emph{Data Mining: Practical Machine Learning Tools and Techniques}.
   3rd Edition, Morgan Kaufmann, San Francisco. 
 }

@@ -2,6 +2,34 @@
 \name{NEWS}
 \title{NEWS file for the partykit package}
 
+\section{Changes in Version 1.0-1 (2015-04-07}{
+  \itemize{
+    \item{The support for (generalized) linear model trees with just
+      a constant regressor has been improved. Now \code{lmtree(y ~ x1 + x2)}
+      is short for \code{lmtree(y ~ 1 | x1 + x2)}, analogously for \code{glmtree()}.
+      Plotting now also works properly in this case.}
+
+    \item{The \code{as.party()} method for \code{"rpart"} objects did not
+      work if one of the partitioning variables was a \code{"character"}
+      variable rather than a \code{"factor"}. A suitable work-around has
+      been added.}
+      
+    \item{The \code{node_barplot()} panel function can now also be used
+      for multivariate responses, e.g., when all responses are numeric and
+      on the same scale.}
+
+    \item{The package now also includes a new data set \code{HuntingSpiders}
+      which is essentially a copy of the \code{spider} data from the package
+      \pkg{mvpart} that is currently archived on CRAN. The documentation has
+      been improved somewhat and is likely to change further to explain how
+      the data has been transformed in De'ath (2002).}
+
+    \item{The survival tree example for the GBSG2 data was broken due to
+      the response being (incorrectly) also part of the explanatory variables.
+      Fixed by using the latest \pkg{Formula} package (at least version 1.2-1).}
+  }
+}
+
 \section{Changes in Version 1.0-0 (2015-02-20}{
   \itemize{
     \item{Version 1.0-0 published. This version is described in the MLOSS paper 

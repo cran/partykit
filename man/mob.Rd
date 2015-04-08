@@ -128,9 +128,9 @@ More details can be found in \code{vignette("mob", package = "partykit")}.
 }
 
 \references{ 
-  Achim Zeileis, Torsten Hothorn, Kurt Hornik (2008). Model-Based
-  Recursive Partitioning. \emph{Journal of Computational and Graphical Statistics}, 
-  \bold{17}(2), 492--514.
+Zeileis A, Hothorn T, Hornik K (2008).
+  Model-Based Recursive Partitioning.
+  \emph{Journal of Computational and Graphical Statistics}, \bold{17}(2), 492--514.
 }
 
 \seealso{\code{\link{mob_control}}, \code{\link{lmtree}}, \code{\link{glmtree}}}

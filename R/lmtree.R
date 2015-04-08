@@ -31,8 +31,18 @@ lmtree <- function(formula, data, subset, na.action, weights, offset, cluster, .
   ## keep call
   cl <- match.call(expand.dots = TRUE)
 
+  ## extend formula if necessary
+  f <- Formula::Formula(formula)
+  if(length(f)[2L] == 1L) {
+    attr(f, "rhs") <- c(list(1), attr(f, "rhs"))
+    formula[[3L]] <- formula(f)[[3L]]
+  } else {
+    f <- NULL
+  }
+
   ## call mob
   m <- match.call(expand.dots = FALSE)
+  if(!is.null(f)) m$formula <- formula
   m$fit <- lmfit
   m$control <- control
   if("..." %in% names(m)) m[["..."]] <- NULL
@@ -106,8 +116,13 @@ plot.lmtree <- function(x, terminal_panel = node_bivplot,
   tp_args = list(), tnex = NULL, drop_terminal = NULL, ...)
 {
   nreg <- if(is.null(tp_args$which)) x$info$nreg else length(tp_args$which)
-  if(is.null(tnex)) tnex <- if(is.null(terminal_panel)) 1L else 2L * nreg
-  if(is.null(drop_terminal)) drop_terminal <- !is.null(terminal_panel)
-  plot.modelparty(x, terminal_panel = terminal_panel,
-    tp_args = tp_args, tnex = tnex, drop_terminal = drop_terminal, ...)
+  if(nreg < 1L & missing(terminal_panel)) {
+    plot.constparty(as.constparty(x),
+      tp_args = tp_args, tnex = tnex, drop_terminal = drop_terminal, ...)
+  } else {
+    if(is.null(tnex)) tnex <- if(is.null(terminal_panel)) 1L else 2L * nreg
+    if(is.null(drop_terminal)) drop_terminal <- !is.null(terminal_panel)
+    plot.modelparty(x, terminal_panel = terminal_panel,
+      tp_args = tp_args, tnex = tnex, drop_terminal = drop_terminal, ...)
+  }
 }

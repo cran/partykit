@@ -9,18 +9,6 @@ require("partykit")
 require("coin")
 require("strucchange")
 set.seed(290875)
-### mvpart was archived 2014-12-15; so grab spider dataset from the archive
-tmpdir <- tempdir()
-wd <- setwd(tmpdir) 
-download.file("http://cran.r-project.org/src/contrib/Archive/mvpart/mvpart_1.6-2.tar.gz", 
-              destfile = "mvpart_1.6-2.tar.gz", quiet = TRUE)
-untar("mvpart_1.6-2.tar.gz", compressed = "gzip")
-s <- gzfile("mvpart/data/spider.tab.gz")      
-sx <- readLines(s)
-close(s) 
-writeLines(sx, con = "tmp.csv")          
-spider <- read.csv("tmp.csv", sep = "\t")
-setwd(wd)
 
 
 ###################################################
@@ -196,8 +184,8 @@ prob <- predict(gtree, type = "prob")[,1] +
 splitvar <- character_split(split_node(node_party(gtree)), 
                             data = data_party(gtree))$name
 plot(GlaucomaM[[splitvar]], prob, 
-      pch = as.numeric(GlaucomaM$Class), ylab = "Conditional Class Prob.",
-      xlab = splitvar)
+     pch = as.numeric(GlaucomaM$Class), ylab = "Conditional Class Prob.",
+     xlab = splitvar)
 abline(v = split_node(node_party(gtree))$breaks, lty = 2)
 legend(0.15, 0.7, pch = 1:2, legend = levels(GlaucomaM$Class), bty = "n")
 
@@ -207,7 +195,7 @@ legend(0.15, 0.7, pch = 1:2, legend = levels(GlaucomaM$Class), bty = "n")
 ###################################################
 data("GBSG2", package = "TH.data")  
 library("survival")
-stree <- ctree(Surv(time, cens) ~ ., data = GBSG2)
+(stree <- ctree(Surv(time, cens) ~ ., data = GBSG2))
 
 
 ###################################################
@@ -241,14 +229,21 @@ plot(mtree)
 ###################################################
 ### code chunk number 34: spider-ctree
 ###################################################
-sptree <- ctree(arct.lute + pard.lugu + zora.spin + pard.nigr + pard.pull +
-    aulo.albi + troc.terr + alop.cune + pard.mont + alop.acce +
-    alop.fabr + arct.peri ~ herbs + reft + moss + sand + twigs+water,
-    control = ctree_control(teststat = "max", minsplit = 5), data = spider)
+data("HuntingSpiders", package = "partykit")
+sptree <- ctree(arct.lute + pard.lugu + zora.spin + pard.nigr +
+  pard.pull + aulo.albi + troc.terr + alop.cune + pard.mont + alop.acce +
+  alop.fabr + arct.peri ~ herbs + reft + moss + sand + twigs + water,
+  data = HuntingSpiders, teststat = "max", minsplit = 5)
 
 
 ###################################################
-### code chunk number 35: spider-plot
+### code chunk number 35: spider-plot1
+###################################################
+plot(sptree, terminal_panel = node_barplot)
+
+
+###################################################
+### code chunk number 36: spider-plot2
 ###################################################
 plot(sptree)
 

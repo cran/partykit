@@ -1,13 +1,15 @@
 \name{cforest}
 \alias{cforest}
 \alias{predict.cforest}
-\title{
-  Conditional Random Forests
-}
+\encoding{latin1}
+
+\title{Conditional Random Forests}
+
 \description{
   An implementation of the random forest and bagging ensemble algorithms
   utilizing conditional inference trees as base learners.
 }
+
 \usage{
 cforest(formula, data, weights, subset, na.action = na.pass, 
         control = ctree_control(teststat = "quad",
@@ -19,6 +21,7 @@ cforest(formula, data, weights, subset, na.action = na.pass,
         type = c("response", "prob", "weights", "node"),
         OOB = FALSE, FUN = NULL, simplify = TRUE, ...)
 }
+
 \arguments{
   \item{formula}{ a symbolic description of the model to be fit. }
   \item{data}{ a data frame containing the variables in the model. }
@@ -157,7 +160,6 @@ cforest(formula, data, weights, subset, na.action = na.pass,
   while in \code{\link{cforest}} unbiased trees and an adequate resampling scheme
   are used by default. See Hothorn et al. (2006b) and Strobl et al. (2007)
   as well as Strobl et al. (2009).
-
 }
 
 \value{
@@ -165,37 +167,38 @@ cforest(formula, data, weights, subset, na.action = na.pass,
 }
 
 \references{
-    Leo Breiman (2001). Random Forests. \emph{Machine Learning}, 45(1), 5--32.
+Breiman L (2001).
+  Random Forests.
+  \emph{Machine Learning}, \bold{45}(1), 5--32.
 
-    Torsten Hothorn, Berthold Lausen, Axel Benner and Martin Radespiel-Troeger
-    (2004). Bagging Survival Trees. \emph{Statistics in Medicine}, \bold{23}(1), 77--91.
+Hothorn T, Lausen B, Benner A, Radespiel-Troeger M (2004).
+  Bagging Survival Trees.
+  \emph{Statistics in Medicine}, \bold{23}(1), 77--91.
 
-    Torsten Hothorn, Peter Buhlmann, Sandrine Dudoit, Annette Molinaro 
-    and Mark J. van der Laan (2006a). Survival Ensembles. \emph{Biostatistics},
-    \bold{7}(3), 355--373.
+Hothorn T, Bühlmann P, Dudoit S, Molinaro A, Van der Laan MJ (2006a).
+  Survival Ensembles.
+  \emph{Biostatistics}, \bold{7}(3), 355--373.
 
-    Torsten Hothorn, Kurt Hornik, Achim Zeileis (2006b). Unbiased
-    Recursive Partitioning: A Conditional Inference Framework.
-    \emph{Journal of Computational and Graphical Statistics}, \bold{15}(3),
-    651--674.  Preprint available from 
-    \url{http://statmath.wu-wien.ac.at/~zeileis/papers/Hothorn+Hornik+Zeileis-2006.pdf}
+Hothorn T, Hornik K, Zeileis A (2006b).
+  Unbiased Recursive Partitioning: A Conditional Inference Framework.
+  \emph{Journal of Computational and Graphical Statistics}, \bold{15}(3), 651--674.
 
-    Nicolai Meinshausen (2006). Quantile Regression Forests. 
-    Journal of Machine Learning Research, \bold{7}, 983--999.
+Meinshausen N (2006).
+  Quantile Regression Forests. 
+  \emph{Journal of Machine Learning Research}, \bold{7}, 983--999.
 
-    Carolin Strobl, Anne-Laure Boulesteix, Achim Zeileis, Torsten Hothorn (2007).
-    Bias in Random Forest Variable Importance Measures: Illustrations, Sources and
-    a Solution. \emph{BMC Bioinformatics}, \bold{8}, 25.
-    \url{http://www.biomedcentral.com/1471-2105/8/25}
+Strobl C, Boulesteix AL, Zeileis A, Hothorn T (2007).
+  Bias in Random Forest Variable Importance Measures: Illustrations, Sources and a Solution.
+  \emph{BMC Bioinformatics}, \bold{8}, 25.
+  \url{http://www.biomedcentral.com/1471-2105/8/25}
 
-    Carolin Strobl, James Malley, Gerhard Tutz (2009).
-    An Introduction to Recursive Partitioning: Rationale, Application, and Characteristics of
-    Classification and Regression Trees, Bagging, and Random forests.
-    \emph{Psychological Methods}, \bold{14}(4), 323--348.
+Strobl C, Malley J, Tutz G (2009).
+  An Introduction to Recursive Partitioning: Rationale, Application, and Characteristics of
+  Classification and Regression Trees, Bagging, and Random Forests.
+  \emph{Psychological Methods}, \bold{14}(4), 323--348.
 }
 
 \examples{
-
 ## basic example: conditional inference forest for cars data
 cf <- cforest(dist ~ speed, data = cars)
 
@@ -223,7 +226,6 @@ legend("topleft", c("mean", "median", "10\% - 90\% quantile"),
   col = c("black", "black", "lightgray"), bty = "n")
 
 \donttest{
-
 ### we may also use predicted conditional (on speed) densities
 mydensity <- function (y, w) approxfun(density(y, weights = w/sum(w))[1:2], rule = 2)
 pd <- predict(cf, newdata = nd, type = "response", FUN = mydensity)
@@ -257,4 +259,5 @@ if (require("TH.data") && require("survival")) {
 }
 }
 }
+
 \keyword{tree}

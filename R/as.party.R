@@ -21,6 +21,10 @@ as.party.rpart <- function(obj, ...) {
     })
     
     mf <- model.frame(obj)
+    
+    ## check if any of the variables in the model frame is a "character"
+    ## and convert to "factor" if necessary
+    for(i in which(sapply(mf, function(x) class(x)[1L]) == "character")) mf[[i]] <- factor(mf[[i]])
 
     rpart_fitted <- function() {
 	ret <- as.data.frame(matrix(nrow = NROW(mf), ncol = 0))

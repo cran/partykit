@@ -146,9 +146,10 @@ node_mvar(obj, which = NULL, id = TRUE, pop = TRUE, ylines = NULL,
 }
 
 \references{
-  David Meyer, Achim Zeileis, Kurt Hornik (2006).
+Meyer D, Zeileis A, Hornik K (2006).
   The Strucplot Framework: Visualizing Multi-Way Contingency Tables with vcd.
-  \emph{Journal of Statistical Software}, \bold{17}(3).
+  \emph{Journal of Statistical Software}, \bold{17}(3), 1--48.
   \url{http://www.jstatsoft.org/v17/i03/}
 }
+
 \keyword{hplot}

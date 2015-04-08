@@ -1,7 +1,7 @@
 Package: partykit
 Title: A Toolkit for Recursive Partytioning
-Date: 2015-02-20
-Version: 1.0-0
+Date: 2015-04-07
+Version: 1.0-1
 Authors@R: c(person(given = "Torsten", family = "Hothorn", role = c("aut", "cre"), email = "Torsten.Hothorn@R-project.org"),
              person(given = "Achim", family = "Zeileis", role = "aut", email = "Achim.Zeileis@R-project.org"))
 Description: A toolkit with infrastructure for representing, summarizing, and
@@ -14,16 +14,17 @@ Description: A toolkit with infrastructure for representing, summarizing, and
   on the new infrastructure.
 Depends: R (>= 3.1.0), graphics, grid
 Imports: stats, survival
-Suggests: XML, pmml, rJava, rpart, mvtnorm, Formula, sandwich,
-        strucchange, vcd, AER, mlbench, TH.data (>= 1.0-3), coin, RWeka
-        (>= 0.4-19), datasets, parallel, psychotools, psychotree
+Suggests: XML, pmml, rJava, rpart, mvtnorm, Formula (>= 1.2-1),
+        sandwich, strucchange, vcd, AER, mlbench, TH.data (>= 1.0-3),
+        coin, RWeka (>= 0.4-19), datasets, parallel, psychotools,
+        psychotree
 LazyData: yes
 License: GPL-2 | GPL-3
 URL: http://partykit.R-forge.R-project.org/partykit
-Packaged: 2015-02-21 15:14:44 UTC; hothorn
+Packaged: 2015-04-07 17:24:35 UTC; hothorn
 Author: Torsten Hothorn [aut, cre],
   Achim Zeileis [aut]
 Maintainer: Torsten Hothorn <Torsten.Hothorn@R-project.org>
 NeedsCompilation: yes
 Repository: CRAN
-Date/Publication: 2015-02-21 18:20:26
+Date/Publication: 2015-04-08 11:12:04
