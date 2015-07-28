@@ -496,7 +496,7 @@ node_barplot <- function(obj,
                            heights = unit(c(1, 1), c("lines", "null"))),
                            width = unit(1, "npc"), 
                            height = unit(1, "npc") - unit(2, "lines"),
-			   name = paste("node_barplot", nid, sep = ""),
+			   name = paste0("node_barplot", nid),
 			   gp = gp)
 
         pushViewport(top_vp)
@@ -520,8 +520,8 @@ node_barplot <- function(obj,
 	
         plot <- viewport(layout.pos.col=2, layout.pos.row=2,
                          xscale=xscale, yscale=yscale,
-			 name = paste("node_barplot", node$nodeID, "plot", 
-                         sep = ""))
+			 name = paste0("node_barplot", node$nodeID, "plot"),
+			 clip = TRUE)
 
         pushViewport(plot)
 	
@@ -631,8 +631,8 @@ node_boxplot <- function(obj,
 	
         plot <- viewport(layout.pos.col = 2, layout.pos.row = 2,
                          xscale = c(0, 1), yscale = yscale,
-			 name = paste("node_boxplot", nid, "plot", 
-                         sep = ""))
+			 name = paste0("node_boxplot", nid, "plot"),
+			 clip = TRUE)
 
         pushViewport(plot)
 	
@@ -765,8 +765,8 @@ node_surv <- function(obj, col = "black", ylines = 2,
 	
         plot <- viewport(layout.pos.col=2, layout.pos.row=2,
                          xscale=xscale, yscale=yscale,
-			 name = paste("node_surv", nid, "plot", 
-                         sep = ""))
+			 name = paste0("node_surv", nid, "plot"),
+			 clip = TRUE)
 
         pushViewport(plot)
         grid.lines(a$x/max(a$x), a$y, gp = gpar(col = col))
@@ -870,8 +870,8 @@ node_ecdf <- function(obj, col = "black", ylines = 2,
 	
         plot <- viewport(layout.pos.col=2, layout.pos.row=2,
                          xscale=xscale, yscale=yscale,
-			 name = paste("node_surv", nid, "plot", 
-                         sep = ""))
+			 name = paste0("node_surv", nid, "plot"),
+			 clip = TRUE)
 
         pushViewport(plot)
         grid.lines(a$x, a$y, gp = gpar(col = col))

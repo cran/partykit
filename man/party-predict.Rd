@@ -12,7 +12,7 @@
 
 }
 \usage{
-\method{predict}{party}(object, newdata = NULL, \dots)
+\method{predict}{party}(object, newdata = NULL, perm = NULL, \dots)
 predict_party(party, id, newdata = NULL, \dots)
 \method{predict_party}{default}(party, id, newdata = NULL, FUN = NULL, \dots) 
 \method{predict_party}{constparty}(party, id, newdata = NULL,
@@ -26,6 +26,10 @@ predict_party(party, id, newdata = NULL, \dots)
   \item{object}{ objects of class \code{\link{party}}. }
   \item{newdata}{ an optional data frame in which to look for variables with
           which to predict, if omitted, the fitted values are used.}
+  \item{perm}{an optional character vector of variable names. Splits of
+              nodes with a primary split in any of these variables will
+              be permuted (after dealing with surrogates). Note that
+              surrogate split in the \code{perm} variables will no be permuted.}
   \item{party}{ objects of class \code{\link{party}}. }
   \item{id}{ a vector of terminal node identifiers. }
   \item{type}{ a character string denoting the type of predicted value

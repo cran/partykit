@@ -18,8 +18,7 @@
 \usage{
 partysplit(varid, breaks = NULL, index = NULL, right = TRUE, 
     prob = NULL, info = NULL)
-kidids_split(split, data, vmatch = 1:ncol(data), obs = NULL, 
-    perm = NULL)
+kidids_split(split, data, vmatch = 1:ncol(data), obs = NULL)
 character_split(split, data = NULL, 
     digits = getOption("digits") - 2)
 varid_split(split)
@@ -46,10 +45,6 @@ info_split(split)
   \item{vmatch}{ a permutation of the variable numbers in \code{data}.}
   \item{obs}{ a logical or integer vector indicating a subset of the 
               observations in \code{data}.}
-  \item{perm}{ a vector of integers specifying the variables
-               to be permuted prior before splitting (i.e., for
-               computing permutation variable importances). The
-               default \code{NULL} doesn't alter the data.}
   \item{digits}{ minimal number of significant digits.}
 }
 \details{
@@ -69,8 +64,6 @@ info_split(split)
   \code{data[obs,varid_split(split)]} and assigns an integer (giving the
   kid node number) to each observation. If \code{vmatch} is given,
   the variable \code{vmatch[varid_split(split)]} is used.
-  In case \code{perm} contains \code{varid_split(split)},
-  the data are permuted using \code{\link{sample}} prior to partitioning.
   
   \code{character_split()} returns a character representation
   of its \code{split} argument. The remaining functions 
@@ -160,11 +153,6 @@ table(kidids_split(sp, data = iris), iris$Species)
 sp <- partysplit(which(names(iris) == "Sepal.Width"), 
     breaks = quantile(iris$Sepal.Width))
 character_split(sp, data = iris)
-## predictions for permuted values of `Sepal.Width'
-## correlation with actual data should be small
-cor(kidids_split(sp, data = iris, 
-    perm = which(names(iris) == "Sepal.Width")),
-    iris$Sepal.Width)
 
 }
 \keyword{tree}

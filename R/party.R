@@ -239,13 +239,19 @@ nodeapply.partynode <- function(obj, ids = 1, FUN = NULL, ...) {
     return(rval)
 }
 
-predict.party <- function(object, newdata = NULL, ...)
+predict.party <- function(object, newdata = NULL, perm = NULL, ...)
 {
     ### compute fitted node ids first
-    fitted <- if(is.null(newdata)) object$fitted[["(fitted)"]] else {
-
-        terminal <- nodeids(object, terminal = TRUE)
-        inner <- 1:max(terminal)
+    fitted <- if(is.null(newdata)) {    
+        object$fitted[["(fitted)"]]	
+    } else {
+      terminal <- nodeids(object, terminal = TRUE)
+	
+      if(max(terminal) == 1L) {
+        rep.int(1L, NROW(newdata))
+      } else {
+	
+        inner <- 1L:max(terminal)
         inner <- inner[-terminal]
 
         primary_vars <- nodeapply(object, ids = inner, by_node = TRUE, FUN = function(node) {
@@ -256,6 +262,13 @@ predict.party <- function(object, newdata = NULL, ...)
             if(is.null(surr)) return(NULL) else return(sapply(surr, varid_split))
         })
         vnames <- names(object$data)
+
+        ### the splits of nodes with a primary split in perm
+        ### will be permuted
+        if (!is.null(perm)) {
+            stopifnot(all(perm %in% vnames))
+            perm <- match(perm, vnames)
+        }
 
         ## ## FIXME: the is.na() call takes loooong on large data sets
         ## unames <- if(any(sapply(newdata, is.na))) 
@@ -275,14 +288,17 @@ predict.party <- function(object, newdata = NULL, ...)
         ## FIXME: inform about wrong classes / factor levels?
         if(all(unames %in% ndnames) && checkclass && checkfactors) {
             vmatch <- match(vnames, ndnames)
-            fitted_node(node_party(object), newdata, vmatch)
+            fitted_node(node_party(object), data = newdata, 
+                        vmatch = vmatch, perm = perm)
         } else {
             if (!is.null(object$terms)) {
                 mf <- model.frame(delete.response(object$terms), newdata)
-                fitted_node(node_party(object), mf, match(vnames, names(mf)))
+                fitted_node(node_party(object), data = mf, 
+                            vmatch = match(vnames, names(mf)), perm = perm)
             } else
                 stop("") ## FIXME: write error message
         }
+      }
     }
     ### compute predictions
     predict_party(object, fitted, newdata, ...)
@@ -584,16 +600,18 @@ nodeprune.partynode <- function(x, ids, ...) {
     x <- unclass(x)
 
     for (i in 1:length(idxs)) {
-    
+        ## path to be pruned
         idx <- idxs[[i]]
-        ### check if we already pruned-off this node
-        tmp <- try(x[[idx]], silent = TRUE)
-        if (inherits(tmp, "try-error"))
-            next()
-
-        ### prune node by introducing a "new" terminal node
-        x[[idx]] <- partynode(id = id_node(x[[idx]]),
-                              info = info_node(x[[idx]]))
+	if(!is.null(idx)) {
+          ### check if we already pruned-off this node
+          tmp <- try(x[[idx]], silent = TRUE)
+          if(inherits(tmp, "try-error")) next()
+          ### prune node by introducing a "new" terminal node
+          x[[idx]] <- partynode(id = id_node(tmp), info = info_node(tmp))
+	} else {
+	  ## if idx path is NULL prune everything
+	  x[2L:4L] <- NULL
+	}
     }
 
     class(x) <- cls

@@ -170,7 +170,7 @@ kidids_node <- function(node, data, vmatch = 1:ncol(data), obs = NULL,
     surrogates <- surrogates_node(node)
 
     ### perform primary split
-    x <- kidids_split(primary, data, vmatch, obs, perm)
+    x <- kidids_split(primary, data, vmatch, obs)
 
     ### surrogate / random splits if needed
     if (any(is.na(x))) {
@@ -189,6 +189,12 @@ kidids_node <- function(node, data, vmatch = 1:ncol(data), obs = NULL,
             x[nax] <- sample(1:length(prob), sum(nax), prob = prob, 
                              replace = TRUE)
         }
+    }
+
+    ### permute variable `perm' _after_ dealing with surrogates etc.
+    if (!is.null(perm)) {
+        if (varid_split(primary) %in% perm)
+            return(sample(x))
     }
     return(x)
 }

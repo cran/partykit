@@ -819,7 +819,8 @@ refit.modelparty <- function(object, node = NULL, drop = TRUE, ...)
     "matrix" = model.matrix(~ 0 + ., Formula::model.part(object$info$Formula, mf, lhs = 1L)),
     "data.frame" = Formula::model.part(object$info$Formula, mf, lhs = 1L)
   )
-  X <- if(object$info$nreg < 1L) NULL else switch(object$info$control$xtype,
+  hasx <- object$info$nreg >= 1L | attr(object$info$terms$response, "intercept") > 0L
+  X <- if(!hasx) NULL else switch(object$info$control$xtype,
     "matrix" = model.matrix(object$info$terms$response, mf),
     "data.frame" = Formula::model.part(object$info$Formula, mf, rhs = 1L)
   )
@@ -831,7 +832,7 @@ refit.modelparty <- function(object, node = NULL, drop = TRUE, ...)
   suby <- function(y, index) {
     if(object$info$control$ytype == "vector") y[index] else y[index, , drop = FALSE]
   }
-  subx <- if(object$info$nreg > 0L) {
+  subx <- if(hasx) {
     function(x, index) {
       sx <- x[index, , drop = FALSE]
       attr(sx, "contrasts") <- attr(x, "contrasts")

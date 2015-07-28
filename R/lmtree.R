@@ -59,6 +59,11 @@ lmtree <- function(formula, data, subset, na.action, weights, offset, cluster, .
 lmfit <- function(y, x, start = NULL, weights = NULL, offset = NULL, cluster = NULL, ...,
   estfun = FALSE, object = FALSE)
 {
+  ## add intercept-only regressor matrix (if missing)
+  ## NOTE: does not have terms/formula
+  if(is.null(x)) x <- matrix(1, nrow = NROW(y), ncol = 1L,
+    dimnames = list(NULL, "(Intercept)"))
+  
   ## call lm fitting function
   if(is.null(weights) || identical(as.numeric(weights), rep.int(1, length(weights)))) {
     z <- lm.fit(x, y, offset = offset, ...)
@@ -88,7 +93,7 @@ lmfit <- function(y, x, start = NULL, weights = NULL, offset = NULL, cluster = N
     z$xlevels <- attr(x, "xlevels")    
 
     cl <- as.call(expression(lm))
-    cl$formula <- attr(x, "formula")	
+    cl$formula <- attr(x, "formula")
     z$call <- cl
     z$terms <- attr(x, "terms")
 

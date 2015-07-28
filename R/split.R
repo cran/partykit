@@ -112,17 +112,11 @@ info_split <- function(split) {
     split$info
 }
 
-kidids_split <- function(split, data, vmatch = 1:ncol(data), 
-                         obs = NULL, perm = NULL) {
+kidids_split <- function(split, data, vmatch = 1:ncol(data), obs = NULL) {
 
     id <- varid_split(split)
     x <- data[[vmatch[id]]]
     if (!is.null(obs)) x <- x[obs]
-
-    ### <FIXME> might be easier to permute predictions
-    if (!is.null(perm))
-        if (id %in% perm) x <- sample(x)
-    ### </FIXME>
 
     if (is.null(breaks_split(split))) {
         stopifnot(storage.mode(x) == "integer")

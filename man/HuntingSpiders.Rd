@@ -47,7 +47,7 @@ A data frame containing 28 observations on 18 variables
 }
 
 \references{
-Van der Aart PJ, Smeenk-Enserink N (1975).
+Van der Aart PJM, Smeenk-Enserink N (1975).
   Correlations between Distributions of Hunting Spiders (Lycosidae, Ctenidae)
   and Environmental Characteristics in a Dune Area.
   \emph{Netherlands Journal of Zoology}, \bold{25}, 1--45.

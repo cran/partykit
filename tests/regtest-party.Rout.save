@@ -1,13 +1,11 @@
 
-R version 3.0.3 (2014-03-06) -- "Warm Puppy"
-Copyright (C) 2014 The R Foundation for Statistical Computing
+R version 3.2.1 (2015-06-18) -- "World-Famous Astronaut"
+Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-unknown-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
 Type 'license()' or 'licence()' for distribution details.
-
-  Natural language support but running in an English locale
 
 R is a collaborative project with many contributors.
 Type 'contributors()' for more information and
@@ -74,7 +72,6 @@ Loading required package: grid
 > ## rpart: GBSG2 data
 > data("GBSG2", package = "TH.data")
 > library("survival")
-Loading required package: splines
 > fit <- rpart(Surv(time, cens) ~ ., data = GBSG2)
 > pfit <- as.party(fit)
 > pfit$fitted
@@ -769,602 +766,602 @@ Loading required package: splines
 $`1`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`2`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`3`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`4`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`5`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`6`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     57      57      57      48     500     426     747 
+      n  events  median 0.95LCL 0.95UCL 
+     57      48     500     426     747 
 
 $`7`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     33      33      33       2      NA      NA      NA 
+      n  events  median 0.95LCL 0.95UCL 
+     33       2      NA      NA      NA 
 
 $`8`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    122     122     122      28      NA      NA      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    122      28      NA      NA      NA 
 
 $`9`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     57      57      57      48     500     426     747 
+      n  events  median 0.95LCL 0.95UCL 
+     57      48     500     426     747 
 
 $`10`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     87      87      87      55     742     577    1366 
+      n  events  median 0.95LCL 0.95UCL 
+     87      55     742     577    1366 
 
 $`11`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     87      87      87      55     742     577    1366 
+      n  events  median 0.95LCL 0.95UCL 
+     87      55     742     577    1366 
 
 $`12`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     87      87      87      55     742     577    1366 
+      n  events  median 0.95LCL 0.95UCL 
+     87      55     742     577    1366 
 
 $`13`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    122     122     122      28      NA      NA      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    122      28      NA      NA      NA 
 
 $`14`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`15`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    122     122     122      28      NA      NA      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    122      28      NA      NA      NA 
 
 $`16`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    122     122     122      28      NA      NA      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    122      28      NA      NA      NA 
 
 $`17`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`18`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    122     122     122      28      NA      NA      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    122      28      NA      NA      NA 
 
 $`19`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    122     122     122      28      NA      NA      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    122      28      NA      NA      NA 
 
 $`20`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`21`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`22`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    122     122     122      28      NA      NA      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    122      28      NA      NA      NA 
 
 $`23`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`24`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`25`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     57      57      57      48     500     426     747 
+      n  events  median 0.95LCL 0.95UCL 
+     57      48     500     426     747 
 
 $`26`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    122     122     122      28      NA      NA      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    122      28      NA      NA      NA 
 
 $`27`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`28`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`29`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`30`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`31`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`32`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`33`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    122     122     122      28      NA      NA      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    122      28      NA      NA      NA 
 
 $`34`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`35`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`36`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`37`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     57      57      57      48     500     426     747 
+      n  events  median 0.95LCL 0.95UCL 
+     57      48     500     426     747 
 
 $`38`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`39`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`40`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`41`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`42`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`43`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`44`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`45`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`46`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`47`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`48`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     57      57      57      48     500     426     747 
+      n  events  median 0.95LCL 0.95UCL 
+     57      48     500     426     747 
 
 $`49`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`50`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`51`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`52`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`53`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`54`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     87      87      87      55     742     577    1366 
+      n  events  median 0.95LCL 0.95UCL 
+     87      55     742     577    1366 
 
 $`55`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`56`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`57`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`58`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`59`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     87      87      87      55     742     577    1366 
+      n  events  median 0.95LCL 0.95UCL 
+     87      55     742     577    1366 
 
 $`60`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`61`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     57      57      57      48     500     426     747 
+      n  events  median 0.95LCL 0.95UCL 
+     57      48     500     426     747 
 
 $`62`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`63`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`64`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`65`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`66`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     33      33      33       2      NA      NA      NA 
+      n  events  median 0.95LCL 0.95UCL 
+     33       2      NA      NA      NA 
 
 $`67`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     87      87      87      55     742     577    1366 
+      n  events  median 0.95LCL 0.95UCL 
+     87      55     742     577    1366 
 
 $`68`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`69`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     57      57      57      48     500     426     747 
+      n  events  median 0.95LCL 0.95UCL 
+     57      48     500     426     747 
 
 $`70`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`71`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`72`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`73`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     87      87      87      55     742     577    1366 
+      n  events  median 0.95LCL 0.95UCL 
+     87      55     742     577    1366 
 
 $`74`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     57      57      57      48     500     426     747 
+      n  events  median 0.95LCL 0.95UCL 
+     57      48     500     426     747 
 
 $`75`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`76`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     57      57      57      48     500     426     747 
+      n  events  median 0.95LCL 0.95UCL 
+     57      48     500     426     747 
 
 $`77`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`78`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     87      87      87      55     742     577    1366 
+      n  events  median 0.95LCL 0.95UCL 
+     87      55     742     577    1366 
 
 $`79`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     57      57      57      48     500     426     747 
+      n  events  median 0.95LCL 0.95UCL 
+     57      48     500     426     747 
 
 $`80`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    122     122     122      28      NA      NA      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    122      28      NA      NA      NA 
 
 $`81`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     87      87      87      55     742     577    1366 
+      n  events  median 0.95LCL 0.95UCL 
+     87      55     742     577    1366 
 
 $`82`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     33      33      33       2      NA      NA      NA 
+      n  events  median 0.95LCL 0.95UCL 
+     33       2      NA      NA      NA 
 
 $`83`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     87      87      87      55     742     577    1366 
+      n  events  median 0.95LCL 0.95UCL 
+     87      55     742     577    1366 
 
 $`84`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`85`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`86`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`87`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     33      33      33       2      NA      NA      NA 
+      n  events  median 0.95LCL 0.95UCL 
+     33       2      NA      NA      NA 
 
 $`88`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     87      87      87      55     742     577    1366 
+      n  events  median 0.95LCL 0.95UCL 
+     87      55     742     577    1366 
 
 $`89`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     57      57      57      48     500     426     747 
+      n  events  median 0.95LCL 0.95UCL 
+     57      48     500     426     747 
 
 $`90`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`91`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     57      57      57      48     500     426     747 
+      n  events  median 0.95LCL 0.95UCL 
+     57      48     500     426     747 
 
 $`92`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`93`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    122     122     122      28      NA      NA      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    122      28      NA      NA      NA 
 
 $`94`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    221     221     221      89    1989    1641      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    221      89    1989    1641      NA 
 
 $`95`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    122     122     122      28      NA      NA      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    122      28      NA      NA      NA 
 
 $`96`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    122     122     122      28      NA      NA      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    122      28      NA      NA      NA 
 
 $`97`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-     57      57      57      48     500     426     747 
+      n  events  median 0.95LCL 0.95UCL 
+     57      48     500     426     747 
 
 $`98`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    122     122     122      28      NA      NA      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    122      28      NA      NA      NA 
 
 $`99`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 $`100`
 Call: survfit(formula = y ~ 1, weights = w, subset = w > 0)
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    122     122     122      28      NA      NA      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    122      28      NA      NA      NA 
 
 > predict(pfit, newdata = GBSG2[1:100,], type = "response")
    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 
@@ -1459,7 +1456,6 @@ records   n.max n.start  events  median 0.95LCL 0.95UCL
 [1] 1 2 3 4 5 6
 > 	
 > ct <- ctree(Species ~ ., data = iris)
-Loading required package: Formula
 > nt <- node_party(ctree(Species ~ ., data = iris))
 > (ctp <- nodeprune(ct, 4)) ### party method
 
@@ -1639,102 +1635,102 @@ Call: ecdf(y)
 $`1`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<environment: 0x40b9088>
+<environment: 0x1b2c9f0>
 
 $`2`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<environment: 0x40b9088>
+<environment: 0x1b2c9f0>
 
 $`3`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<environment: 0x40b9088>
+<environment: 0x1b2c9f0>
 
 $`4`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<environment: 0x40b9088>
+<environment: 0x1b2c9f0>
 
 $`5`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<environment: 0x40b9088>
+<environment: 0x1b2c9f0>
 
 $`6`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<environment: 0x40b8820>
+<environment: 0x1b2c070>
 
 $`7`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<environment: 0x40b8820>
+<environment: 0x1b2c070>
 
 $`8`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<environment: 0x40b8820>
+<environment: 0x1b2c070>
 
 $`9`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<environment: 0x3d35030>
+<environment: 0x1b2b840>
 
 > predict(ct, newdata = nd, type = "density")
 $`1`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f)
-<bytecode: 0x452d700>
-<environment: 0x44bf4a8>
+<bytecode: 0x301b270>
+<environment: 0x25e7580>
 
 $`2`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f)
-<bytecode: 0x452d700>
-<environment: 0x44bf4a8>
+<bytecode: 0x301b270>
+<environment: 0x25e7580>
 
 $`3`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f)
-<bytecode: 0x452d700>
-<environment: 0x44bf4a8>
+<bytecode: 0x301b270>
+<environment: 0x25e7580>
 
 $`4`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f)
-<bytecode: 0x452d700>
-<environment: 0x44bf4a8>
+<bytecode: 0x301b270>
+<environment: 0x25e7580>
 
 $`5`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f)
-<bytecode: 0x452d700>
-<environment: 0x44bf4a8>
+<bytecode: 0x301b270>
+<environment: 0x25e7580>
 
 $`6`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f)
-<bytecode: 0x452d700>
-<environment: 0x444b220>
+<bytecode: 0x301b270>
+<environment: 0x2c610c8>
 
 $`7`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f)
-<bytecode: 0x452d700>
-<environment: 0x444b220>
+<bytecode: 0x301b270>
+<environment: 0x2c610c8>
 
 $`8`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f)
-<bytecode: 0x452d700>
-<environment: 0x444b220>
+<bytecode: 0x301b270>
+<environment: 0x2c610c8>
 
 $`9`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f)
-<bytecode: 0x452d700>
-<environment: 0x43f3918>
+<bytecode: 0x301b270>
+<environment: 0x2c7e178>
 
 > predict(ct, newdata = nd, type = "density", at = (1:9) / 10)
         [,1]       [,2]       [,3]       [,4]       [,5]       [,6]      [,7]
@@ -1760,4 +1756,4 @@ function (v)
 > 
 > proc.time()
    user  system elapsed 
-  2.020   0.188   2.014 
+  1.585   0.098   1.480 

@@ -155,7 +155,8 @@ predict.cforest <- function(object, newdata = NULL, type = c("response", "prob",
     nd <- object$data
     vmatch <- 1:ncol(nd)
     if (!is.null(newdata)) {
-        nd <- model.frame(delete.response(object$terms), newdata)
+        nd <- model.frame(delete.response(object$terms), 
+                          data = newdata, na.action = na.pass)
         OOB <- FALSE
         vmatch <- match(names(object$data), names(nd))
     }

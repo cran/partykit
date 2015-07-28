@@ -72,7 +72,7 @@ function (X, FUN, ...)
         X <- as.list(X)
     .Internal(lapply(X, FUN))
 }
-<bytecode: 0x22adb20>
+<bytecode: 0x19c20f8>
 <environment: namespace:base>
 
 
@@ -124,7 +124,7 @@ function (X, FUN, ...)
         X <- as.list(X)
     .Internal(lapply(X, FUN))
 }
-<bytecode: 0x22adb20>
+<bytecode: 0x19c20f8>
 <environment: namespace:base>
 
 
@@ -176,7 +176,7 @@ function (X, FUN, ...)
         X <- as.list(X)
     .Internal(lapply(X, FUN))
 }
-<bytecode: 0x22adb20>
+<bytecode: 0x19c20f8>
 <environment: namespace:base>
 
 
@@ -228,7 +228,7 @@ function (X, FUN, ...)
         X <- as.list(X)
     .Internal(lapply(X, FUN))
 }
-<bytecode: 0x22adb20>
+<bytecode: 0x19c20f8>
 <environment: namespace:base>
 
 
@@ -280,7 +280,7 @@ function (X, FUN, ...)
         X <- as.list(X)
     .Internal(lapply(X, FUN))
 }
-<bytecode: 0x22adb20>
+<bytecode: 0x19c20f8>
 <environment: namespace:base>
 
 
@@ -460,16 +460,16 @@ Number of terminal nodes: 4
 Call: survfit(formula = Surv(time, cens) ~ 1, data = GBSG2, subset = (n == 
     pn[1]))
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    248     248     248      88    2093    1814      NA 
+      n  events  median 0.95LCL 0.95UCL 
+    248      88    2093    1814      NA 
 
 > survfit(Surv(time, cens) ~ 1, data = GBSG2, subset = (n == 
 +     pn[2]))
 Call: survfit(formula = Surv(time, cens) ~ 1, data = GBSG2, subset = (n == 
     pn[2]))
 
-records   n.max n.start  events  median 0.95LCL 0.95UCL 
-    166     166     166      77    1701    1174    2018 
+      n  events  median 0.95LCL 0.95UCL 
+    166      77    1701    1174    2018 
 
 > data("mammoexp", package = "TH.data")
 
@@ -490,4 +490,4 @@ records   n.max n.start  events  median 0.95LCL 0.95UCL
  *** Run successfully completed ***
 > proc.time()
    user  system elapsed 
-  3.839   0.044   3.878 
+  3.359   0.027   3.385 

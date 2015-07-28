@@ -1,7 +1,7 @@
 Package: partykit
 Title: A Toolkit for Recursive Partytioning
-Date: 2015-04-07
-Version: 1.0-1
+Date: 2015-07-28
+Version: 1.0-2
 Authors@R: c(person(given = "Torsten", family = "Hothorn", role = c("aut", "cre"), email = "Torsten.Hothorn@R-project.org"),
              person(given = "Achim", family = "Zeileis", role = "aut", email = "Achim.Zeileis@R-project.org"))
 Description: A toolkit with infrastructure for representing, summarizing, and
@@ -21,10 +21,10 @@ Suggests: XML, pmml, rJava, rpart, mvtnorm, Formula (>= 1.2-1),
 LazyData: yes
 License: GPL-2 | GPL-3
 URL: http://partykit.R-forge.R-project.org/partykit
-Packaged: 2015-04-07 17:24:35 UTC; hothorn
+NeedsCompilation: yes
+Packaged: 2015-07-28 15:38:23 UTC; hothorn
 Author: Torsten Hothorn [aut, cre],
   Achim Zeileis [aut]
 Maintainer: Torsten Hothorn <Torsten.Hothorn@R-project.org>
-NeedsCompilation: yes
 Repository: CRAN
-Date/Publication: 2015-04-08 11:12:04
+Date/Publication: 2015-07-28 22:45:50
