@@ -2,7 +2,13 @@
 \name{NEWS}
 \title{NEWS file for the partykit package}
 
-\section{Changes in Version 1.0-2 (2015-07-28}{
+\section{Changes in Version 1.0-3 (2015-08-14)}{
+  \itemize{
+    \item{Import \code{logrank_trafo} from \pkg{coin}.}
+  }
+}
+
+\section{Changes in Version 1.0-2 (2015-07-28)}{
   \itemize{
     \item{\code{nodeprune(..., ids = 1)} did not prune the tree to the root
       node. Fixed now.}
@@ -14,8 +20,7 @@
   }
 }
 
-
-\section{Changes in Version 1.0-1 (2015-04-07}{
+\section{Changes in Version 1.0-1 (2015-04-07)}{
   \itemize{
     \item{The support for (generalized) linear model trees with just
       a constant regressor has been improved. Now \code{lmtree(y ~ x1 + x2)}
@@ -43,7 +48,7 @@
   }
 }
 
-\section{Changes in Version 1.0-0 (2015-02-20}{
+\section{Changes in Version 1.0-0 (2015-02-20)}{
   \itemize{
     \item{Version 1.0-0 published. This version is described in the MLOSS paper 
           accepted for publication by the Journal of Machine Learning Research today.}
@@ -53,7 +58,7 @@
   }
 }
 
-\section{Changes in Version 0.8-4 (2015-01-06}{
+\section{Changes in Version 0.8-4 (2015-01-06)}{
   \itemize{
     \item{Extended \code{mob()} interface by a \code{cluster} argument. This can be
     a vector (numeric, integer, factor) with cluster IDs that are
@@ -85,7 +90,7 @@
   }
 }
 
-\section{Changes in Version 0.8-3 (2014-12-15}{
+\section{Changes in Version 0.8-3 (2014-12-15)}{
   \itemize{
     \item{\pkg{mvpart} was archived 2014-12-15.}
   }
