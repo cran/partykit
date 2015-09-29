@@ -8,6 +8,7 @@
 \alias{[[.party}
 \alias{depth.party}
 \alias{width.party}
+\alias{getCall.party}
 \alias{nodeprune}
 \alias{nodeprune.party}
 \title{ Methods for Party Objects }

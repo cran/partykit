@@ -94,6 +94,7 @@ lmfit <- function(y, x, start = NULL, weights = NULL, offset = NULL, cluster = N
 
     cl <- as.call(expression(lm))
     cl$formula <- attr(x, "formula")
+    if(!is.null(offset)) cl$offset <- attr(x, "offset")
     z$call <- cl
     z$terms <- attr(x, "terms")
 

@@ -536,6 +536,10 @@ depth.party <- function(x, root = FALSE, ...) {
   depth(node_party(x), root = root, ...)
 }
 
+getCall.party <- function(x, ...) {
+  x$info$call
+}
+
 nodeprune <- function(x, ids, ...)
     UseMethod("nodeprune")
 

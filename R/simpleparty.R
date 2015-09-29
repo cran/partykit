@@ -147,22 +147,28 @@ as.simpleparty.constparty <- function(obj, ...) {
       wnam <- if(isTRUE(all.equal(w, round(w)))) "n" else "w" 
     }
     
+    ## extract p.value (if any)
+    pval <- function(node) {
+      p <- info_node(node)
+      if(is.list(p)) p$p.value else NULL
+    }
+    
     switch(rtype,
       "numeric" = {
         yhat <- .pred_numeric_response(y, w)
         list(prediction = yhat, n = structure(sum(w), .Names = wnam),
-	  error = sum(w * (y - yhat)^2), distribution = NULL)
+	  error = sum(w * (y - yhat)^2), distribution = NULL, p.value = pval(node))
       },
       "factor" = {
         yhat <- .pred_factor_response(y, w)
         ytab <- round(.pred_factor(y, w) * sum(w))
         list(prediction = yhat, n = structure(sum(w), .Names = wnam),
 	  error = structure(sum(100 * prop.table(ytab)[names(ytab) != yhat]), .Names = "%"),
-	  distribution = ytab)
+	  distribution = ytab, p.value = pval(node))
       },
       "Surv" = {
         list(prediction = .pred_Surv(y, w), n = structure(sum(w), .Names = wnam),
-	  error = NULL, distribution = NULL) ## FIXME: change distribution format?
+	  error = NULL, distribution = NULL, p.value = pval(node)) ## FIXME: change distribution format?
       })
   }
 

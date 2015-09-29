@@ -26,7 +26,8 @@ node_inner(obj, id = TRUE, pval = TRUE, abbreviate = FALSE, fill = "white",
 node_terminal(obj, digits = 3, abbreviate = FALSE,
     fill = c("lightgray", "white"), id = TRUE,
     just = c("center", "top"), top = 0.85,
-    align = c("center", "left", "right"), gp = NULL, FUN = NULL)
+    align = c("center", "left", "right"), gp = NULL, FUN = NULL,
+    height = NULL, width = NULL)
 
 edge_simple(obj, digits = 3, abbreviate = FALSE, justmin = Inf,
   just = c("alternate", "increasing", "decreasing", "equal"))
@@ -75,7 +76,7 @@ node_mvar(obj, which = NULL, id = TRUE, pop = TRUE, ylines = NULL,
   \item{align}{alignment of text within terminal panel viewport.}
   \item{ylines}{ number of lines for spaces in y-direction. }
   \item{widths}{ widths in barplots. }
-  \item{width, boxwidth}{ width in boxplots. }
+  \item{boxwidth}{ width in boxplots (called \code{width} in \code{node_boxplot}). }
   \item{gap}{ gap between bars in a barplot (\code{node_barplot}). }
   \item{yscale}{ limits in y-direction}
   \item{ymax}{ upper limit in y-direction}
@@ -85,6 +86,7 @@ node_mvar(obj, which = NULL, id = TRUE, pop = TRUE, ylines = NULL,
     for barplots.}
   \item{gp}{graphical parameters.}
   \item{FUN}{function for formatting the \code{info}, passed to \code{\link{formatinfo_node}}.}
+  \item{height, width}{ numeric, number of lines/columns for printing text. }
   \item{mobobj}{an object of class \code{modelparty} as computed by \code{\link{mob}}.}
   \item{which}{numeric or character. Optional selection of subset of regressor
     variables. By default one panel for each regressor variable is drawn.}

@@ -96,7 +96,9 @@ node_terminal <- function(obj,
 			  top = 0.85,
 			  align = c("center", "left", "right"),
 			  gp = NULL,
-			  FUN = NULL)
+			  FUN = NULL,
+			  height = NULL,
+			  width = NULL)
 {
   nam <- names(obj)
 
@@ -110,7 +112,7 @@ node_terminal <- function(obj,
       return(lab[which.max(nchar(lab))])
   }
 
-  nstr <- maxstr(node_party(obj))
+  nstr <- if(is.null(width)) maxstr(node_party(obj)) else paste(rep("a", width), collapse = "")
 
   just <- match.arg(just[1L], c("center", "centre", "top"))
   if(just == "centre") just <- "center"
@@ -130,18 +132,19 @@ node_terminal <- function(obj,
       pushViewport(outer_vp)
     }
     
+    if(is.null(height)) height <- length(lab) + 1L
+    
     node_vp <- viewport(x = unit(0.5, "npc"),
       y = unit(if(just == "top") top else 0.5, "npc"),
       just = c("center", just),
       width = unit(1, "strwidth", nstr) * 1.1,
-      height = unit(length(lab) + 1, "lines"),
+      height = unit(height, "lines"),
       name = paste("node_terminal", id_node(node), sep = ""),
       gp = if(is.null(gp)) gpar() else gp
     )
     pushViewport(node_vp)
 
     grid.rect(gp = gpar(fill = fill[1]))
-      "center" = 
       
     for(i in seq_along(lab)) grid.text(
       x = switch(align,
@@ -380,10 +383,13 @@ plot.constparty <- function(x, main = NULL,
     ### compute default settings
     type <- match.arg(type)
     if (type == "simple") {
+	x <- as.simpleparty(x)
         if (is.null(terminal_panel)) 
             terminal_panel <- node_terminal
         if (is.null(tnex)) tnex <- 1
         if (is.null(drop_terminal)) drop_terminal <- FALSE
+        if (is.null(tp_args) || length(tp_args) < 1L) tp_args <- list(
+	  FUN = .make_formatinfo_simpleparty(x, digits = getOption("digits") - 4L, sep = "\n"))
     } else {
         if (is.null(terminal_panel)) {
 	    cl <- class(x$fitted[["(response)"]])
@@ -521,32 +527,28 @@ node_barplot <- function(obj,
         plot <- viewport(layout.pos.col=2, layout.pos.row=2,
                          xscale=xscale, yscale=yscale,
 			 name = paste0("node_barplot", node$nodeID, "plot"),
-			 clip = TRUE)
+			 clip = FALSE)
 
         pushViewport(plot)
 	
 	if(beside) {
   	  xcenter <- cumsum(widths+gap) - widths/2
+          if(length(xcenter) > 1) grid.xaxis(at = xcenter, label = FALSE)
+	  grid.text(ylevels, x = xcenter, y = unit(-1, "lines"), 
+                    just = c("center", "top"),
+	            default.units = "native", check.overlap = TRUE)
+          grid.yaxis()
+          grid.rect(gp = gpar(fill = "transparent"))
+	  grid.clip()
 	  for (i in 1:np) {
             grid.rect(x = xcenter[i], y = 0, height = pred[i], 
                       width = widths[i],
 	              just = c("center", "bottom"), default.units = "native",
 	              gp = gpar(col = col[i], fill = fill[i]))
 	  }
-          if(length(xcenter) > 1) grid.xaxis(at = xcenter, label = FALSE)
-	  grid.text(ylevels, x = xcenter, y = unit(-1, "lines"), 
-                    just = c("center", "top"),
-	            default.units = "native", check.overlap = TRUE)
-          grid.yaxis()
 	} else {
   	  ycenter <- cumsum(pred) - pred
 
-	  for (i in 1:np) {
-            grid.rect(x = xscale[2]/2, y = ycenter[i], height = min(pred[i], ymax - ycenter[i]), 
-                      width = widths[1],
-	              just = c("center", "bottom"), default.units = "native",
-	              gp = gpar(col = col[i], fill = fill[i]))
-	  }
           if(np > 1) {
 	    grid.text(ylevels[1], x = unit(-1, "lines"), y = 0,
                       just = c("left", "center"), rot = 90,
@@ -561,9 +563,19 @@ node_barplot <- function(obj,
 	              default.units = "native", check.overlap = TRUE)
 	  }
           grid.yaxis(main = FALSE)	
+
+          grid.clip()
+          grid.rect(gp = gpar(fill = "transparent"))
+	  for (i in 1:np) {
+            grid.rect(x = xscale[2]/2, y = ycenter[i], height = min(pred[i], ymax - ycenter[i]), 
+                      width = widths[1],
+	              just = c("center", "bottom"), default.units = "native",
+	              gp = gpar(col = col[i], fill = fill[i]))
+	  }
 	}
+	grid.rect(gp = gpar(fill = "transparent"))
+
 	
-        grid.rect(gp = gpar(fill = "transparent"))
         upViewport(2)
     }
     
@@ -632,10 +644,14 @@ node_boxplot <- function(obj,
         plot <- viewport(layout.pos.col = 2, layout.pos.row = 2,
                          xscale = c(0, 1), yscale = yscale,
 			 name = paste0("node_boxplot", nid, "plot"),
-			 clip = TRUE)
+			 clip = FALSE)
 
         pushViewport(plot)
 	
+        grid.yaxis()
+        grid.rect(gp = gpar(fill = "transparent"))
+	grid.clip()
+
 	xl <- 0.5 - width/4
 	xr <- 0.5 + width/4
 
@@ -665,8 +681,6 @@ node_boxplot <- function(obj,
                             size = unit(cex, "char"), gp = gpar(col = col))
         }
 	
-        grid.yaxis()
-        grid.rect(gp = gpar(fill = "transparent"))
         upViewport(2)
     }
     
@@ -766,13 +780,14 @@ node_surv <- function(obj, col = "black", ylines = 2,
         plot <- viewport(layout.pos.col=2, layout.pos.row=2,
                          xscale=xscale, yscale=yscale,
 			 name = paste0("node_surv", nid, "plot"),
-			 clip = TRUE)
+			 clip = FALSE)
 
         pushViewport(plot)
-        grid.lines(a$x/max(a$x), a$y, gp = gpar(col = col))
         grid.xaxis()
         grid.yaxis()
         grid.rect(gp = gpar(fill = "transparent"))
+	grid.clip()
+        grid.lines(a$x/max(a$x), a$y, gp = gpar(col = col))
         upViewport(2)
     }
 
@@ -871,13 +886,14 @@ node_ecdf <- function(obj, col = "black", ylines = 2,
         plot <- viewport(layout.pos.col=2, layout.pos.row=2,
                          xscale=xscale, yscale=yscale,
 			 name = paste0("node_surv", nid, "plot"),
-			 clip = TRUE)
+			 clip = FALSE)
 
         pushViewport(plot)
-        grid.lines(a$x, a$y, gp = gpar(col = col))
         grid.xaxis()
         grid.yaxis()
         grid.rect(gp = gpar(fill = "transparent"))
+	grid.clip()
+        grid.lines(a$x, a$y, gp = gpar(col = col))
         upViewport(2)
     }
 
