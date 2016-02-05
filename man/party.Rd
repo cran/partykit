@@ -96,6 +96,11 @@ is.simpleparty(party)
   \code{data_party} returns a data frame with observations contained in node
   \code{id}.
 }
+\references{ 
+Hothorn T, Zeileis A (2015).
+  partykit: A Modular Toolkit for Recursive Partytioning in R.
+  \emph{Journal of Machine Learning Research}, \bold{16}, 3905--3909.
+}
 \examples{
 ### data ###
 ## artificial WeatherPlay data

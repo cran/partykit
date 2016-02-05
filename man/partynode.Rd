@@ -111,6 +111,11 @@ formatinfo_node(node, FUN = NULL, default = "", prefix = NULL, \dots)
   of the terminal nodes each observation belongs to.
 
 }
+\references{ 
+Hothorn T, Zeileis A (2015).
+  partykit: A Modular Toolkit for Recursive Partytioning in R.
+  \emph{Journal of Machine Learning Research}, \bold{16}, 3905--3909.
+}
 \examples{
 data("iris", package = "datasets")
 

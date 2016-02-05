@@ -170,7 +170,8 @@ node_terminal <- function(obj,
 class(node_terminal) <- "grapcon_generator"
 
 edge_simple <- function(obj, digits = 3, abbreviate = FALSE,
-  justmin = Inf, just = c("alternate", "increasing", "decreasing", "equal"))
+  justmin = Inf, just = c("alternate", "increasing", "decreasing", "equal"),
+  fill = "white")
 {
   meta <- obj$data
 
@@ -200,7 +201,7 @@ edge_simple <- function(obj, digits = 3, abbreviate = FALSE,
       tr <- suppressWarnings(try(parse(text = paste("phantom(0)", split)), silent = TRUE))
       if(!inherits(tr, "try-error")) split <- tr
     }
-    grid.rect(y = y, gp = gpar(fill = "white", col = 0), width = unit(1, "strwidth", split))
+    grid.rect(y = y, gp = gpar(fill = fill, col = 0), width = unit(1, "strwidth", split))
     grid.text(split, y = y, just = "center")
   }
 }
@@ -419,6 +420,7 @@ plot.constparty <- function(x, main = NULL,
 node_barplot <- function(obj,
                          col = "black",
       		         fill = NULL,
+			 bg = "white",
 			 beside = NULL,
 		         ymax = NULL,
 		         ylines = NULL,
@@ -506,7 +508,7 @@ node_barplot <- function(obj,
 			   gp = gp)
 
         pushViewport(top_vp)
-        grid.rect(gp = gpar(fill = "white", col = 0))
+        grid.rect(gp = gpar(fill = bg, col = 0))
 
         ## main title
         top <- viewport(layout.pos.col=2, layout.pos.row=1)
@@ -586,6 +588,7 @@ class(node_barplot) <- "grapcon_generator"
 node_boxplot <- function(obj,
                          col = "black",
 		         fill = "lightgray",
+			 bg = "white",
 		         width = 0.5,
 		         yscale = NULL,
 		         ylines = 3,
@@ -623,7 +626,7 @@ node_boxplot <- function(obj,
 			   gp = gp)
 
         pushViewport(top_vp)
-        grid.rect(gp = gpar(fill = "white", col = 0))
+        grid.rect(gp = gpar(fill = bg, col = 0))
 
         ## main title
         top <- viewport(layout.pos.col=2, layout.pos.row=1)
@@ -688,7 +691,7 @@ node_boxplot <- function(obj,
 }
 class(node_boxplot) <- "grapcon_generator"
 
-node_surv <- function(obj, col = "black", ylines = 2,
+node_surv <- function(obj, col = "black", bg = "white", ylines = 2,
 		      id = TRUE, mainlab = NULL, gp = gpar(), ...)
 {
     ## extract response
@@ -759,7 +762,7 @@ node_surv <- function(obj, col = "black", ylines = 2,
 			   name = paste("node_surv", nid, sep = ""), gp = gp)
 
         pushViewport(top_vp)
-        grid.rect(gp = gpar(fill = "white", col = 0))
+        grid.rect(gp = gpar(fill = bg, col = 0))
 
         ## main title
         top <- viewport(layout.pos.col=2, layout.pos.row=1)
@@ -795,7 +798,7 @@ node_surv <- function(obj, col = "black", ylines = 2,
 }
 class(node_surv) <- "grapcon_generator"
 
-node_ecdf <- function(obj, col = "black", ylines = 2,
+node_ecdf <- function(obj, col = "black", bg = "white", ylines = 2,
 		      id = TRUE, mainlab = NULL, gp = gpar(), ...)
 {
     ## extract response
@@ -865,7 +868,7 @@ node_ecdf <- function(obj, col = "black", ylines = 2,
 			   name = paste("node_ecdf", nid, sep = ""), gp = gp)
 
         pushViewport(top_vp)
-        grid.rect(gp = gpar(fill = "white", col = 0))
+        grid.rect(gp = gpar(fill = bg, col = 0))
 
         ## main title
         top <- viewport(layout.pos.col=2, layout.pos.row=1)
@@ -903,7 +906,7 @@ class(node_ecdf) <- "grapcon_generator"
 
 
 
-node_mvar <- function(obj, which = NULL, id = TRUE, pop = TRUE, ylines = NULL, mainlab = NULL, varlab = TRUE, ...)
+node_mvar <- function(obj, which = NULL, id = TRUE, pop = TRUE, ylines = NULL, mainlab = NULL, varlab = TRUE, bg = "white", ...)
 {  
   ## obtain dependent variables
   y <- obj$fitted[["(response)"]]
@@ -926,7 +929,7 @@ node_mvar <- function(obj, which = NULL, id = TRUE, pop = TRUE, ylines = NULL, m
 		       width = unit(1, "npc"), height = unit(1, "npc") - unit(2, "lines"),
 		       name = paste("node_mvar", tid, sep = ""))
     pushViewport(top_vp)
-    grid.rect(gp = gpar(fill = "white", col = 0))
+    grid.rect(gp = gpar(fill = bg, col = 0))
 
     ## main title
     if (is.null(mainlab)) { 

@@ -119,6 +119,8 @@ Functions such as \code{coef}, \code{print}, \code{summary} also take a
 Some examples are given below.
 
 More details can be found in \code{vignette("mob", package = "partykit")}.
+An overview of the connections to other functions in the package is provided
+by Hothorn and Zeileis (2015).
 }
 
 \value{
@@ -128,6 +130,10 @@ More details can be found in \code{vignette("mob", package = "partykit")}.
 }
 
 \references{ 
+Hothorn T, Zeileis A (2015).
+  partykit: A Modular Toolkit for Recursive Partytioning in R.
+  \emph{Journal of Machine Learning Research}, \bold{16}, 3905--3909.
+
 Zeileis A, Hothorn T, Hornik K (2008).
   Model-Based Recursive Partitioning.
   \emph{Journal of Computational and Graphical Statistics}, \bold{17}(2), 492--514.

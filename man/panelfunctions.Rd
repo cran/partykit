@@ -21,38 +21,41 @@
 
 \usage{
 node_inner(obj, id = TRUE, pval = TRUE, abbreviate = FALSE, fill = "white", 
-    gp = gpar())
+  gp = gpar())
 
 node_terminal(obj, digits = 3, abbreviate = FALSE,
-    fill = c("lightgray", "white"), id = TRUE,
-    just = c("center", "top"), top = 0.85,
-    align = c("center", "left", "right"), gp = NULL, FUN = NULL,
-    height = NULL, width = NULL)
+  fill = c("lightgray", "white"), id = TRUE,
+  just = c("center", "top"), top = 0.85,
+  align = c("center", "left", "right"), gp = NULL, FUN = NULL,
+  height = NULL, width = NULL)
 
 edge_simple(obj, digits = 3, abbreviate = FALSE, justmin = Inf,
-  just = c("alternate", "increasing", "decreasing", "equal"))
+  just = c("alternate", "increasing", "decreasing", "equal"),
+  fill = "white")
 
-node_boxplot(obj, col = "black", fill = "lightgray", width = 0.5,
-    yscale = NULL, ylines = 3, cex = 0.5, id = TRUE, mainlab = NULL, gp = gpar())
+node_boxplot(obj, col = "black", fill = "lightgray", bg = "white", width = 0.5,
+  yscale = NULL, ylines = 3, cex = 0.5, id = TRUE, mainlab = NULL, gp = gpar())
 
-node_barplot(obj, col = "black", fill = NULL, beside = NULL,
-    ymax = NULL, ylines = NULL, widths = 1, gap = NULL,
-    reverse = NULL, id = TRUE, mainlab = NULL, gp = gpar())
+node_barplot(obj, col = "black", fill = NULL, bg = "white",
+  beside = NULL, ymax = NULL, ylines = NULL, widths = 1, gap = NULL,
+  reverse = NULL, id = TRUE, mainlab = NULL, gp = gpar())
 
-node_surv(obj, col = "black", ylines = 2, id = TRUE, mainlab = NULL, gp = gpar(), \dots)
+node_surv(obj, col = "black", bg = "white", ylines = 2,
+  id = TRUE, mainlab = NULL, gp = gpar(), \dots)
 
-node_ecdf(obj, col = "black", ylines = 2, id = TRUE, mainlab = NULL, gp = gpar(), \dots)
+node_ecdf(obj, col = "black", bg = "white", ylines = 2,
+  id = TRUE, mainlab = NULL, gp = gpar(), \dots)
 
 node_bivplot(mobobj, which = NULL, id = TRUE, pop = TRUE,
   pointcol = "black", pointcex = 0.5,
   boxcol = "black", boxwidth = 0.5, boxfill = "lightgray",
-  fitmean = TRUE, linecol = "red",
+  bg = "white", fitmean = TRUE, linecol = "red",
   cdplot = FALSE, fivenum = TRUE, breaks = NULL,
   ylines = NULL, xlab = FALSE, ylab = FALSE, margins = rep(1.5, 4),
   mainlab = NULL, \dots)
 
 node_mvar(obj, which = NULL, id = TRUE, pop = TRUE, ylines = NULL,
-  mainlab = NULL, varlab = TRUE, ...)
+  mainlab = NULL, varlab = TRUE, bg = "white", ...)
 }
 
 \arguments{
@@ -61,7 +64,7 @@ node_mvar(obj, which = NULL, id = TRUE, pop = TRUE, ylines = NULL,
   \item{abbreviate}{ logical indicating whether strings should be 
     abbreviated. }
   \item{col, pointcol, boxcol, linecol}{ a color for points and lines. }
-  \item{fill, boxfill}{ a color to filling rectangles. }
+  \item{fill, boxfill, bg}{ a color to filling rectangles and backgrounds. }
   \item{id}{ logical. Should node IDs be plotted?}
   \item{pval}{ logical. Should node p values be plotted (if they are
     available)?}

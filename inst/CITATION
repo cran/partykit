@@ -6,13 +6,15 @@ citEntry(entry = "Article",
 		   as.person("Achim Zeileis")),
   journal      = "Journal of Machine Learning Research",
   year         = "2015",
-  url	       = "http://EconPapers.RePEc.org/RePEc:inn:wpaper:2014-10",
+  volume       = "16",
+  pages        = "3905-3909",
+  url	       = "http://jmlr.org/papers/v16/hothorn15a.html",
   
   textVersion  = 
   paste("Torsten Hothorn, Achim Zeileis (2015).",
 	"partykit: A Modular Toolkit for Recursive Partytioning in R.",
- 	"Journal of Machine Learning Research (accepted 2015-02-20).",
-	"URL http://EconPapers.RePEc.org/RePEc:inn:wpaper:2014-10")
+ 	"Journal of Machine Learning Research, 16, 3905-3909.",
+	"URL http://jmlr.org/papers/v16/hothorn15a.html")
 )
 
 citEntry(entry="Article",

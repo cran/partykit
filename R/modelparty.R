@@ -502,7 +502,7 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL, cluster = NULL
     if(verbose) {
       if(id == 1L) cat("\n")
       cat(sprintf("-- Node %i %s\n", id, paste(rep("-", 32 - floor(log10(id)) + 1L), collapse = "")))
-      cat(sprintf("Number of observations: %i\n", w2n(weights)))
+      cat(sprintf("Number of observations: %s\n", w2n(weights)))
       ## cat(sprintf("Depth: %i\n", depth))
     }
 
@@ -519,11 +519,11 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL, cluster = NULL
     ## if too few observations or maximum depth: no split = return terminal node
     TERMINAL <- FALSE
     if(w2n(weights) < 2 * minsize) {
-      if(verbose) cat(sprintf("Too few observations, stop splitting (minsize = %i)\n\n", minsize))
+      if(verbose) cat(sprintf("Too few observations, stop splitting (minsize = %s)\n\n", minsize))
       TERMINAL <- TRUE
     }
     if(depth >= control$maxdepth) {
-      if(verbose) cat(sprintf("Maximum depth reached, stop splitting (maxdepth = %i)\n\n", control$maxdepth))
+      if(verbose) cat(sprintf("Maximum depth reached, stop splitting (maxdepth = %s)\n\n", control$maxdepth))
       TERMINAL <- TRUE
     }
     if(TERMINAL) {
@@ -955,7 +955,7 @@ print.modelparty <- function(x, node = NULL,
     } else function (party) ""
 
     if(is.null(FUN)) {
-      FUN <- function(x) c(sprintf(": n = %i", x$nobs), capture.output(print(x$coefficients)))
+      FUN <- function(x) c(sprintf(": n = %s", x$nobs), capture.output(print(x$coefficients)))
     }
     terminal_panel <- function(node) formatinfo_node(node,
       default = "*", prefix = NULL, FUN = FUN)
@@ -1106,7 +1106,7 @@ plot.modelparty <- function(x, terminal_panel = NULL, FUN = NULL, ...) {
       FUN <- function(x) {
         cf <- x$coefficients
 	cf <- matrix(cf, ncol = 1, dimnames = list(names(cf), ""))
-        c(sprintf("n = %i", x$nobs), "Estimated parameters:",
+        c(sprintf("n = %s", x$nobs), "Estimated parameters:",
           strwrap(capture.output(print(cf, digits = 4L))[-1L]))
       }
     }

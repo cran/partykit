@@ -2,6 +2,18 @@
 \name{NEWS}
 \title{NEWS file for the partykit package}
 
+\section{Changes in Version 1.0-5 (2016-02-05)}{
+  \itemize{
+    \item{The \pkg{partykit} package has now been published in
+      \emph{Journal of Machine Learning Research}, 16, 3905-3909.
+      \url{http://jmlr.org/papers/v16/hothorn15a.html}}
+    \item{Added support for setting background in panel functions.}
+    \item{The \code{as.list()} method for \code{partynode} objects
+      erroneously created an object \code{thisnode} in the calling
+      environment which is avoided now.}
+  }
+}
+
 \section{Changes in Version 1.0-4 (2015-09-29)}{
   \itemize{
     \item{Bug fix in \code{plot()} method for \code{constparty} objects.

@@ -1,6 +1,6 @@
 node_bivplot <- function(mobobj, which = NULL, id = TRUE, pop = TRUE,
   pointcol = "black", pointcex = 0.5,
-  boxcol = "black", boxwidth = 0.5, boxfill = "lightgray",
+  boxcol = "black", boxwidth = 0.5, boxfill = "lightgray", bg = "white",
   fitmean = TRUE, linecol = "red",
   cdplot = FALSE, fivenum = TRUE, breaks = NULL,
   ylines = NULL, xlab = FALSE, ylab = FALSE, margins = rep(1.5, 4),
@@ -188,7 +188,7 @@ node_bivplot <- function(mobobj, which = NULL, id = TRUE, pop = TRUE,
 		       width = unit(1, "npc"), height = unit(1, "npc") - unit(2, "lines"),
 		       name = paste("node_mob", nid, sep = ""))
     pushViewport(top_vp)
-    grid.rect(gp = gpar(fill = "white", col = 0))
+    grid.rect(gp = gpar(fill = bg, col = 0))
 
     ## main title
     top <- viewport(layout.pos.col = 2, layout.pos.row = 1)

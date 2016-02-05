@@ -4,7 +4,8 @@ import("graphics")
 import("grid")
 importFrom("survival", "survfit")
 importFrom("grDevices", "gray.colors")
-importFrom("utils", "capture.output", "head", "tail")
+importFrom("utils", "capture.output", "head", "tail",
+           "setTxtProgressBar", "txtProgressBar")
 
 export(
   ## core infrastructure

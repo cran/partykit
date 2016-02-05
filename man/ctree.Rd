@@ -104,10 +104,6 @@ ctree(formula, data, weights, subset, na.action = na.pass,
 }
 
 \references{ 
-Strasser H, Weber C (1999).
-  On the Asymptotic Theory of Permutation Statistics.
-  \emph{Mathematical Methods of Statistics}, \bold{8}, 220--250.
-
 Hothorn T, Hornik K, Van de Wiel MA, Zeileis A (2006).
   A Lego System for Conditional Inference.
   \emph{The American Statistician}, \bold{60}(3), 257--263.
@@ -115,6 +111,14 @@ Hothorn T, Hornik K, Van de Wiel MA, Zeileis A (2006).
 Hothorn T, Hornik K, Zeileis A (2006).
   Unbiased Recursive Partitioning: A Conditional Inference Framework.
   \emph{Journal of Computational and Graphical Statistics}, \bold{15}(3), 651--674. 
+
+Hothorn T, Zeileis A (2015).
+  partykit: A Modular Toolkit for Recursive Partytioning in R.
+  \emph{Journal of Machine Learning Research}, \bold{16}, 3905--3909.
+
+Strasser H, Weber C (1999).
+  On the Asymptotic Theory of Permutation Statistics.
+  \emph{Mathematical Methods of Statistics}, \bold{8}, 220--250.
 }
 
 \examples{

@@ -51,7 +51,8 @@ cforest <- function(formula, data, weights, subset, na.action = na.pass,
                                             testtype = "Univ", mincriterion = 0, ...), 
                     ytrafo = NULL, scores = NULL,
                     ntree = 500L, perturb = list(replace = FALSE, fraction = 0.632),
-                    mtry = ceiling(sqrt(nvar)), applyfun = NULL, cores = NULL, ...) {
+                    mtry = ceiling(sqrt(nvar)), applyfun = NULL, cores = NULL, 
+                    trace = FALSE, ...) {
 
     if (missing(data))
         data <- environment(formula)
@@ -128,10 +129,13 @@ cforest <- function(formula, data, weights, subset, na.action = na.pass,
     ### no parallelization in ctree, only in cforest
     control$applyfun <- lapply
 
+    if (trace) pb <- txtProgressBar(style = 3)
     forest <- applyfun(1:ntree, function(b) {
+        if (trace) setTxtProgressBar(pb, b/ntree)
         .ctree_fit(dat, response, weights = rw[[b]], 
                    ctrl = control, ytrafo = ytrafo)
     })
+    if (trace) close(pb)
 
     fitted <- data.frame(idx = 1:nrow(dat))
     fitted[[2]] <- dat[,response, drop = length(response) == 1]

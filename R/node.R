@@ -106,6 +106,7 @@ as.list.partynode <- function(x, ...)
 {
     ids <- nodeids(x)
     obj <- vector(mode = "list", length = length(ids))
+    thisnode <- NULL
     
     nodelist <- function(node) {
         if (is.terminal(node))

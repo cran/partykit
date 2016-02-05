@@ -1,0 +1,156 @@
+
+\name{NEWS}
+\title{NEWS file for the partykit package}
+
+\section{Changes in Version 0.8-3}{
+  \itemize{
+    \item{Bug fix in \code{mob()} that occurred when regressor variables and
+    partitioning variables overlapped and were not sorted in the
+    underlying model frame.}
+
+    \item{Extended \code{mob()} interface by a 'cluster' argument. This can be
+    a vector (numeric, integer, factor) with cluster IDs that are
+    then passed on to the 'fit' function (if supported) and used
+    for clustering the covariance matrix in the parameter stability
+    tests. \code{lmtree()} and \code{glmtree()} hence both gained a 'cluster'
+    argument which is used only for cluster covariances but not
+    for the model estimation (i.e., corresponding to a working
+    independence model).}
+  }
+}
+
+\section{Changes in Version 0.8-2}{
+  \itemize{
+    \item{Fixed an uninitialized memory issue reported by valgrind.}
+  }
+}
+
+\section{Changes in Version 0.8-1}{
+  \itemize{
+
+  \item{partykit now depends on R version >= 3.1.0 in order to import the
+        \code{depth()} generic from the \pkg{grid} package.}
+
+  \item{The print methods for \code{party}/\code{partynode} objects with only a root node
+    was modified. Now, the terminal panel function is also applied
+    if there is only a root node (while previously it was not).}
+
+  \item{ \code{ctree()} now catches \code{sum(weights) <= 1} situations before they 
+    lead to an error.}
+
+  \item{ Code from suggested packages is included by using \code{::} syntax as
+    required by recent R versions.}
+    
+  \item{ Argument \code{ytrafo} of \code{ctree()} can now be a function which will be
+    updated in every node.}
+    
+  \item{ A small demo briefly illustrating some memory and speed properties
+    has been added. It can be run interactively via
+    \code{demo("memory-speed", package = "partykit").}}
+    
+  \item{ Section 3 of the "constparty" vignette now shows how properties of
+    a new tree algorithm can be assessed by using \pkg{partykit} building
+    blocks.}
+  }
+}
+
+
+\section{Changes in Version 0.8-0}{
+  \itemize{
+
+  \item{Major improved version of \pkg{partykit}. The previously existing functions
+    in the package were tested and enhanced, new functions and
+    extensive vignettes added.}
+
+  \item{Extended and improved introductory documentation. The basic classes
+    and class constructors \code{partynode}/\code{partysplit}/\code{party} are introduced in 
+    much more detail now in \code{vignette("partykit", package = "partykit")}.}
+    
+  \item{The class \code{constparty} (inheriting from \code{party}) for representing \code{party}
+    objects with constant fits in the nodes (along with coercion methods
+    for \code{rpart}, \code{J48}, etc.) is now described in more detail in the new
+    \code{vignette("constparty", package = "partykit")}.}
+
+  \item{The package now includes a reimplementation of the model-based
+    recursive partitioning algorithm (MOB) using \pkg{partykit} infrastructure.
+    The generic algorithm, the corresponding convenience interfaces
+    \code{lmtree()} and \code{glmtree()} as well as various illustrations and possible
+    extensions are described in detail in the new
+    \code{vignette("mob", package = "partykit")}.}
+
+  \item{Improved implementation of conditional inference trees (CTree), see
+    the new \code{vignette("ctree", package = "partykit")} for details.}
+
+  \item{New \code{nodeprune()} generic for pruning nodes in all \code{party} trees and
+    \code{partynode} objects.}
+
+  \item{Deal with empty levels in \code{ctree()} for \code{teststat = "quad"}
+    (bug reported by Wei-Yin Loh <loh_at_stat.wisc.edu>).}
+
+  \item{In \code{predict()} method for \code{constparty} objects, \code{type = "prob"} now returns
+    ECDF for numeric responses and \code{type = "response"} the (weighted) mean.}
+
+  \item{New panel function \code{node_ecdf()} for plotting empirical cumulative
+    distribution functions in the terminal leaves of \code{constparty} trees.}
+  }
+}
+
+\section{Changes in Version 0.1-6}{
+  \itemize{
+
+  \item{Bug fix in \code{as.party()} method for J48 trees with ordered factors.}
+ }
+}
+
+\section{Changes in Version 0.1-5}{
+  \itemize{
+
+  \item{Fix C code problems reported by clang under OS X.}
+  }
+}
+
+\section{Changes in Version 0.1-4}{
+  \itemize{
+
+  \item{Added \code{node_surv()} for plotting survival ctrees. Accompanying
+    infrastructure for survival trees was enhanced.}
+    
+  \item{\code{ctree()} now checks for (and does not allow) \code{x >= max(x)} splits.}
+  }
+}
+
+\section{Changes in Version 0.1-3}{
+  \itemize{
+
+  \item{Added \pkg{ipred} to the list of suggested packages due to usage of
+        GlaucomaM and GBSG2 data in tests/examples.}
+  }
+}
+
+
+\section{Changes in Version 0.1-2}{
+  \itemize{
+
+  \item{The \code{node_terminal()} panel-generating function is now customizable
+    by a FUN argument that is passed to \code{formatinfo()}.}
+
+  \item{The \code{plot()} method for \code{simpleparty} object now sets up a formatting
+    function passed to \code{formatinfo()}, both in \code{print()} and \code{plot()}.}
+
+  \item{Fixed bug in \code{pmmlTreeModel()} for processing label IDS in splits when
+    not all levels are present.}
+  
+  \item{Cleaned up unused variables in C code and partial argument matching
+    in R code.}
+  }
+}  
+
+\section{Changes in Version 0.1-1}{
+  \itemize{
+
+  \item{First CRAN release.}
+  
+  \item{See \code{vignette("partykit", package = "partykit")} for a (somewhat rough)
+    introduction to the package and its classes/methods.}
+  }
+}

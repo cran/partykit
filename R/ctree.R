@@ -2,18 +2,18 @@
 ### calculate quad p-values
 .MPinv <- function (X, tol = sqrt(.Machine$double.eps)) 
 {
-    if (length(dim(X)) > 2 || !(is.numeric(X) || is.complex(X))) 
+    if (length(dim(X)) > 2L || !(is.numeric(X) || is.complex(X))) 
         stop("'X' must be a numeric or complex matrix")
     if (!is.matrix(X)) 
         X <- as.matrix(X)
     Xsvd <- svd(X)
     if (is.complex(X)) 
         Xsvd$u <- Conj(Xsvd$u)
-    Positive <- Xsvd$d > max(tol * Xsvd$d[1], 0)
+    Positive <- Xsvd$d > max(tol * Xsvd$d[1L], 0)
     Xplus <- if (all(Positive)) 
         Xsvd$v %*% (1/Xsvd$d * t(Xsvd$u))
     else if (!any(Positive)) 
-        array(0, dim(X)[2:1])
+        array(0, dim(X)[2L:1L])
     else Xsvd$v[, Positive, drop = FALSE] %*% ((1/Xsvd$d[Positive]) * 
         t(Xsvd$u[, Positive, drop = FALSE]))
     list(Xplus = Xplus, rank = sum(Positive))
@@ -92,14 +92,14 @@
 
     ret <- vector(mode = "list", length = min(sum(inp), ctrl$maxsurrogate))
 
-    for (i in 1:length(ret)) {
+    for (i in 1L:length(ret)) {
         isel <- which.max(crit)
         isel <- which(inp)[isel]
         x <- data[[isel]]
         sp <- .Call("R_split", x, response, weights, as.integer(0))
         if (any(is.na(sp))) next
         if (length(sp) == 1) {
-            ret[[i]] <- partysplit(as.integer(isel), breaks = sp, index = 1:2)
+            ret[[i]] <- partysplit(as.integer(isel), breaks = sp, index = 1L:2L)
         } else {
             ret[[i]] <- partysplit(as.integer(isel), index = sp)
         }
@@ -187,8 +187,8 @@
         if (mb < swp) mb <- as.integer(swp)
 
         if ((ctrl$multiway && ctrl$maxsurrogate == 0) && is.factor(x)) {
-            if (all(table(x[rep(1:length(x), weights)]) > mb)) {
-                thissplit <- partysplit(as.integer(isel), index = 1:levels(x))
+            if (all(table(x[rep(1L:length(x), weights)]) > mb)) {
+                thissplit <- partysplit(as.integer(isel), index = 1L:nlevels(x))
                 break()
             }
         } else {
@@ -220,7 +220,7 @@
     kidids <- kidids_node(ret, data)
     prob <- prop.table(table(kidids))
     if (ctrl$majority)  ### go with majority
-        prob <- numeric(0) + 1:length(prob) %in% which.max(prob)
+        prob <- numeric(0) + 1L:length(prob) %in% which.max(prob)
     ret$prob <- prob
 
     if (ctrl$maxsurrogate > 0) {
@@ -235,7 +235,7 @@
 
     kids <- vector(mode = "list", length = max(kidids)) ## Z: was 1:max(kidids)
     nextid <- id + 1
-    for (k in 1:max(kidids)) {
+    for (k in 1L:max(kidids)) {
         w <- weights
         w[kidids != k] <- 0
         assign("depth", depth + 1, envir = cenv)
@@ -416,7 +416,7 @@ ctree <- function(formula, data, weights, subset, na.action = na.pass,
             },
             "ordered" = {
                 sc <- attr(response, "scores")
-                if (is.null(sc)) sc <- 1:nlevels(response)
+                if (is.null(sc)) sc <- 1L:nlevels(response)
                 sc <- as.numeric(sc)
                 return(sc[as.integer(response)])
             },
@@ -427,7 +427,7 @@ ctree <- function(formula, data, weights, subset, na.action = na.pass,
         ### multivariate response
         infl <- lapply(response, .y2infl, data = data)
         tmp <- do.call("cbind", infl)
-        attr(tmp, "assign") <- rep(1:length(infl), sapply(infl, NCOL))
+        attr(tmp, "assign") <- rep(1L:length(infl), sapply(infl, NCOL))
         infl <- tmp
     }
     storage.mode(infl) <- "double"
