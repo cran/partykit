@@ -192,7 +192,11 @@
                 break()
             }
         } else {
-            sp <- .Call("R_split", x, response, weights, mb)
+            if (is.null(ctrl$splitfun)) {
+                sp <- .Call("R_split", x, response, weights, mb)
+            } else {
+                sp <- ctrl$splitfun(x, response, weights, mb)
+            }
             if (!any(is.na(sp))) {
                 if (length(sp) == 1) {
                     thissplit <- partysplit(as.integer(isel), breaks = sp)
@@ -294,7 +298,7 @@ ctree <- function(formula, data, weights, subset, na.action = na.pass,
     mf$formula <- formula
     mf$drop.unused.levels <- FALSE
     mf$na.action <- na.action
-    mf[[1]] <- as.name("model.frame")
+    mf[[1]] <- quote(stats::model.frame)
     mf <- eval(mf, parent.frame())
 
     response <- names(Formula::model.part(formula, mf, lhs = 1))

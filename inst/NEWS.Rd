@@ -2,6 +2,33 @@
 \name{NEWS}
 \title{NEWS file for the partykit package}
 
+\section{Changes in Version 1.1-0 (2016-07-14)}{
+  \itemize{
+    \item{Added a new function \code{palmtree} that fits partially
+      additive (generalized) linear model trees. These employ
+      model-based recursive partitioning (\code{mob}) based on (generalized)
+      linear models with some local (i.e., leaf-specific) and
+      some global (i.e., constant throughout the tree) regression
+      coefficients.}
+    \item{Splits in ordinal variables are now represented correctly 
+      in the (still internal) \code{list.rule} method.}
+    \item{Kaplan-Meier curves in \code{"constparty"} trees were
+      plotted incorrectly due to use a wrong scaling of the
+      x-axis. Spotted by Peter Calhoun <calhoun.peter@gmail.com>.}
+    \item{Use \code{quote(stats::model.frame)} instead of
+      \code{as.name("model.frame")}.}
+    \item{The \code{as.party} methods for \code{rpart} and
+      \code{Weka_tree} now have a \code{data = TRUE} argument
+      so that by default the data is preserved in the \code{party}
+      object (instead of an empty model frame).}
+    \item{The \code{predict} method for \code{cforest} objects
+      did not work for one-row data frames, fixed now.}
+    \item{Added \code{rot} and \code{just} arguments to \code{node_barplot}
+      for more fine control of x-axis labeling (e.g., with 45 degree
+      rotation).}
+  }
+}
+
 \section{Changes in Version 1.0-5 (2016-02-05)}{
   \itemize{
     \item{The \pkg{partykit} package has now been published in

@@ -20,8 +20,8 @@ Functions coercing various objects to objects of class party.
 
 \usage{
 as.party(obj, \dots)
-\method{as.party}{rpart}(obj, \dots)
-\method{as.party}{Weka_tree}(obj, \dots)
+\method{as.party}{rpart}(obj, data = TRUE, \dots)
+\method{as.party}{Weka_tree}(obj, data = TRUE, \dots)
 \method{as.party}{XMLNode}(obj, \dots)
 pmmlTreeModel(file, \dots)
 as.constparty(obj, \dots)
@@ -36,6 +36,8 @@ as.simpleparty(obj, \dots)
   \item{obj}{ an object of class \code{\link[rpart]{rpart}},
               \code{\link[RWeka:Weka_classifier_trees]{Weka_tree}}, \code{XMLnode} or
               objects inheriting from \code{party}.}
+  \item{data}{logical. Should the model frame associated with the fitted
+              \code{obj} be included in the \code{data} of the \code{party}?}
   \item{file}{ a file name of a XML file 
               containing a PMML description of a tree.}
   \item{\dots}{ additional arguments.}

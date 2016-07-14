@@ -67,7 +67,7 @@ cforest <- function(formula, data, weights, subset, na.action = na.pass,
     mf$formula <- formula
     mf$drop.unused.levels <- FALSE
     mf$na.action <- na.action
-    mf[[1]] <- as.name("model.frame")
+    mf[[1]] <- quote(stats::model.frame)
     mf <- eval(mf, parent.frame())
 
     response <- names(Formula::model.part(formula, mf, lhs = 1))
@@ -188,10 +188,11 @@ predict.cforest <- function(object, newdata = NULL, type = c("response", "prob",
         tw <- rw[[b]]
         if (OOB) tw <- as.integer(tw == 0)
         pw <- sapply(ids, function(i) tw * (fdata == i))
-        return(pw[, match(fnewdata, ids)])
+        return(pw[, match(fnewdata, ids), drop = FALSE])
     })
 
     w <- Reduce("+", bw)
+    if (!is.matrix(w)) w <- matrix(w, ncol = 1)
 
     if (type == "weights") {
         ret <- w

@@ -1,30 +1,29 @@
 Package: partykit
 Title: A Toolkit for Recursive Partytioning
-Date: 2016-02-05
-Version: 1.0-5
+Date: 2016-07-14
+Version: 1.1-0
 Authors@R: c(person(given = "Torsten", family = "Hothorn", role = c("aut", "cre"), email = "Torsten.Hothorn@R-project.org"),
              person(given = "Achim", family = "Zeileis", role = "aut", email = "Achim.Zeileis@R-project.org"))
 Description: A toolkit with infrastructure for representing, summarizing, and
   visualizing tree-structured regression and classification models. This
   unified infrastructure can be used for reading/coercing tree models from
-  different sources (rpart, RWeka, PMML) yielding objects that share
-  functionality for print/plot/predict methods. Furthermore, new and improved
-  reimplementations of conditional inference trees (ctree) and model-based
-  recursive partitioning (mob) from the party package are provided based
+  different sources (`rpart', `RWeka', `PMML') yielding objects that share
+  functionality for print()/plot()/predict() methods. Furthermore, new and improved
+  reimplementations of conditional inference trees (ctree()) and model-based
+  recursive partitioning (mob()) from the `party' package are provided based
   on the new infrastructure.
 Depends: R (>= 3.1.0), graphics, grid
-Imports: stats, survival
-Suggests: XML, pmml, rJava, rpart, mvtnorm, Formula (>= 1.2-1),
-        sandwich, strucchange, vcd, AER, mlbench, TH.data (>= 1.0-3),
-        coin (>= 1.1-0), RWeka (>= 0.4-19), datasets, parallel,
-        psychotools, psychotree
+Imports: grDevices, stats, utils, survival, Formula (>= 1.2-1)
+Suggests: XML, pmml, rJava, rpart, mvtnorm, sandwich, strucchange, vcd,
+        AER, mlbench, TH.data (>= 1.0-3), coin (>= 1.1-0), RWeka (>=
+        0.4-19), datasets, parallel, psychotools, psychotree
 LazyData: yes
 License: GPL-2 | GPL-3
-URL: http://partykit.R-forge.R-project.org/partykit
+URL: http://partykit.R-Forge.R-project.org/partykit
 NeedsCompilation: yes
-Packaged: 2016-02-05 10:33:38 UTC; hothorn
+Packaged: 2016-07-14 11:59:04 UTC; hothorn
 Author: Torsten Hothorn [aut, cre],
   Achim Zeileis [aut]
 Maintainer: Torsten Hothorn <Torsten.Hothorn@R-project.org>
 Repository: CRAN
-Date/Publication: 2016-02-05 19:28:44
+Date/Publication: 2016-07-14 15:30:03

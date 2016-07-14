@@ -59,7 +59,7 @@ mob <- function(formula, data, subset, na.action, weights, offset, cluster,
   mf$formula <- formula
 
   ## evaluate model.frame
-  mf[[1L]] <- as.name("model.frame")
+  mf[[1L]] <- quote(stats::model.frame)
   mf <- eval(mf, parent.frame())
 
   ## extract terms, response, regressor matrix (if any), partitioning variables
@@ -777,7 +777,7 @@ model.frame.modelparty <- function(formula, ...)
   mf <- formula$info$call
   mf <- mf[c(1L, match(c("formula", "data", "subset", "na.action"), names(mf), 0L))]
   mf$drop.unused.levels <- TRUE
-  mf[[1L]] <- as.name("model.frame")
+  mf[[1L]] <- quote(stats::model.frame)
   mf[names(nargs)] <- nargs
   if(is.null(env <- environment(formula$info$terms))) env <- parent.frame()
   mf$formula <- Formula::Formula(as.formula(mf$formula))
@@ -792,10 +792,10 @@ weights.modelparty <- function(object, ...) {
 
 ## methods concerning model/parameters/loglik/etc.
 
-coef.modelparty <- function(object, node = NULL, ...) {
+coef.modelparty <- function(object, node = NULL, drop = TRUE, ...) {
   if(is.null(node)) node <- nodeids(object, terminal = TRUE)
-  drop(do.call("rbind",
-    nodeapply(object, ids = node, FUN = function(n) info_node(n)$coefficients)))
+  cf <- do.call("rbind", nodeapply(object, ids = node, FUN = function(n) info_node(n)$coefficients))
+  if(drop) drop(cf) else cf
 }
 
 refit.modelparty <- function(object, node = NULL, drop = TRUE, ...)

@@ -384,7 +384,7 @@ following inputs:
 \end{Code}
 The meaning of all arguments is the same as above. However, in this case
 \code{fit} needs to return a classed model object for which methods to
-\code{coef()}, \code{logLik()}, and \code{estfun()} \citep[see][]{sandwich}
+\code{coef()}, \code{logLik()}, and \code{estfun()} \citep[see][and the \pkg{sandwich} package]{sandwich}
 are available for extracting the parameter estimates, the maximized log-likelihood,
 and associated empirical estimating functions (or score contributions), respectively.
 Internally, a function of type (1) is set up by \code{mob()} in case a function
@@ -1452,7 +1452,7 @@ system.time(bt1 <- mob(preference ~ 1 | gender + age + q1 + q2 + q3,
 An alternative way to fit the exact same tree somewhat more quickly would be to
 employ the extended interface described in Section~\ref{sec:fit}:
 %
-<<btfit2, echo=FALSE, results=hide>>=
+<<btfit2>>=
 btfit2 <- function(y, x = NULL, start = NULL, weights = NULL,
   offset = NULL, ..., estfun = FALSE, object = FALSE) {
   rval <- btReg.fit(y, ..., estfun = estfun, vcov = object)
@@ -1467,8 +1467,8 @@ btfit2 <- function(y, x = NULL, start = NULL, weights = NULL,
 %
 Still \code{btReg.fit()} is employed for fitting the model but the quantities
 \code{estfun} and \code{vcov} are only computed if they are really required. This
-saves some computation time (about 20\% on the authors' machine) when computing
-the tree:
+may save some computation time -- about 20\% on the authors' machine at the time of
+writing -- when computing the tree:
 %
 <<bt2>>=
 system.time(bt2 <- mob(preference ~ 1 | gender + age + q1 + q2 + q3,

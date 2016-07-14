@@ -38,7 +38,8 @@ node_boxplot(obj, col = "black", fill = "lightgray", bg = "white", width = 0.5,
 
 node_barplot(obj, col = "black", fill = NULL, bg = "white",
   beside = NULL, ymax = NULL, ylines = NULL, widths = 1, gap = NULL,
-  reverse = NULL, id = TRUE, mainlab = NULL, gp = gpar())
+  reverse = NULL, rot = 0, just = c("center", "top"), id = TRUE,
+  mainlab = NULL, gp = gpar())
 
 node_surv(obj, col = "black", bg = "white", ylines = 2,
   id = TRUE, mainlab = NULL, gp = gpar(), \dots)
@@ -69,7 +70,7 @@ node_mvar(obj, which = NULL, id = TRUE, pop = TRUE, ylines = NULL,
   \item{pval}{ logical. Should node p values be plotted (if they are
     available)?}
   \item{just}{justification of terminal panel viewport (\code{node_terminal}),
-    or edge labels (\code{edge_simple}).}
+    or labels (\code{edge_simple}, \code{node_barplot}).}
   \item{justmin}{minimum average edge label length to employ justification
     via \code{just} in \code{edge_panel}, otherwise \code{just = "equal"}
     is used. Thus, by default \code{"equal"} justification is always used
@@ -86,7 +87,9 @@ node_mvar(obj, which = NULL, id = TRUE, pop = TRUE, ylines = NULL,
   \item{cex, pointcex}{character extension of points in scatter plots.}
   \item{beside}{ logical indicating if barplots should be side by side or stacked. }
   \item{reverse}{logical indicating whether the order of levels should be reversed
-    for barplots.}
+    for barplots. }
+  \item{rot}{ arguments passed to \code{\link[grid]{grid.text}} for the
+    x-axis labeling. }
   \item{gp}{graphical parameters.}
   \item{FUN}{function for formatting the \code{info}, passed to \code{\link{formatinfo_node}}.}
   \item{height, width}{ numeric, number of lines/columns for printing text. }

@@ -2,10 +2,20 @@ useDynLib("partykit")
 import("stats")
 import("graphics")
 import("grid")
-importFrom("survival", "survfit")
-importFrom("grDevices", "gray.colors")
-importFrom("utils", "capture.output", "head", "tail",
-           "setTxtProgressBar", "txtProgressBar")
+import("Formula")
+importFrom("survival",
+  "survfit"
+)
+importFrom("grDevices",
+  "gray.colors"
+)
+importFrom("utils",
+  "capture.output",
+  "head",
+  "tail",
+  "setTxtProgressBar",
+  "txtProgressBar"
+)
 
 export(
   ## core infrastructure
@@ -23,8 +33,11 @@ export(
   "mob_control",
   "refit.modelparty",
   "sctest.modelparty",
+
+  ## mobsters
   "lmtree",
   "glmtree",
+  "palmtree",
 
   ## new cforest implementation
   "cforest",
@@ -104,8 +117,10 @@ S3method("[", "party")
 S3method("[[", "party")
 S3method("as.simpleparty", "party")
 S3method("depth", "party")
+S3method("formula", "party")
 S3method("getCall", "party")
 S3method("length", "party")
+S3method("model.frame", "party")
 S3method("names", "party")
 S3method("names<-", "party")
 S3method("nodeapply", "party")
@@ -169,6 +184,13 @@ S3method("print", "lmtree")
 S3method("plot", "glmtree")
 S3method("predict", "glmtree")
 S3method("print", "glmtree")
+
+## methods for class lmtree
+S3method("coef", "palmtree")
+S3method("logLik", "palmtree")
+S3method("plot", "palmtree")
+S3method("predict", "palmtree")
+S3method("print", "palmtree")
 
 ## methods for class cforest
 S3method("predict", "cforest")
