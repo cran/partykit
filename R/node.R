@@ -128,17 +128,20 @@ as.list.partynode <- function(x, ...)
 
 
 id_node <- function(node) {
-    stopifnot(inherits(node, "partynode"))
+    if (!(inherits(node, "partynode")))
+        stop(sQuote("node"), " ", "is not an object of class", " ", sQuote("node"))
     node$id
 }
 
 kids_node <- function(node) {
-    stopifnot(inherits(node, "partynode"))
+    if (!(inherits(node, "partynode")))
+        stop(sQuote("node"), " ", "is not an object of class", " ", sQuote("node"))
     node$kids
 }
 
 info_node <- function(node) {
-    stopifnot(inherits(node, "partynode"))
+    if (!(inherits(node, "partynode")))
+        stop(sQuote("node"), " ", "is not an object of class", " ", sQuote("node"))
     node$info
 }
 
@@ -224,17 +227,20 @@ length.partynode <- function(x)
     length(kids_node(x))
 
 "[.partynode" <- "[[.partynode" <- function(x, i, ...) {
-    stopifnot(length(i) == 1 & is.numeric(i))
+    if (!(length(i) == 1 && is.numeric(i)))
+        stop(sQuote("x"), " ", "is incorrect node")
     kids_node(x)[[i]]
 }
 
 split_node <- function(node) {
-    stopifnot(inherits(node, "partynode"))
+    if (!(inherits(node, "partynode")))
+        stop(sQuote("node"), " ", "is not an object of class", " ", sQuote("node"))
     node$split
 }
 
 surrogates_node <- function(node) {
-    stopifnot(inherits(node, "partynode"))
+    if (!(inherits(node, "partynode")))
+        stop(sQuote("node"), " ", "is not an object of class", " ", sQuote("node"))
     node$surrogates
 }
 
@@ -244,7 +250,8 @@ is.terminal <- function(x, ...)
 is.terminal.partynode <- function(x, ...) {
     kids <- is.null(kids_node(x))
     split <- is.null(split_node(x))
-    stopifnot(kids == split)
+    if (kids != split)
+        stop("x", " ", "is incorrect node")
     kids
 }
 

@@ -7,7 +7,8 @@ partysplit <- function(varid, breaks = NULL, index = NULL, right = TRUE,
     names(split) <- c("varid", "breaks", "index", "right", "prob", "info")
 
     ### split is an id referring to a variable
-    stopifnot(is.integer(varid))
+    if (!is.integer(varid))
+        stop(sQuote("varid"), " ", "is not integer")
     split$varid <- varid
 
     if (is.null(breaks) && is.null(index))
@@ -53,10 +54,14 @@ partysplit <- function(varid, breaks = NULL, index = NULL, right = TRUE,
         if (!is.double(prob) || 
             (any(prob < 0) | any(prob > 1) | !isTRUE(all.equal(sum(prob), 1))))
             stop(sQuote("prob"), " ", "is not a vector of probabilities")
-        if (!is.null(index))
-            stopifnot(max(index, na.rm = TRUE) == length(prob))
-        if (!is.null(breaks) && is.null(index))
-            stopifnot(length(breaks) == (length(prob) - 1))
+        if (!is.null(index)) {
+            if (!(max(index, na.rm = TRUE) == length(prob)))
+                stop("incorrect", " ", sQuote("index"))
+        }
+        if (!is.null(breaks) && is.null(index)) {
+            if (!(length(breaks) == (length(prob) - 1)))
+               stop("incorrect", " ", sQuote("breaks"))
+        }
         split$prob <- prob
     }
 
@@ -69,27 +74,37 @@ partysplit <- function(varid, breaks = NULL, index = NULL, right = TRUE,
 }
 
 varid_split <- function(split) {
-    stopifnot(inherits(split, "partysplit"))
+    if (!(inherits(split, "partysplit")))
+        stop(sQuote("split"), " ", "is not an object of class", 
+             " ", sQuote("partysplit"))
     split$varid
 }
 
 breaks_split <- function(split) {
-    stopifnot(inherits(split, "partysplit"))
+    if (!(inherits(split, "partysplit")))
+        stop(sQuote("split"), " ", "is not an object of class", 
+             " ", sQuote("partysplit"))
     split$breaks
 }
 
 index_split <- function(split) {
-    stopifnot(inherits(split, "partysplit"))
+    if (!(inherits(split, "partysplit")))
+        stop(sQuote("split"), " ", "is not an object of class", 
+             " ", sQuote("partysplit"))
     split$index
 }
 
 right_split <- function(split) {
-    stopifnot(inherits(split, "partysplit"))
+    if (!(inherits(split, "partysplit")))
+        stop(sQuote("split"), " ", "is not an object of class", 
+             " ", sQuote("partysplit"))
     split$right
 }
 
 prob_split <- function(split) {
-    stopifnot(inherits(split, "partysplit"))
+    if (!(inherits(split, "partysplit")))
+        stop(sQuote("split"), " ", "is not an object of class", 
+             " ", sQuote("partysplit"))
     prob <- split$prob
     if (!is.null(prob)) return(prob)
 
@@ -108,7 +123,9 @@ prob_split <- function(split) {
 }
 
 info_split <- function(split) {
-    stopifnot(inherits(split, "partysplit"))
+    if (!(inherits(split, "partysplit")))
+        stop(sQuote("split"), " ", "is not an object of class", 
+             " ", sQuote("partysplit"))
     split$info
 }
 
@@ -119,11 +136,15 @@ kidids_split <- function(split, data, vmatch = 1:ncol(data), obs = NULL) {
     if (!is.null(obs)) x <- x[obs]
 
     if (is.null(breaks_split(split))) {
-        stopifnot(storage.mode(x) == "integer")
+        if (storage.mode(x) != "integer")
+            stop("variable", " ", vmatch[id], " ", "is not integer")
     } else {
-        x <- as.integer(cut.default(as.numeric(x), 
+        ### labels = FALSE returns integers and is faster
+        ### <FIXME> use findInterval instead of cut?
+        x <- cut.default(as.numeric(x), labels = FALSE,
                  breaks = c(-Inf, breaks_split(split), Inf), 
-                 right = right_split(split)))
+                 right = right_split(split))
+        ### </FIXME>
     }
     index <- index_split(split)
     ### empty factor levels correspond to NA and return NA here

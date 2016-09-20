@@ -14,7 +14,8 @@ constparties <- function(nodes, data, weights, fitted = NULL, terms = NULL, info
     } else {
         stopifnot(nrow(data) > 0L)
         stopifnot(!is.null(terms))
-        fitted <- data.frame("(response)" = model.response(model.frame(terms, data = data)),
+        fitted <- data.frame("(response)" = model.response(model.frame(terms, data = data, 
+                                                                       na.action = na.pass)),
                              check.names = FALSE)
     }
 

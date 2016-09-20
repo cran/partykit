@@ -43,7 +43,7 @@ A data frame containing 28 observations on 18 variables
 
 \source{
   Package \pkg{mvpart} (currently archived, see
-  \url{http://CRAN.R-project.org/package=mvpart}).
+  \url{https://CRAN.R-project.org/package=mvpart}).
 }
 
 \references{

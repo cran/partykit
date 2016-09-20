@@ -153,10 +153,10 @@
         do.call(ctrl$cfun, x[-1])))
     crit <- p[1,,drop = TRUE]
     ### crit is maximised, but there might be ties
-    ties <- which(abs(crit - max(crit)) < .Machine$double.eps)
+    ties <- which(abs(crit - max(crit)) < sqrt(.Machine$double.xmin))
     if (length(ties) > 1) {
         ### add a small value (< 1/1000) to crit derived from order of teststats
-        crit[ties] <- crit[ties] + order(p["statistic", ties]) / (sum(ties) * 1000)
+        crit[ties] <- crit[ties] + rank(p["statistic", ties]) / (sum(ties) * 1000)
     }
     p <- p[-1,,drop = FALSE]
     colnames(p) <- colnames(data)[inp]
@@ -222,10 +222,13 @@
     ret$info <- list(criterion = p, p.value = fmP(p)[iselp])
     thissurr <- NULL
     kidids <- kidids_node(ret, data)
-    prob <- prop.table(table(kidids))
-    if (ctrl$majority)  ### go with majority
-        prob <- numeric(0) + 1L:length(prob) %in% which.max(prob)
-    ret$prob <- prob
+    w <- weights
+    w[is.na(data[[varid_split(thissplit)]])] <- 0
+    prob <- prop.table(table(rep(kidids, w)))
+    names(dimnames(prob)) <- NULL
+    if (ctrl$majority)  ### go with majority; ie prob = 1 and 0 elsewhere
+        prob <- as.double(1L:length(prob) %in% which.max(prob))
+    ret$split$prob <- prob
 
     if (ctrl$maxsurrogate > 0) {
         inp <- inputs

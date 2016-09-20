@@ -72,11 +72,12 @@ glmfit <- function(y, x, start = NULL, weights = NULL, offset = NULL, cluster = 
   ## degrees of freedom
   df <- z$rank
   if(z$family$family %in% c("gaussian", "Gamma", "inverse.gaussian")) df <- df + 1
+  if(substr(z$family$family, 1L, 5L) != "quasi") objfun <- z$aic/2 - df else objfun <- z$deviance
 
   ## list structure
   rval <- list(
     coefficients = z$coefficients,
-    objfun = z$aic/2 - df,
+    objfun = objfun,
     estfun = NULL,
     object = NULL
   )
@@ -113,9 +114,10 @@ glmfit <- function(y, x, start = NULL, weights = NULL, offset = NULL, cluster = 
 
 ## methods
 print.glmtree <- function(x,
-  title = NULL, objfun = "negative log-likelihood", ...)
+  title = NULL, objfun = NULL, ...)
 {
   if(is.null(title)) title <- sprintf("Generalized linear model tree (family: %s)", x$info$family)
+  if(is.null(objfun)) objfun <- if(substr(x$info$family, 1L, 5L) != "quasi") "negative log-likelihood" else "deviance"
   print.modelparty(x, title = title, objfun = objfun, ...)
 }
 
