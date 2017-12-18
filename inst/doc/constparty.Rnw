@@ -52,7 +52,7 @@ classes, (b)~parsing of XML descriptions of trees learned in other software syst
 
 \Address{
   Torsten Hothorn\\
-  Institut f\"ur Sozial- und Pr\"aventivmedizin, Abteilung Biostatistik \\
+  Institut f\"ur Epidemiologie, Biostatistik und Pr\"avention \\
   Universit\"at Z\"urich \\
   Hirschengraben 84\\
   CH-8001 Z\"urich, Switzerland \\
@@ -162,10 +162,12 @@ The response variable describes whether or not the passenger survived the sinkin
 \subsection{Coercing rpart objects}
 
 We first fit a classification tree by means of the the \fct{rpart} function 
-from package \pkg{rpart} \citep{rpart} to this data set:
+from package \pkg{rpart} \citep{rpart} to this data set (make sure to set
+\code{model = TRUE}; otherwise \code{model.frame.rpart} will return the
+\code{rpart} object and not the data):
 <<rpart>>=
 library("rpart")
-(rp <- rpart(Survived ~ ., data = ttnc))
+(rp <- rpart(Survived ~ ., data = ttnc, model = TRUE))
 @
 The \class{rpart} object \code{rp} can be coerced to
 a \class{constparty} by \fct{as.party}. Internally, this transforms
@@ -221,8 +223,12 @@ The \pkg{RWeka} package \citep{RWeka} provides an interface to the
 \pkg{Weka} machine learning library and we can use the \fct{J48} function to
 fit a J4.8 tree to the Titanic data
 <<J48>>=
-library("RWeka")
-(j48 <- J48(Survived ~ ., data = ttnc))
+if (require("RWeka")) {
+  j48 <- J48(Survived ~ ., data = ttnc)
+} else {
+  j48 <- rpart(Survived ~ ., data = ttnc)
+}
+print(j48)
 @
 This object can be coerced to a \class{party} object using
 <<J48-party>>=

@@ -1,10 +1,18 @@
-useDynLib("partykit")
+
+useDynLib(partykit, .registration = TRUE)
+
 import("stats")
 import("graphics")
 import("grid")
 import("Formula")
+import("libcoin")
+import("inum")
+import("mvtnorm")
 importFrom("survival",
   "survfit"
+)
+importFrom("rpart",
+  "prune"
 )
 importFrom("grDevices",
   "gray.colors"
@@ -23,10 +31,15 @@ export(
   "partynode",
   "partysplit",
 
+  ## internal tree growing infrastructure
+  "extree_data",
+  "extree_fit",
+
   ## new ctree implementation
   "ctree",
   "ctree_control",
   "sctest.constparty",
+  "varimp.constparty",
 
   ## new mob implementation
   "mob",
@@ -37,11 +50,14 @@ export(
   ## mobsters
   "lmtree",
   "glmtree",
-  "palmtree",
 
   ## new cforest implementation
   "cforest",
   "predict.cforest",
+  "varimp",
+  "gettree",
+  "varimp.cforest",
+  "gettree.cforest",
 
   ## as/is class generics
   "as.party",  
@@ -61,6 +77,7 @@ export(
 
   ## exported methods (to facilitate re-use)
   "plot.party",
+  "predict.party",
   "print.party",
   "plot.modelparty",
   "predict.modelparty",
@@ -108,8 +125,9 @@ export(
   "as.simpleparty.XMLNode",
 
   ## misc infrastructure
-  "model.frame.rpart",
-  "pmmlTreeModel"
+  "pmmlTreeModel",
+  "get_paths",
+  "model_frame_rpart"
 )
 
 ## methods for class party
@@ -119,6 +137,7 @@ S3method("as.simpleparty", "party")
 S3method("depth", "party")
 S3method("formula", "party")
 S3method("getCall", "party")
+S3method("getCall", "constparties")
 S3method("length", "party")
 S3method("model.frame", "party")
 S3method("names", "party")
@@ -133,6 +152,9 @@ S3method("print", "party")
 S3method("plot", "party")
 S3method("data_party", "default")
 S3method("predict_party", "default")
+
+S3method("[[", "extree_data")
+S3method("model.frame", "extree_data")
 
 ## methods for class partynode
 S3method("[", "partynode")
@@ -152,6 +174,7 @@ S3method("as.simpleparty", "constparty")
 S3method("plot", "constparty")
 S3method("predict_party", "constparty")
 S3method("print", "constparty")
+S3method("varimp", "constparty")
 
 ## methods for class simpleparty
 S3method("as.simpleparty", "simpleparty")
@@ -174,6 +197,7 @@ S3method("weights", "modelparty")
 S3method("predict", "modelparty")
 S3method("print", "modelparty")
 S3method("plot", "modelparty")
+S3method("prune", "modelparty")
 
 ## methods for class lmtree
 S3method("plot", "lmtree")
@@ -185,15 +209,11 @@ S3method("plot", "glmtree")
 S3method("predict", "glmtree")
 S3method("print", "glmtree")
 
-## methods for class lmtree
-S3method("coef", "palmtree")
-S3method("logLik", "palmtree")
-S3method("plot", "palmtree")
-S3method("predict", "palmtree")
-S3method("print", "palmtree")
-
 ## methods for class cforest
 S3method("predict", "cforest")
+S3method("varimp", "cforest")
+S3method("gettree", "cforest")
+S3method("model.frame", "cforest")
 
 ## misc methods
 S3method("as.partynode", "list")
@@ -201,4 +221,3 @@ S3method("as.party", "Weka_tree")
 S3method("as.party", "XMLNode")
 S3method("as.simpleparty", "XMLNode")
 S3method("as.party", "rpart")
-S3method("model.frame", "rpart")

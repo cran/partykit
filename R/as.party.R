@@ -5,22 +5,11 @@ as.party.rpart <- function(obj, data = TRUE, ...) {
 
     ff <- obj$frame
     n  <- nrow(ff)
-    if (n==1) return(partynode(as.integer(1)))  # special case of no splits
 
-    is.leaf <- (ff$var == "<leaf>")
-    vnames <- ff$var[!is.leaf]  #the variable names for the primary splits
-
-    index <- cumsum(c(1, ff$ncompete + ff$nsurrogate + 1*(!is.leaf)))
-    splitindex <- list()
-    splitindex$primary <- numeric(n)
-    splitindex$primary[!is.leaf] <- index[c(!is.leaf, FALSE)]
-    splitindex$surrogate <- lapply(1L:n, function(i) {
-        prim <- splitindex$primary[i]
-        if (prim < 1 || ff[i, "nsurrogate"] == 0) return(NULL)
-        else return(prim + ff[i, "ncompete"] + 1L:ff[i, "nsurrogate"])
-    })
-    
-    mf <- model.frame(obj)
+    ### it is no longer allowed to overwrite rpart::model.frame.rpart
+    ### make sure to use our own implementation
+    ### which works without `model = TRUE' in the rpart call
+    mf <- model_frame_rpart(obj)
     
     ## check if any of the variables in the model frame is a "character"
     ## and convert to "factor" if necessary
@@ -35,6 +24,24 @@ as.party.rpart <- function(obj, data = TRUE, ...) {
     }
     fitted <- rpart_fitted()
 
+    # special case of no splits
+    if (n == 1) {
+      node <- partynode(1L)
+    } else {
+
+    is.leaf <- (ff$var == "<leaf>")
+    vnames <- ff$var[!is.leaf]  #the variable names for the primary splits
+
+    index <- cumsum(c(1, ff$ncompete + ff$nsurrogate + 1*(!is.leaf)))
+    splitindex <- list()
+    splitindex$primary <- numeric(n)
+    splitindex$primary[!is.leaf] <- index[c(!is.leaf, FALSE)]
+    splitindex$surrogate <- lapply(1L:n, function(i) {
+        prim <- splitindex$primary[i]
+        if (prim < 1 || ff[i, "nsurrogate"] == 0) return(NULL)
+        else return(prim + ff[i, "ncompete"] + 1L:ff[i, "nsurrogate"])
+    })
+    
     rpart_kids <- function(i) {
         if (is.leaf[i]) return(NULL)
         else return(c(i + 1L, 
@@ -94,13 +101,15 @@ as.party.rpart <- function(obj, data = TRUE, ...) {
 
     node <- rpart_node(1)
 
+    }
+    
     rval <- party(node = node, data = if(data) mf else mf[0L,],
       fitted = fitted, terms = obj$terms, info = list(method = "rpart"))
     class(rval) <- c("constparty", class(rval))
     return(rval)
 }
 
-model.frame.rpart <- function(formula, ...) {
+model_frame_rpart <- function(formula, ...) {
   ## if model.frame is stored, simply extract
   if(!is.null(formula$model)) return(formula$model)
   

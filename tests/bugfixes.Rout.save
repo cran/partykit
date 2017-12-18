@@ -1,7 +1,7 @@
 
-R version 3.0.3 (2014-03-06) -- "Warm Puppy"
-Copyright (C) 2014 The R Foundation for Statistical Computing
-Platform: x86_64-unknown-linux-gnu (64-bit)
+R version 3.4.3 (2017-11-30) -- "Kite-Eating Tree"
+Copyright (C) 2017 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -15,6 +15,8 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
+> 
+> set.seed(290875)
 > 
 > datLB <-
 + structure(list(Site = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 
@@ -337,6 +339,9 @@ Type 'q()' to quit R.
 > 
 > library("partykit")
 Loading required package: grid
+Loading required package: libcoin
+Loading required package: mvtnorm
+Loading required package: rpart
 > library("rpart")
 > 
 > fac <- c(1,3,6)
@@ -373,7 +378,6 @@ attr(,"class")
 > library("mlbench")
 > data("Vowel")
 > ct <- ctree(V2 ~ V1, data = Vowel[1:200,]) ### only levels 1:4 in V1
-Loading required package: Formula
 > p1 <- predict(ct, newdata = Vowel) ### 14 levels in V1
 > 
 > ### deal with empty levels for teststat = "quad" by
@@ -733,27 +737,29 @@ Loading required package: Formula
 > 
 > ### was: error
 > model <- ctree(ytrain ~ ., data = tdata, 
-+     control = ctree_control(testtype = "Univariate"))
++     control = ctree_control(testtype = "Univariate", splitstat = "maximum"))
 > 
 > library("coin")
 Loading required package: survival
-Loading required package: splines
 > ### check against coin (independence_test automatically
 > ### removes empty levels)
-> p <- 1 - exp(info_node(node_party(model))$criterion[2,])
+> p <- info_node(node_party(model))$criterion["p.value",]
+> p[is.na(p)] <- 0
 > p2 <- sapply(names(p), function(n)
 +     pvalue(independence_test(ytrain ~ .,
 +     data = tdata[, c("ytrain", n)], teststat = "quad")))
 > stopifnot(max(abs(p - p2)) < sqrt(.Machine$double.eps))
 > 
-> p <- 1 - exp(info_node(node_party(model[2]))$criterion[2,])
+> p <- info_node(node_party(model[2]))$criterion["p.value",]
+> p[is.na(p)] <- 0
 > p2 <- sapply(names(p), function(n)
 +     pvalue(independence_test(ytrain ~ .,
 +     data = tdata[tdata$language != "8", c("ytrain", n)], 
 +     teststat = "quad")))
 > stopifnot(max(abs(p - p2)) < sqrt(.Machine$double.eps))
 > 
-> p <- 1 - exp(info_node(node_party(model[3]))$criterion[2,])
+> p <- info_node(node_party(model[3]))$criterion["p.value",]
+> p[is.na(p)] <- 0
 > p2 <- sapply(names(p), function(n)
 +     pvalue(independence_test(ytrain ~ .,
 +     data = tdata[!(tdata$language %in% c("2", "4", "8")), 
@@ -857,6 +863,174 @@ Fitted party:
 Number of inner nodes:    4
 Number of terminal nodes: 6
 > 
+> ### scores
+> y <- gl(3, 10, ordered = TRUE)
+> x <- rnorm(length(y))  
+> x <- ordered(cut(x, 3))
+> d <- data.frame(y = y, x = x)
+> 
+> ### partykit with scores
+> ct11 <- partykit::ctree(y ~ x, data = d) 
+> ct12 <- partykit::ctree(y ~ x, data = d, 
++                         scores = list(y = c(1, 4, 5)))
+> ct13 <- partykit::ctree(y ~ x, data = d, 
++                         scores = list(y = c(1, 4, 5), x = c(1, 5, 6)))
+> 
+> ### party with scores
+> ct21 <- party::ctree(y ~ x, data = d) 
+> ct22 <- party::ctree(y ~ x, data = d, 
++                      scores = list(y = c(1, 4, 5)))
+> ct23 <- party::ctree(y ~ x, data = d, 
++                      scores = list(y = c(1, 4, 5), x = c(1, 5, 6)))
+> 
+> stopifnot(all.equal(ct11$node$info$p.value, 
++           1 - ct21@tree$criterion$criterion, check.attr = FALSE))
+> stopifnot(all.equal(ct12$node$info$p.value, 
++           1 - ct22@tree$criterion$criterion, check.attr = FALSE))
+> stopifnot(all.equal(ct13$node$info$p.value, 
++           1 - ct23@tree$criterion$criterion, check.attr = FALSE))
+> 
+> ### ytrafo
+> y <- runif(100, max = 3)
+> x <- rnorm(length(y))
+> d <- data.frame(y = y, x = x)
+> 
+> ### partykit with scores
+> ct11 <- partykit::ctree(y ~ x, data = d)
+> ct12 <- partykit::ctree(y ~ x, data = d,
++                         ytrafo = list(y = sqrt))
+> 
+> ### party with scores
+> ct21 <- party::ctree(y ~ x, data = d)
+> f <- function(data) coin::trafo(data, numeric_trafo = sqrt)
+> ct22 <- party::ctree(y ~ x, data = d,
++                      ytrafo = f)
+> 
+> stopifnot(all.equal(ct11$node$info$p.value,
++           1 - ct21@tree$criterion$criterion, check.attr = FALSE))
+> stopifnot(all.equal(ct12$node$info$p.value,
++           1 - ct22@tree$criterion$criterion, check.attr = FALSE))
+> 
+> 
+> ### spotted by Peter Philip Stephensen (DREAM) <PSP@dreammodel.dk>
+> ### splits x >= max(x) where possible in partykit::ctree
+> library("partykit")
+> nAge <- 30
+> d <- data.frame(Age=rep(1:nAge,2),y=c(rep(1,nAge),rep(0,nAge)), 
++                 n = rep(0,2*nAge))
+> ntot <- 100
+> alpha <- .5
+> d[d$y==1,]$n = floor(ntot * alpha * d[d$y==1,]$Age / nAge)
+> d[d$y==0,]$n = ntot - d[d$y==1,]$n
+> d$n <- as.integer(d$n)
+> ctrl <- partykit::ctree_control(maxdepth=3, minbucket = min(d$n) + 1)
+> tree <- partykit::ctree(y ~ Age, weights=n, data=d, control=ctrl)
+> tree
+
+Model formula:
+y ~ Age
+
+Fitted party:
+[1] root
+|   [2] Age <= 15
+|   |   [3] Age <= 7
+|   |   |   [4] Age <= 4: 0.038 (n = 400, err = 14.4)
+|   |   |   [5] Age > 4: 0.097 (n = 300, err = 26.2)
+|   |   [6] Age > 7
+|   |   |   [7] Age <= 11: 0.155 (n = 400, err = 52.4)
+|   |   |   [8] Age > 11: 0.222 (n = 400, err = 69.2)
+|   [9] Age > 15
+|   |   [10] Age <= 22: 0.313 (n = 700, err = 150.5)
+|   |   [11] Age > 22
+|   |   |   [12] Age <= 26: 0.405 (n = 400, err = 96.4)
+|   |   |   [13] Age > 26: 0.472 (n = 400, err = 99.7)
+
+Number of inner nodes:    6
+Number of terminal nodes: 7
+> 
+> (w1 <- predict(tree, type = "node"))
+ 4  4  4  4  5  5  5  7  7  7  7  8  8  8  8 10 10 10 10 10 10 10 12 12 12 12 
+ 4  4  4  4  5  5  5  7  7  7  7  8  8  8  8 10 10 10 10 10 10 10 12 12 12 12 
+13 13 13 13  4  4  4  4  5  5  5  7  7  7  7  8  8  8  8 10 10 10 10 10 10 10 
+13 13 13 13  4  4  4  4  5  5  5  7  7  7  7  8  8  8  8 10 10 10 10 10 10 10 
+12 12 12 12 13 13 13 13 
+12 12 12 12 13 13 13 13 
+> 
+> (ct <- ctree(dist + I(dist^2) ~ speed, data = cars))
+
+Model formula:
+~dist + I(dist^2) + speed
+
+Fitted party:
+[1] root
+|   [2] speed <= 12: *
+|   [3] speed > 12
+|   |   [4] speed <= 20: *
+|   |   [5] speed > 20: *
+
+Number of inner nodes:    2
+Number of terminal nodes: 3
+> predict(ct)
+       dist I(dist^2)
+1  18.20000  409.6667
+2  18.20000  409.6667
+3  18.20000  409.6667
+4  18.20000  409.6667
+5  18.20000  409.6667
+6  18.20000  409.6667
+7  18.20000  409.6667
+8  18.20000  409.6667
+9  18.20000  409.6667
+10 18.20000  409.6667
+11 18.20000  409.6667
+12 18.20000  409.6667
+13 18.20000  409.6667
+14 18.20000  409.6667
+15 18.20000  409.6667
+16 46.28571 2423.1429
+17 46.28571 2423.1429
+18 46.28571 2423.1429
+19 46.28571 2423.1429
+20 46.28571 2423.1429
+21 46.28571 2423.1429
+22 46.28571 2423.1429
+23 46.28571 2423.1429
+24 46.28571 2423.1429
+25 46.28571 2423.1429
+26 46.28571 2423.1429
+27 46.28571 2423.1429
+28 46.28571 2423.1429
+29 46.28571 2423.1429
+30 46.28571 2423.1429
+31 46.28571 2423.1429
+32 46.28571 2423.1429
+33 46.28571 2423.1429
+34 46.28571 2423.1429
+35 46.28571 2423.1429
+36 46.28571 2423.1429
+37 46.28571 2423.1429
+38 46.28571 2423.1429
+39 46.28571 2423.1429
+40 46.28571 2423.1429
+41 46.28571 2423.1429
+42 46.28571 2423.1429
+43 46.28571 2423.1429
+44 82.85714 7272.8571
+45 82.85714 7272.8571
+46 82.85714 7272.8571
+47 82.85714 7272.8571
+48 82.85714 7272.8571
+49 82.85714 7272.8571
+50 82.85714 7272.8571
+> 
+> ### nodeapply was not the same for permutations of ids
+> ### spotted by Heidi Seibold
+> airq <- subset(airquality, !is.na(Ozone))
+> airct <- ctree(Ozone ~ ., data = airq)
+> n1 <- nodeapply(airct, ids = c(3, 5, 6), function(x) x$info$nobs)
+> n2 <- nodeapply(airct, ids = c(6, 3, 5), function(x) x$info$nobs)
+> stopifnot(all.equal(n1[names(n2)], n2))
+> 
 > proc.time()
    user  system elapsed 
-  3.656   0.100   3.759 
+  4.444   0.088   4.529 

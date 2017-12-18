@@ -10,8 +10,9 @@
 }
 
 \usage{
-ctree(formula, data, weights, subset, na.action = na.pass,
-    control = ctree_control(\dots), ytrafo = NULL, scores = NULL, \dots)
+ctree(formula, data, subset, weights, na.action = na.pass, offset, cluster, 
+    control = ctree_control(\dots), ytrafo = NULL, 
+    converged = NULL, scores = NULL, doFit = TRUE, \dots)
 }
 
 \arguments{
@@ -22,6 +23,9 @@ ctree(formula, data, weights, subset, na.action = na.pass,
   \item{weights}{ an optional vector of weights to be used in the fitting
                   process. Only non-negative integer valued weights are
                   allowed.}
+  \item{offset}{ an optional vector of offset values.}
+  \item{cluster}{ an optional factor indicating independent clusters. 
+                  Highly experimental, use at your own risk.}
   \item{na.action}{a function which indicates what should happen when the data
                    contain missing value.}
   \item{control}{a list with control parameters, see
@@ -32,10 +36,14 @@ ctree(formula, data, weights, subset, na.action = na.pass,
                 performed once for the root node and does not take weights into account.
                 Alternatively, \code{ytrafo} can be a function of \code{data} and
                 \code{weights}. In this case, the transformation is computed for
-                every node. This feature is experimental and the user interface 
-                likely to change.}
+                every node with corresponding weights. This feature is experimental
+                and the user interface likely to change.}
+  \item{converged}{an optional function for checking user-defined criteria
+                   before splits are implemented. This is not to be used and
+                   very likely to change.}
   \item{scores}{an optional named list of scores to be attached to ordered
                 factors.}
+  \item{doFit}{a logical, if \code{FALSE}, the tree is not fitted.}
   \item{\dots}{arguments passed to \code{\link{ctree_control}}.}
 }
 
@@ -139,27 +147,26 @@ table(predict(irisct), iris$Species)
 tr <- predict(irisct, newdata = iris[1:10,], type = "prob")
 
 ### survival analysis
-if (require("TH.data") && require("survival") && require("coin")) {
+if (require("TH.data") && require("survival") && 
+    require("coin") && require("Formula")) {
 
   data("GBSG2", package = "TH.data")
-  GBSG2ct <- ctree(Surv(time, cens) ~ ., data = GBSG2)
+  (GBSG2ct <- ctree(Surv(time, cens) ~ ., data = GBSG2))
   predict(GBSG2ct, newdata = GBSG2[1:2,], type = "response")	  
   plot(GBSG2ct)
 
   ### with weight-dependent log-rank scores
-  ctree(Surv(time, cens) ~ ., data = GBSG2)
-
   ### log-rank trafo for observations in this node only (= weights > 0)
-  h <- function(data, weights) {
-    s <- data[, "Surv(time, cens)"]
-    s <- logrank_trafo(s[weights > 0,])
-    r <- rep(0, nrow(data))
-    r[weights > 0] <- s
-    matrix(as.double(r), ncol = 1)
+  h <- function(y, x, start = NULL, weights, offset, estfun = TRUE, object = FALSE, ...) {
+      if (is.null(weights)) weights <- rep(1, NROW(y))
+      s <- logrank_trafo(y[weights > 0,,drop = FALSE])
+      r <- rep(0, length(weights))
+      r[weights > 0] <- s
+      list(estfun = matrix(as.double(r), ncol = 1), converged = TRUE)
   }
 
   ### very much the same tree
-  ctree(Surv(time, cens) ~ ., data = GBSG2, ytrafo = h) 
+  (ctree(Surv(time, cens) ~ ., data = GBSG2, ytrafo = h))
 }
 
 ### multivariate responses

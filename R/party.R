@@ -235,16 +235,17 @@ nodeapply.partynode <- function(obj, ids = 1, FUN = NULL, ...) {
         invisible(TRUE)
     }
     foo <- recFUN(obj)
-    rval <- rval[match(rval_id, ids)]
+    rval <- rval[match(ids, rval_id)]
     return(rval)
 }
 
 predict.party <- function(object, newdata = NULL, perm = NULL, ...)
 {
     ### compute fitted node ids first
-    fitted <- if(is.null(newdata)) {    
+    fitted <- if(is.null(newdata) && is.null(perm)) {    
         object$fitted[["(fitted)"]]	
     } else {
+      if (is.null(newdata)) newdata <- model.frame(object)
       terminal <- nodeids(object, terminal = TRUE)
 	
       if(max(terminal) == 1L) {
@@ -266,8 +267,18 @@ predict.party <- function(object, newdata = NULL, perm = NULL, ...)
         ### the splits of nodes with a primary split in perm
         ### will be permuted
         if (!is.null(perm)) {
-            stopifnot(all(perm %in% vnames))
-            perm <- match(perm, vnames)
+            if (is.character(perm)) {
+                stopifnot(all(perm %in% vnames))
+                perm <- match(perm, vnames)
+            } else {
+                ### perm is a named list of factors coding strata
+                ### (for varimp(..., conditional = TRUE)
+                stopifnot(all(names(perm) %in% vnames))
+                stopifnot(all(sapply(perm, is.factor)))
+                tmp <- vector(mode = "list", length = length(vnames))
+                tmp[match(names(perm), vnames)] <- perm
+                perm <- tmp
+            }
         }
 
         ## ## FIXME: the is.na() call takes loooong on large data sets
@@ -292,6 +303,8 @@ predict.party <- function(object, newdata = NULL, perm = NULL, ...)
                         vmatch = vmatch, perm = perm)
         } else {
             if (!is.null(object$terms)) {
+                ### <FIXME> this won't work for multivariate responses
+                ### </FIXME>
                 mf <- model.frame(delete.response(object$terms), newdata)
                 fitted_node(node_party(object), data = mf, 
                             vmatch = match(vnames, names(mf)), perm = perm)
@@ -435,6 +448,7 @@ predict_party.constparty <- function(party, id, newdata = NULL,
         rtype <- class(response)[1]
         if (rtype == "ordered") rtype <- "factor"    
         if (rtype == "integer") rtype <- "numeric"
+        if (rtype == "AsIs") rtype <- "numeric"
 
         if (type %in% c("quantile", "density") && rtype != "numeric")
             stop("quantile and density estimation currently only implemented for numeric responses")
@@ -540,6 +554,10 @@ getCall.party <- function(x, ...) {
   x$info$call
 }
 
+getCall.constparties <- function(x, ...) {
+  x$info$call
+}
+
 formula.party <- function(x, ...) {
   x <- terms(x)
   NextMethod()
@@ -565,53 +583,7 @@ model.frame.party <- function(formula, ...)
 nodeprune <- function(x, ids, ...)
     UseMethod("nodeprune")
 
-nodeprune.party <- function(x, ids, ...) {
 
-    ### map names to nodeids
-    if (!is.numeric(ids))
-        ids <- match(ids, names(x))
-    stopifnot(ids %in% nodeids(x))
-
-    ### compute indices path to each node
-    ### to be pruned off
-    idxs <- lapply(ids, .get_path, obj = node_party(x))
-
-    ### [[.party is NOT [[.list
-    cls <- class(x)
-    x <- unclass(x)
-    ni <- which(names(x) == "node")
-
-    for (i in 1:length(idxs)) {
-    
-        idx <- c(ni, idxs[[i]])
-        ### check if we already pruned-off this node
-        tmp <- try(x[[idx]], silent = TRUE)
-        if (inherits(tmp, "try-error"))
-            next()
-
-        ### node ids of off-pruned daugther nodes
-        idrm <- nodeids(x[[idx]])[-1]
-
-        ### prune node by introducing a "new" terminal node
-        x[[idx]] <- partynode(id = id_node(x[[idx]]),
-                              info = info_node(x[[idx]]))
-
-        ### constparty only: make sure the node ids in
-        ### fitted are corrected
-        if (length(idrm) > 0) {
-             if(!is.null(x$fitted) && 
-                 "(fitted)" %in% names(x$fitted)) {
-                     j <- x$fitted[["(fitted)"]] %in% idrm
-                     x$fitted[["(fitted)"]][j] <- ids[i]
-             }
-        }
-    }
-
-    ### reindex to 1:max(nodeid)
-    class(x) <- cls
-    nodeids(x) <- 1:length(nodeids(x))
-    return(x)
-}
 
 nodeprune.partynode <- function(x, ids, ...) {
 

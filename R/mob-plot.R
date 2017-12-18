@@ -126,7 +126,7 @@ node_bivplot <- function(mobobj, which = NULL, id = TRUE, pop = TRUE,
       pushViewport(plotViewport(margins = margins, name = name,
         yscale = yscale, xscale = c(0.3, xscale[2L,i]+0.7)))
 
-      for(j in seq(along = xlev)) {
+      for(j in seq_along(xlev)) {
         by <- boxplot(y[x == xlev[j]], plot = FALSE)
 	xl <- j - boxwidth/4
         xr <- j + boxwidth/4
@@ -159,8 +159,8 @@ node_bivplot <- function(mobobj, which = NULL, id = TRUE, pop = TRUE,
       }
       if(fitmean) {
         yfit <- unlist(tapply(yfit, x, mean))
-	grid.lines(seq(along = xlev), yfit, default.units = "native", gp = gpar(col = linecol))
-	grid.points(seq(along = xlev), yfit, default.units = "native",
+	grid.lines(seq_along(xlev), yfit, default.units = "native", gp = gpar(col = linecol))
+	grid.points(seq_along(xlev), yfit, default.units = "native",
           gp = gpar(col = linecol, cex = pointcex), pch = 19)
       }
       grid.rect(gp = gpar(fill = "transparent"))

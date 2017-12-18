@@ -1,15 +1,66 @@
 
 \name{NEWS}
-\title{NEWS file for the partykit package}
+\title{NEWS file for the \pkg{partykit} package}
 
-\section{Changes in Version 1.1-1 (2016-mm-dd)}{
+\section{Changes in Version 1.2-0 (2017-12-18)}{
+  \subsection{New Features}{
+    \itemize{
+      \item{Internal re-organisation for \code{ctree} by means of new extensible
+            tree infrastructure (available in  \code{extree_data} and 
+            \code{extree_fit}). Certain parts of the new infrastructure
+            are still experimental. \code{ctree} is fully backward
+            compatible.}
+      \item{Use \pkg{libcoin} for computing linear test statistics 
+            and p-values for \code{ctree}.}
+      \item{Use \pkg{inum} for binning (the new \code{nmax} argument).}
+      \item{Quadratic test statistics for splitpoint selection are now available for \code{ctree} via 
+            \code{ctree_control(splitstat = "quadratic")}.}
+      \item{Maximally selected test statistics for variable selection are now available for \code{ctree} via 
+            \code{ctree_control(splittest = TRUE)}.}
+      \item{Missing values can be treated as a separate category, also
+            for splits in numeric variables in \code{ctree} via
+            \code{ctree_control(MIA = TRUE)}.}
+      \item{Permutation variable importance, including conditional variable
+            importance, was added to \pkg{partykit}.}
+      \item{New \code{offset} argument in \code{ctree}.}
+      \item{New \code{get_paths} for computing paths to nodes.}
+      \item{\code{node_barplot} gained a \code{text} argument
+            that can be used to draw text labels for the
+            percentages displayed.}
+      \item{The \code{margins} used in \code{plot.party} can now
+            also be set by the user.}
+    }
+  }
+  \subsection{Bugfixes}{
+  \itemize{
+    \item{Bug fix in code{mob()} if \code{weights} are used and \code{caseweights = TRUE} (the default).
+          The statistics for the parameter instability tests were computed incorrectly and
+	  consequently the selection of splitting variables and also the stopping criterion
+	  were affected/incorrect.} 
+    \item{Avoid log(p) values of \code{-Inf} inside \code{mob()} by replacing weighted averaging
+          with naive averaging in the response surface regression output in case
+	  the p values are below machine precision.}
+    \item{The \code{as.party} method for \code{rpart} objects
+          without any splits only returned a naked \code{partynode}
+	  rather than a full \code{party}. This has been corrected
+	  now.}
+    \item{\code{nodeapply} did not produce the same results for permutations of \code{ids}.
+          Spotted by Heidi Seibold.}
+    \item{Out-of-bag predictions in \code{predict.cforest} were incorrect.}
+    \item{\code{perm} in \code{predict} was only considered when
+          \code{newdata} was given. Spotted by Heidi Seibold.}
+  }
+  }
+}
+
+\section{Changes in Version 1.1-1 (2016-09-20)}{
   \itemize{
     \item{Proper support of quasi-families in \code{glmtree}
-      and hence \code{palmtree}.}
+          and hence \code{palmtree}.}
     \item{NA handling by following the majority was 
           potentially incorrect in \code{ctree}.}
-    \item{minor speed improvements.}
-    \item{breaking ties before variable selection was
+    \item{Minor speed improvements.}
+    \item{Breaking ties before variable selection was
           suboptimal for very small log-p-values.}
   }
 }

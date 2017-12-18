@@ -61,7 +61,7 @@
   URL: \url{http://eeecon.uibk.ac.at/~zeileis/} \\
 
   Torsten Hothorn\\
-  Institut f\"ur Sozial- und Pr\"aventivmedizin, Abteilung Biostatistik \\
+  Institut f\"ur Epidemiologie, Biostatistik und Pr\"avention \\
   Universit\"at Z\"urich \\
   Hirschengraben 84\\
   CH-8001 Z\"urich, Switzerland \\

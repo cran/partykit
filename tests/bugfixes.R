@@ -1,4 +1,6 @@
 
+set.seed(290875)
+
 datLB <-
 structure(list(Site = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 
 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 
@@ -694,25 +696,28 @@ tdata$ytrain <- factor(tdata$ytrain)
 
 ### was: error
 model <- ctree(ytrain ~ ., data = tdata, 
-    control = ctree_control(testtype = "Univariate"))
+    control = ctree_control(testtype = "Univariate", splitstat = "maximum"))
 
 library("coin")
 ### check against coin (independence_test automatically
 ### removes empty levels)
-p <- 1 - exp(info_node(node_party(model))$criterion[2,])
+p <- info_node(node_party(model))$criterion["p.value",]
+p[is.na(p)] <- 0
 p2 <- sapply(names(p), function(n)
     pvalue(independence_test(ytrain ~ .,
     data = tdata[, c("ytrain", n)], teststat = "quad")))
 stopifnot(max(abs(p - p2)) < sqrt(.Machine$double.eps))
 
-p <- 1 - exp(info_node(node_party(model[2]))$criterion[2,])
+p <- info_node(node_party(model[2]))$criterion["p.value",]
+p[is.na(p)] <- 0
 p2 <- sapply(names(p), function(n)
     pvalue(independence_test(ytrain ~ .,
     data = tdata[tdata$language != "8", c("ytrain", n)], 
     teststat = "quad")))
 stopifnot(max(abs(p - p2)) < sqrt(.Machine$double.eps))
 
-p <- 1 - exp(info_node(node_party(model[3]))$criterion[2,])
+p <- info_node(node_party(model[3]))$criterion["p.value",]
+p[is.na(p)] <- 0
 p2 <- sapply(names(p), function(n)
     pvalue(independence_test(ytrain ~ .,
     data = tdata[!(tdata$language %in% c("2", "4", "8")), 
@@ -764,3 +769,80 @@ predict(cp, type = "node", newdata = nd)
 predict(cp, type = "response", newdata = nd)
 as.simpleparty(cp)
 print(cp)
+
+### scores
+y <- gl(3, 10, ordered = TRUE)
+x <- rnorm(length(y))  
+x <- ordered(cut(x, 3))
+d <- data.frame(y = y, x = x)
+
+### partykit with scores
+ct11 <- partykit::ctree(y ~ x, data = d) 
+ct12 <- partykit::ctree(y ~ x, data = d, 
+                        scores = list(y = c(1, 4, 5)))
+ct13 <- partykit::ctree(y ~ x, data = d, 
+                        scores = list(y = c(1, 4, 5), x = c(1, 5, 6)))
+
+### party with scores
+ct21 <- party::ctree(y ~ x, data = d) 
+ct22 <- party::ctree(y ~ x, data = d, 
+                     scores = list(y = c(1, 4, 5)))
+ct23 <- party::ctree(y ~ x, data = d, 
+                     scores = list(y = c(1, 4, 5), x = c(1, 5, 6)))
+
+stopifnot(all.equal(ct11$node$info$p.value, 
+          1 - ct21@tree$criterion$criterion, check.attr = FALSE))
+stopifnot(all.equal(ct12$node$info$p.value, 
+          1 - ct22@tree$criterion$criterion, check.attr = FALSE))
+stopifnot(all.equal(ct13$node$info$p.value, 
+          1 - ct23@tree$criterion$criterion, check.attr = FALSE))
+
+### ytrafo
+y <- runif(100, max = 3)
+x <- rnorm(length(y))
+d <- data.frame(y = y, x = x)
+
+### partykit with scores
+ct11 <- partykit::ctree(y ~ x, data = d)
+ct12 <- partykit::ctree(y ~ x, data = d,
+                        ytrafo = list(y = sqrt))
+
+### party with scores
+ct21 <- party::ctree(y ~ x, data = d)
+f <- function(data) coin::trafo(data, numeric_trafo = sqrt)
+ct22 <- party::ctree(y ~ x, data = d,
+                     ytrafo = f)
+
+stopifnot(all.equal(ct11$node$info$p.value,
+          1 - ct21@tree$criterion$criterion, check.attr = FALSE))
+stopifnot(all.equal(ct12$node$info$p.value,
+          1 - ct22@tree$criterion$criterion, check.attr = FALSE))
+
+
+### spotted by Peter Philip Stephensen (DREAM) <PSP@dreammodel.dk>
+### splits x >= max(x) where possible in partykit::ctree
+library("partykit")
+nAge <- 30
+d <- data.frame(Age=rep(1:nAge,2),y=c(rep(1,nAge),rep(0,nAge)), 
+                n = rep(0,2*nAge))
+ntot <- 100
+alpha <- .5
+d[d$y==1,]$n = floor(ntot * alpha * d[d$y==1,]$Age / nAge)
+d[d$y==0,]$n = ntot - d[d$y==1,]$n
+d$n <- as.integer(d$n)
+ctrl <- partykit::ctree_control(maxdepth=3, minbucket = min(d$n) + 1)
+tree <- partykit::ctree(y ~ Age, weights=n, data=d, control=ctrl)
+tree
+
+(w1 <- predict(tree, type = "node"))
+
+(ct <- ctree(dist + I(dist^2) ~ speed, data = cars))
+predict(ct)
+
+### nodeapply was not the same for permutations of ids
+### spotted by Heidi Seibold
+airq <- subset(airquality, !is.na(Ozone))
+airct <- ctree(Ozone ~ ., data = airq)
+n1 <- nodeapply(airct, ids = c(3, 5, 6), function(x) x$info$nobs)
+n2 <- nodeapply(airct, ids = c(6, 3, 5), function(x) x$info$nobs)
+stopifnot(all.equal(n1[names(n2)], n2))

@@ -46,7 +46,7 @@ lmtree <- function(formula, data, subset, na.action, weights, offset, cluster, .
   m$fit <- lmfit
   m$control <- control
   if("..." %in% names(m)) m[["..."]] <- NULL
-  m[[1L]] <- as.name("mob")
+  m[[1L]] <- as.call(quote(partykit::mob))
   rval <- eval(m, parent.frame())
   
   ## extend class and keep original call
@@ -82,7 +82,7 @@ lmfit <- function(y, x, start = NULL, weights = NULL, offset = NULL, cluster = N
 
   ## add estimating functions (if desired)
   if(estfun) {
-    rval$estfun <- as.vector(z$residuals) * weights * x
+    rval$estfun <- as.vector(z$residuals) * weights * x[, !is.na(z$coefficients), drop = FALSE]
   }
 
   ## add model (if desired)

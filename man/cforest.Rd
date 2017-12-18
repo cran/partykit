@@ -1,5 +1,7 @@
 \name{cforest}
 \alias{cforest}
+\alias{gettree}
+\alias{gettree.cforest}
 \alias{predict.cforest}
 \encoding{latin1}
 
@@ -11,16 +13,18 @@
 }
 
 \usage{
-cforest(formula, data, weights, subset, na.action = na.pass, 
-        control = ctree_control(teststat = "quad",
-                                testtype = "Univ", mincriterion = 0, ...), 
+cforest(formula, data, weights, subset, offset, cluster, strata, 
+        na.action = na.pass,
+	control = ctree_control(teststat = "quad", testtype = "Univ", 
+            mincriterion = 0, saveinfo = FALSE, \dots),
         ytrafo = NULL, scores = NULL, ntree = 500L, 
         perturb = list(replace = FALSE, fraction = 0.632), 
         mtry = ceiling(sqrt(nvar)), applyfun = NULL, cores = NULL, 
-        trace = FALSE, ...)
+        trace = FALSE, \dots)
 \method{predict}{cforest}(object, newdata = NULL, 
         type = c("response", "prob", "weights", "node"),
-        OOB = FALSE, FUN = NULL, simplify = TRUE, ...)
+        OOB = FALSE, FUN = NULL, simplify = TRUE, \dots)
+\method{gettree}{cforest}(object, tree = 1L, \dots)
 }
 
 \arguments{
@@ -40,20 +44,27 @@ cforest(formula, data, weights, subset, na.action = na.pass,
     else. Alternatively, \code{weights} can be a double matrix defining
     case weights for all \code{ncol(weights)} trees in the forest directly.
     This requires more storage but gives the user more control.}
+  \item{offset}{ an optional vector of offset values.}
+  \item{cluster}{ an optional factor indicating independent clusters.
+                  Highly experimental, use at your own risk.}
+  \item{strata}{ an optional factor for stratified sampling.}
   \item{na.action}{a function which indicates what should happen when the data
                    contain missing value.}
   \item{control}{a list with control parameters, see
                  \code{\link{ctree_control}}. The default values correspond to those
                  of the default values used by \code{\link[party]{cforest}} from the
-                 \code{party} package.}
+                 \code{party} package. \code{saveinfo = FALSE} leads to less
+                 memory hungry representations of trees.}
   \item{ytrafo}{an optional named list of functions to be applied to the response
                 variable(s) before testing their association with the explanatory
                 variables. Note that this transformation is only
-                performed once for the root node and does not take weights into account.
+                performed once for the root node and does not take weights into account
+                (which means, the forest bootstrap or subsetting is ignored,
+                which is almost certainly not a good idea).
                 Alternatively, \code{ytrafo} can be a function of \code{data} and
                 \code{weights}. In this case, the transformation is computed for
-                every node. This feature is experimental and the user interface
-                likely to change.}
+                every node and the corresponding weights. This feature is experimental 
+                and the user interface likely to change.}
   \item{scores}{an optional named list of scores to be attached to ordered
                 factors.}
   \item{ntree}{
@@ -107,6 +118,7 @@ cforest(formula, data, weights, subset, na.action = na.pass,
     a logical indicating whether the resulting list
                    of predictions should be converted to a suitable
                    vector or matrix (if possible).}
+  \item{tree}{ an integer, the number of the tree to extract from the forest.}
   \item{\dots}{ additional arguments. }
 }
 
@@ -232,7 +244,6 @@ legend("topleft", c("mean", "median", "10\% - 90\% quantile"),
   lwd = c(1.5, 1.5, 10), lty = c(1, 2, 1),
   col = c("black", "black", "lightgray"), bty = "n")
 
-\donttest{
 ### we may also use predicted conditional (on speed) densities
 mydensity <- function (y, w) approxfun(density(y, weights = w/sum(w))[1:2], rule = 2)
 pd <- predict(cf, newdata = nd, type = "response", FUN = mydensity)
@@ -246,6 +257,8 @@ lines(mean ~ speed, data = nd, lwd = 1.5)
 lines(median ~ speed, data = nd, lty = 2, lwd = 1.5)
 lines(lower ~ speed, data = nd, lty = 2)
 lines(upper ~ speed, data = nd, lty = 2)
+
+\dontrun{
 
 ### honest (i.e., out-of-bag) cross-classification of
 ### true vs. predicted classes
@@ -262,7 +275,7 @@ if (require("TH.data") && require("survival")) {
     ### estimate conditional Kaplan-Meier curves
     print(predict(bst, newdata = GBSG2[1:2,], OOB = TRUE, type = "prob"))
 
-    print(bst$nodes[[1]])
+    print(gettree(bst))
 }
 }
 }

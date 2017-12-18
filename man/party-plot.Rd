@@ -16,7 +16,8 @@
     inner_panel = node_inner, ip_args = list(),
     edge_panel = edge_simple, ep_args = list(),
     drop_terminal = FALSE, tnex = 1,
-    newpage = TRUE, pop = TRUE, gp = gpar(), \dots)
+    newpage = TRUE, pop = TRUE, gp = gpar(),
+    margins = NULL, \dots)
 \method{plot}{constparty}(x, main = NULL,
     terminal_panel = NULL, tp_args = list(),
     inner_panel = node_inner, ip_args = list(),
@@ -65,6 +66,7 @@
   \item{pop}{ a logical whether the viewport tree should be popped before
               return. }
   \item{gp}{graphical parameters.}
+  \item{margins}{numeric vector of margin sizes.}
   \item{digits}{number of digits to be printed.}
   \item{\dots}{ additional arguments passed to callies.}
 }

@@ -2,6 +2,7 @@
 \alias{nodeids}
 \alias{nodeids.party}
 \alias{nodeids.partynode}
+\alias{get_paths}
 \title{ Extract Node Identifiers }
 \description{
 
@@ -13,6 +14,7 @@
 nodeids(obj, \dots)
 \method{nodeids}{partynode}(obj, from = NULL, terminal = FALSE, \dots)
 \method{nodeids}{party}(obj, from = NULL, terminal = FALSE, \dots)
+get_paths(obj, i)
 }
 \arguments{
   \item{obj}{ an object of class \code{\link{partynode}} 
@@ -20,10 +22,13 @@ nodeids(obj, \dots)
   \item{from}{ an integer specifying node to start from.}
   \item{terminal}{ logical specifying if only node identifiers 
                    of terminal nodes are returned. }
+  \item{i}{a vector of node identifiers.}
   \item{\dots}{ additional arguments.}
 }
 \details{
-  The identifiers of each node are extracted.
+  The identifiers of each node are extracted from \code{nodeids}.
+  \code{get_paths} returns the paths for extracting the corresponding
+  nodes using list subsets.
 }
 \value{
   A vector of node identifiers.
@@ -71,6 +76,10 @@ nodeids(obj, \dots)
   ### ids of terminal nodes in subtree with root [3]
   nodeids(tree, from = 3, terminal = TRUE)
 
+  ### get paths and extract all terminal nodes
+  tr <- unclass(node_party(tree))
+  lapply(get_paths(tree, nodeids(tree, terminal = TRUE)), 
+         function(path) tr[path])
 
 }
 \keyword{tree}

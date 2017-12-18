@@ -21,7 +21,7 @@ names(ttnc)[2] <- "Gender"
 ### code chunk number 3: rpart
 ###################################################
 library("rpart")
-(rp <- rpart(Survived ~ ., data = ttnc))
+(rp <- rpart(Survived ~ ., data = ttnc, model = TRUE))
 
 
 ###################################################
@@ -65,8 +65,12 @@ prop.table(do.call("table", fitted(party_rp)), 1)
 ###################################################
 ### code chunk number 10: J48
 ###################################################
-library("RWeka")
-(j48 <- J48(Survived ~ ., data = ttnc))
+if (require("RWeka")) {
+  j48 <- J48(Survived ~ ., data = ttnc)
+} else {
+  j48 <- rpart(Survived ~ ., data = ttnc)
+}
+print(j48)
 
 
 ###################################################

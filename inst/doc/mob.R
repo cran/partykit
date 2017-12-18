@@ -114,13 +114,13 @@ summary(pid_tree, node = 1)
 
 
 ###################################################
-### code chunk number 18: mob.Rnw:783-784
+### code chunk number 18: mob.Rnw:782-783
 ###################################################
 exp(coef(pid_tree)[,2])
 
 
 ###################################################
-### code chunk number 19: mob.Rnw:787-788
+### code chunk number 19: mob.Rnw:786-787
 ###################################################
 risk <- round(100 * (exp(coef(pid_tree)[,2])-1), digits = 1)
 
@@ -162,7 +162,7 @@ pid_tree[3]
 
 
 ###################################################
-### code chunk number 25: mob.Rnw:875-878
+### code chunk number 25: mob.Rnw:874-877
 ###################################################
 predict(pid_tree2, newdata = pid, type = "node")
 predict(pid_tree2, newdata = pid, type = "response")
@@ -254,8 +254,8 @@ tr_lm <- lm(eval ~ beauty + gender + minority + native + tenure + division,
 ###################################################
 ### code chunk number 37: TeachingRatings-tree
 ###################################################
-tr_tree <- lmtree(eval ~ beauty | minority + age + gender + division +
-  native + tenure, data = tr, weights = students, caseweights = FALSE)
+(tr_tree <- lmtree(eval ~ beauty | minority + age + gender + division +
+  native + tenure, data = tr, weights = students, caseweights = FALSE))
 
 
 ###################################################
@@ -470,8 +470,8 @@ btfit1 <- function(y, x = NULL, start = NULL, weights = NULL,
 ###################################################
 ### code chunk number 53: bt1
 ###################################################
-system.time(bt1 <- mob(preference ~ 1 | gender + age + q1 + q2 + q3,
-  data = Topmodel2007, fit = btfit1))
+bt1 <- mob(preference ~ 1 | gender + age + q1 + q2 + q3,
+  data = Topmodel2007, fit = btfit1)
 
 
 ###################################################
@@ -492,8 +492,8 @@ btfit2 <- function(y, x = NULL, start = NULL, weights = NULL,
 ###################################################
 ### code chunk number 55: bt2
 ###################################################
-system.time(bt2 <- mob(preference ~ 1 | gender + age + q1 + q2 + q3,
-  data = Topmodel2007, fit = btfit2))
+bt2 <- mob(preference ~ 1 | gender + age + q1 + q2 + q3,
+  data = Topmodel2007, fit = btfit2)
 
 
 ###################################################

@@ -16,7 +16,8 @@ node_inner <- function(obj, id = TRUE, pval = TRUE, abbreviate = FALSE, fill = "
 
     ## FIXME: make more flexible rather than special-casing p-value
     if(pval) {
-      pval <- suppressWarnings(try(!is.null(info_node(node)$p.value), silent = TRUE))
+      nullna <- function(x) is.null(x) || is.na(x)
+      pval <- suppressWarnings(try(!nullna(info_node(node)$p.value), silent = TRUE))
       pval <- if(inherits(pval, "try-error")) FALSE else pval
     }
     if(pval) {
@@ -108,8 +109,12 @@ node_terminal <- function(obj,
       lab <- extract_label(node)
       klab <- if(is.terminal(node)) "" else unlist(lapply(kids_node(node), maxstr))
       lab <- c(lab, klab)
-      lab <- unlist(lapply(lab, function(x) strsplit(x, "\n")))
-      return(lab[which.max(nchar(lab))])
+      lab <- try(unlist(lapply(lab, function(x) strsplit(x, "\n"))), silent = TRUE)
+      if(inherits(lab, "try-error")) {
+        paste(rep("a", 9L), collapse = "") ## FIXME: completely ad-hoc: possibly throw warning?
+      } else {
+        return(lab[which.max(nchar(lab))])
+      }
   }
 
   nstr <- if(is.null(width)) maxstr(node_party(obj)) else paste(rep("a", width), collapse = "")
@@ -308,7 +313,8 @@ plot.party <- function(x, main = NULL,
 		       inner_panel = node_inner, ip_args = list(),
                        edge_panel = edge_simple, ep_args = list(),
 		       drop_terminal = FALSE, tnex = 1, 
-		       newpage = TRUE, pop = TRUE, gp = gpar(), ...)
+		       newpage = TRUE, pop = TRUE, gp = gpar(),
+		       margins = NULL, ...)
 {
 
     ### extract tree
@@ -322,10 +328,15 @@ plot.party <- function(x, main = NULL,
     if (newpage) grid.newpage()
 
     ## setup root viewport
+    margins <- if(is.null(margins)) {
+      c(1, 1, if(is.null(main)) 0 else 3, 1)
+    } else {
+      rep_len(margins, 4L)
+    }
     root_vp <- viewport(layout = grid.layout(3, 3, 
-    			heights = unit(c(ifelse(is.null(main), 0, 3), 1, 1), 
+    			heights = unit(c(margins[3L], 1, margins[1L]), 
                                       c("lines", "null", "lines")),
-    			widths = unit(c(1, 1, 1), 
+    			widths = unit(c(margins[2L], 1, margins[4L]), 
                                      c("lines", "null", "lines"))), 
     			name = "root",
 			gp = gp)       
@@ -356,7 +367,8 @@ plot.party <- function(x, main = NULL,
 
 
     if((nx <= 1 & ny <= 1)) {
-      pushViewport(plotViewport(margins = rep(1.5, 4), name = paste("Node", id_node(node), sep = "")))
+      if(is.null(margins)) margins <- rep.int(1.5, 4)
+      pushViewport(plotViewport(margins = margins, name = paste("Node", id_node(node), sep = "")))
       terminal_panel(node)
     } else {
       ## call the workhorse
@@ -389,8 +401,13 @@ plot.constparty <- function(x, main = NULL,
             terminal_panel <- node_terminal
         if (is.null(tnex)) tnex <- 1
         if (is.null(drop_terminal)) drop_terminal <- FALSE
-        if (is.null(tp_args) || length(tp_args) < 1L) tp_args <- list(
-	  FUN = .make_formatinfo_simpleparty(x, digits = getOption("digits") - 4L, sep = "\n"))
+        if (is.null(tp_args) || length(tp_args) < 1L) {
+	  tp_args <- list(FUN = .make_formatinfo_simpleparty(x, digits = getOption("digits") - 4L, sep = "\n"))
+	} else {
+	  if(is.null(tp_args$FUN)) {
+  	    tp_args$FUN <- .make_formatinfo_simpleparty(x, digits = getOption("digits") - 4L, sep = "\n")
+	  }
+	}
     } else {
         if (is.null(terminal_panel)) {
 	    cl <- class(x$fitted[["(response)"]])
@@ -431,6 +448,7 @@ node_barplot <- function(obj,
 			 just = c("center", "top"),
 		         id = TRUE,
                          mainlab = NULL,
+			 text = c("none", "horizontal", "vertical"),
 			 gp = gpar())
 {   
     ## extract response
@@ -476,6 +494,11 @@ node_barplot <- function(obj,
     if(is.null(reverse)) reverse <- !beside
     if(is.null(fill)) fill <- gray.colors(length(ylevels))
     if(is.null(ylines)) ylines <- if(beside) c(3, 2) else c(1.5, 2.5)
+
+    ## text labels?
+    if(isTRUE(text)) text <- "horizontal"
+    if(!is.character(text)) text <- "none"
+    text <- match.arg(text, c("none", "horizontal", "vertical"))
 
     ### panel function for barplots in nodes
     rval <- function(node) {
@@ -549,6 +572,13 @@ node_barplot <- function(obj,
                       width = widths[i],
 	              just = c("center", "bottom"), default.units = "native",
 	              gp = gpar(col = col[i], fill = fill[i]))
+            if(text != "none") {
+              grid.text(x = xcenter[i], y = pred[i] + 0.025,
+	        label = paste(format(round(100 * pred[i], 1), nsmall = 1), "%", sep = ""),
+	        just = if(text == "horizontal") c("center", "bottom") else c("left", "center"),
+	        rot = if(text == "horizontal") 0 else 90,
+		default.units = "native")
+            }
 	  }
 	} else {
   	  ycenter <- cumsum(pred) - pred

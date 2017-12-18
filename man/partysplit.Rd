@@ -18,7 +18,7 @@
 \usage{
 partysplit(varid, breaks = NULL, index = NULL, right = TRUE, 
     prob = NULL, info = NULL)
-kidids_split(split, data, vmatch = 1:ncol(data), obs = NULL)
+kidids_split(split, data, vmatch = 1:length(data), obs = NULL)
 character_split(split, data = NULL, 
     digits = getOption("digits") - 2)
 varid_split(split)

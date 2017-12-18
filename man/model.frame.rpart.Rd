@@ -1,5 +1,5 @@
-\name{model.frame.rpart}
-\alias{model.frame.rpart}
+\name{model_frame_rpart}
+\alias{model_frame_rpart}
 \title{ Model Frame Method for rpart }
 \description{
 
@@ -7,7 +7,7 @@
 
 }
 \usage{
-\method{model.frame}{rpart}(formula, \dots)
+model_frame_rpart(formula, \dots)
 }
 \arguments{
   \item{formula}{ an object of class \code{\link{rpart}}.}
@@ -15,6 +15,8 @@
 }
 \details{
   A \code{\link{model.frame}} method for \code{\link{rpart}} objects.
+  Because it is no longer possible to overwrite existing methods,
+  the function name is a little different here.
 }
 \value{
   A model frame.

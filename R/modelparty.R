@@ -223,20 +223,21 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL, cluster = NULL
     z <- z[ww0, , drop = FALSE]
     k <- NCOL(process)
     n <- NROW(process)
+    nobs <- if(control$caseweights && any(weights != 1L)) sum(weights) else n
 
     ## scale process
-    process <- process/sqrt(n)
+    process <- process/sqrt(nobs)
     vcov <- control$vcov
     if(is.null(obj)) vcov <- "opg"
     if(vcov != "opg") {
-      bread <- vcov(obj) * n
+      bread <- vcov(obj) * nobs
     }
     if(vcov != "info") {
       meat <- if(is.null(cluster)) {
-        crossprod(process)
+        crossprod(process/sqrt(weights))
       } else {
         ## nclus <- length(unique(cluster)) ## nclus / (nclus - 1L) * 
-        crossprod(as.matrix(aggregate(process, by = list(cluster), FUN = sum)[, -1L, drop = FALSE]))
+        crossprod(as.matrix(apply(process/sqrt(weights), 2L, tapply, cluster, sum)))
       }
     }
     J12 <- root.matrix(switch(vcov,
@@ -251,10 +252,10 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL, cluster = NULL
     k <- NCOL(process)
 
     ## get critical values for supLM statistic
-    from <- if(control$trim > 1) control$trim else ceiling(n * control$trim)
+    from <- if(control$trim > 1) control$trim else ceiling(nobs * control$trim)
     from <- max(from, minsize)
-    to <- n - from
-    lambda <- ((n - from) * to)/(from * (n - to))
+    to <- nobs - from
+    lambda <- ((nobs - from) * to)/(from * (nobs - to))
 
     beta <- mob_beta_suplm
     logp.supLM <- function(x, k, lambda)
@@ -270,23 +271,25 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL, cluster = NULL
       } else {
         ## use Hansen (1997) approximation
         nb <- ncol(beta) - 1L
-        if(lambda<1) tau <- lambda
-        else tau <- 1/(1 + sqrt(lambda))
+        tau <- if(lambda < 1) lambda else 1/(1 + sqrt(lambda))
         beta <- beta[(((k - 1) * 25 + 1):(k * 25)),]
-        dummy <- beta[,(1L:nb)]%*%x^(0:(nb-1))
-        dummy <- dummy*(dummy>0)
+        dummy <- beta[,(1L:nb)] %*% x^(0:(nb-1))
+        dummy <- dummy * (dummy > 0)
         pp <- pchisq(dummy, beta[,(nb+1)], lower.tail = FALSE, log.p = TRUE)
-        if(tau == 0.5)
+        if(tau == 0.5) {
           p <- pchisq(x, k, lower.tail = FALSE, log.p = TRUE)
-        else if(tau <= 0.01)
+        } else if(tau <= 0.01) {
           p <- pp[25L]
-        else if(tau >= 0.49)
+        } else if(tau >= 0.49) {
           p <- log((exp(log(0.5 - tau) + pp[1L]) + exp(log(tau - 0.49) + pchisq(x, k, lower.tail = FALSE, log.p = TRUE))) * 100)
-        else
-        {
+	  ## if p becomes so small that 'correct' weighted averaging does not work, resort to 'naive' averaging
+	  if(!is.finite(p)) p <- mean(c(pp[1L], pchisq(x, k, lower.tail = FALSE, log.p = TRUE)))
+        } else {
   	  taua <- (0.51 - tau) * 50
     	  tau1 <- floor(taua)
   	  p <- log(exp(log(tau1 + 1 - taua) + pp[tau1]) + exp(log(taua-tau1) + pp[tau1 + 1L]))
+	  ## if p becomes so small that 'correct' weighted averaging does not work, resort to 'naive' averaging
+	  if(!is.finite(p)) p <- mean(pp[tau1 + 0L:1L])
         }
       }
       return(as.vector(p))
@@ -295,17 +298,20 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL, cluster = NULL
     ## compute statistic and p-value for each ordering
     for(i in mtest) {
       zi <- z[,i]
+      if(length(unique(zi)) < 2L) next
       if(is.factor(zi)) {
-        proci <- process[order(zi), , drop = FALSE]
+        oi <- order(zi)
+        proci <- process[oi, , drop = FALSE]
         ifac[i] <- TRUE
 	iord <- is.ordered(zi) & (control$ordinal != "chisq")
 
         ## order partitioning variable
-        zi <- zi[order(zi)]
+        zi <- zi[oi]
         # re-apply factor() added to drop unused levels
         zi <- factor(zi, levels = unique(zi))
         # compute segment weights
-        segweights <- as.vector(table(zi))/n
+        segweights <- if(control$caseweights) tapply(weights[oi], zi, sum) else table(zi)
+	segweights <- as.vector(segweights)/nobs
 
         # compute statistic only if at least two levels are left
         if(length(segweights) < 2L) {
@@ -313,9 +319,10 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL, cluster = NULL
 	  pval[i] <- NA_real_
         } else if(iord) {
           proci <- apply(proci, 2L, cumsum)
+	  tt0 <- head(cumsum(table(zi)), -1L)
           tt <- head(cumsum(segweights), -1L)
           if(control$ordinal == "max") {
-  	    stat[i] <- max(abs(proci[round(tt * n), ] / sqrt(tt * (1-tt))))
+  	    stat[i] <- max(abs(proci[tt0, ] / sqrt(tt * (1-tt))))
 	    pval[i] <- log(as.numeric(1 - mvtnorm::pmvnorm(
 	      lower = -stat[i], upper = stat[i],
 	      mean = rep(0, length(tt)),
@@ -324,7 +331,7 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL, cluster = NULL
 	      )^k))
 	  } else {
 	    proci <- rowSums(proci^2)
-  	    stat[i] <- max(proci[round(tt * n)] / (tt * (1-tt)))
+  	    stat[i] <- max(proci[tt0] / (tt * (1-tt)))
 	    pval[i] <- log(strucchange::ordL2BB(segweights, nproc = k, nrep = control$nrep)$computePval(stat[i], nproc = k))
 	  }
 	} else {      
@@ -341,10 +348,11 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL, cluster = NULL
         }
         proci <- process[oi, , drop = FALSE]
         proci <- apply(proci, 2L, cumsum)
+	tt0 <- if(control$caseweights && any(weights != 1L)) cumsum(weights[oi]) else 1:n
         stat[i] <- if(from < to) {
 	  xx <- rowSums(proci^2)
-	  xx <- xx[from:to]
-	  tt <- (from:to)/n
+	  xx <- xx[tt0 >= from & tt0 <= to]
+	  tt <- tt0[tt0 >= from & tt0 <= to]/nobs
 	  max(xx/(tt * (1 - tt)))	  
 	} else {
 	  0
@@ -1100,7 +1108,7 @@ residuals.modelparty <- function(object, ...)
   return(rval)
 }
 
-plot.modelparty <- function(x, terminal_panel = NULL, FUN = NULL, ...) {
+plot.modelparty <- function(x, terminal_panel = NULL, FUN = NULL, tp_args = NULL, ...) {
   if(is.null(terminal_panel)) {
     if(is.null(FUN)) {
       FUN <- function(x) {
@@ -1110,7 +1118,96 @@ plot.modelparty <- function(x, terminal_panel = NULL, FUN = NULL, ...) {
           strwrap(capture.output(print(cf, digits = 4L))[-1L]))
       }
     }
-    terminal_panel <- node_terminal(x, FUN = FUN)
+    terminal_panel <- do.call("node_terminal", c(list(obj = x, FUN = FUN), tp_args))
+    tp_args <- NULL
   }
-  plot.party(x, terminal_panel = terminal_panel, ...)
+  plot.party(x, terminal_panel = terminal_panel, tp_args = tp_args, ...)
 }
+
+### AIC-based pruning
+prune.modelparty <- function(tree, type = "AIC", ...)
+{
+  
+  ## prepare pruning function
+  if(is.character(type)) {
+    type <- tolower(type)
+    type <- match.arg(type, c("aic", "bic", "none"))
+    
+    if("lmtree" %in% class(tree)) {
+      type <- switch(type,
+                     "aic" = {
+                       function(objfun, df, nobs) (nobs[1L] * log(objfun[1L]) + 2 * df[1L]) < (nobs[1L] * log(objfun[2L]) + 2 * df[2L])
+                     }, "bic" = {
+                       function(objfun, df, nobs) (nobs[1L] * log(objfun[1L]) + log(nobs[2L]) * df[1L]) < (nobs[1L] * log(objfun[2L]) + log(nobs[2L]) * df[2L])
+                     }, "none" = {
+                       NULL
+                     })
+    } else {
+      type <- switch(type,
+                     "aic" = {
+                       function(objfun, df, nobs) (2 * - objfun[1L] + 2 * df[1L]) < (2 * - objfun[2L] + 2 * df[2L])
+                     }, "bic" = {
+                       function(objfun, df, nobs) (2 * - objfun[1L] + log(n) * df[1L]) < (2 * - objfun[2L] + log(n) * df[2L])
+                     }, "none" = {
+                       NULL
+                     })   
+    }
+  }
+  if(!is.function(type)) {
+    warning("Unknown specification of 'prune'")
+    type <- NULL
+  }
+  
+  ## degrees of freedom
+  dfsplit <- tree$info$control$dfsplit
+  
+  ## turn node to list
+  node <- tree$node
+  nd <- as.list(node)
+  
+  ## if no pruning selected
+  if(is.null(type)) return(nd)
+  
+  ## node information (IDs, kids, ...)
+  id <- seq_along(nd)
+  kids <- lapply(nd, "[[", "kids")
+  tmnl <- sapply(kids, is.null)
+  
+  ## check nodes that only have terminal kids
+  check <- sapply(id, function(i) !tmnl[i] && all(tmnl[kids[[i]]]))
+  while(any(check)) {
+    
+    ## pruning node information
+    pnode <- which(check)
+    objfun <- sapply(nd, function(x) x$info$objfun)
+    n <- nrow(tree$fitted)
+    pok <- sapply(pnode, function(i) type(
+      objfun = c(objfun[i], sum(objfun[kids[[i]]])),
+      df = c(length(nd[[1]]$info$coefficients), length(kids[[i]]) * length(nd[[1]]$info$coefficients) + as.integer(dfsplit)),
+      nobs = c(nd[[i]]$info$nobs, n)
+    ))
+    
+    ## do any nodes need pruning?
+    pnode <- pnode[pok]
+    if(length(pnode) < 1L) break
+    
+    ## prune
+    tree <- nodeprune.party(tree, ids = pnode)
+    node <- tree$node
+    nd <- as.list(node)
+    
+    ## node information
+    kids <- lapply(nd, "[[", "kids")
+    tmnl <- sapply(kids, is.null)
+    id <- seq_along(nd)
+    check <- sapply(id, function(i) !tmnl[i] && all(tmnl[kids[[i]]]))
+  }
+  
+  ## return pruned tree
+  return(tree)
+}
+
+
+.mfluc_test  <- function(...)
+    stop("not yet implemented")
+

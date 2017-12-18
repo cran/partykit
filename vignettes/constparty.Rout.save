@@ -3,6 +3,9 @@
 
 > library("partykit")
 Loading required package: grid
+Loading required package: libcoin
+Loading required package: mvtnorm
+Loading required package: rpart
 
 > set.seed(290875)
 
@@ -16,7 +19,7 @@ Loading required package: grid
 
 > library("rpart")
 
-> (rp <- rpart(Survived ~ ., data = ttnc))
+> (rp <- rpart(Survived ~ ., data = ttnc, model = TRUE))
 n= 2201 
 
 node), split, n, loss, yval, (yprob)
@@ -75,9 +78,14 @@ Number of terminal nodes: 5
        8 0.5408163 0.4591837
        9 0.0729927 0.9270073
 
-> library("RWeka")
+> if (require("RWeka")) {
++     j48 <- J48(Survived ~ ., data = ttnc)
++ } else {
++     j48 <- rpart(Survived ~ ., data = ttnc)
++ }
+Loading required package: RWeka
 
-> (j48 <- J48(Survived ~ ., data = ttnc))
+> print(j48)
 J48 pruned tree
 ------------------
 
@@ -358,4 +366,4 @@ Levels: No Yes
  *** Run successfully completed ***
 > proc.time()
    user  system elapsed 
-  4.800   0.073   4.760 
+  6.800   0.172   6.103 

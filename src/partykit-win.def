@@ -1,0 +1,4 @@
+
+LIBRARY partykit.dll
+EXPORTS
+  R_init_partykit

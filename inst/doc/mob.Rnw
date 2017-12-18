@@ -64,7 +64,7 @@ options(prompt = "R> ", continue = "+  ", digits = 4, useFancyQuotes = FALSE)
   URL: \url{http://eeecon.uibk.ac.at/~zeileis/} \\
 
   Torsten Hothorn\\
-  Institut f\"ur Sozial- und Pr\"aventivmedizin, Abteilung Biostatistik \\
+  Institut f\"ur Epidemiologie, Biostatistik und Pr\"avention \\
   Universit\"at Z\"urich \\
   Hirschengraben 84\\
   CH-8001 Z\"urich, Switzerland \\
@@ -73,7 +73,6 @@ options(prompt = "R> ", continue = "+  ", digits = 4, useFancyQuotes = FALSE)
 }
 
 \begin{document}
-
 \section{Overview}
 
 To implement the model-based recursive partitioning (MOB) algorithm of 
@@ -636,7 +635,7 @@ pruned or \code{FALSE} if not. The arguments supplied are a vector of objective 
 the current node and the sum of all child nodes, a vector of corresponding degrees of freedom,
 and the number of observations in the current node and in total. For example if the objective
 function used is the negative log-likelihood, then for BIC-based pruning the \code{prune} function
-is: \code{(2 * objfun[1] + log(nobs[2]) * df[1]) < (2 * objfun[2] + nobs[2] * df[2])}. As the
+is: \code{(2 * objfun[1] + log(nobs[1]) * df[1]) < (2 * objfun[2] + log(nobs[2]) * df[2])}. As the
 negative log-likelihood is the default objective function when using the ``simple'' \code{fit}
 interface, \code{prune} can also be set to \code{"AIC"} or \code{"BIC"} and then suitable
 functions will be set up internally. Note, however, that for other objective functions this
@@ -1011,7 +1010,8 @@ with Charles river) and thus needs to be turned into a factor. Furthermore, the 
 values. Hence, it is most appropriately treated as an ordered factor.
 Note that both transformations only affect the parameter stability test chosen (step~2), not the splitting
 procedure (step~3).
-%
+% Note that with splittry = 0 (according to old version of mob) there is no
+% split in dis
 <<BostonHousing-tree>>=
 bh_tree <- lmtree(medv ~ log(lstat) + I(rm^2) | zn + indus + chas + nox +
   age + dis + rad + tax + crim + b + ptratio, data = BostonHousing)
@@ -1105,8 +1105,8 @@ For WLS estimation, we set \code{weights = students} and \code{caseweights = FAL
 replicated observations).
 %
 <<TeachingRatings-tree>>=
-tr_tree <- lmtree(eval ~ beauty | minority + age + gender + division +
-  native + tenure, data = tr, weights = students, caseweights = FALSE)
+(tr_tree <- lmtree(eval ~ beauty | minority + age + gender + division +
+  native + tenure, data = tr, weights = students, caseweights = FALSE))
 @
 %
 \begin{figure}[t!]
@@ -1445,8 +1445,8 @@ now specifying the response and the partitioning variable (and no regressors bec
 there are no regressors in this model).
 %
 <<bt1>>=
-system.time(bt1 <- mob(preference ~ 1 | gender + age + q1 + q2 + q3,
-  data = Topmodel2007, fit = btfit1))
+bt1 <- mob(preference ~ 1 | gender + age + q1 + q2 + q3,
+  data = Topmodel2007, fit = btfit1)
 @
 %
 An alternative way to fit the exact same tree somewhat more quickly would be to
@@ -1471,8 +1471,8 @@ may save some computation time -- about 20\% on the authors' machine at the time
 writing -- when computing the tree:
 %
 <<bt2>>=
-system.time(bt2 <- mob(preference ~ 1 | gender + age + q1 + q2 + q3,
-  data = Topmodel2007, fit = btfit2))
+bt2 <- mob(preference ~ 1 | gender + age + q1 + q2 + q3,
+  data = Topmodel2007, fit = btfit2)
 @
 %
 The speed-up is not huge but comes almost for free: just a few additional lines

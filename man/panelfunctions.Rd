@@ -39,7 +39,7 @@ node_boxplot(obj, col = "black", fill = "lightgray", bg = "white", width = 0.5,
 node_barplot(obj, col = "black", fill = NULL, bg = "white",
   beside = NULL, ymax = NULL, ylines = NULL, widths = 1, gap = NULL,
   reverse = NULL, rot = 0, just = c("center", "top"), id = TRUE,
-  mainlab = NULL, gp = gpar())
+  mainlab = NULL, text = c("none", "horizontal", "vertical"), gp = gpar())
 
 node_surv(obj, col = "black", bg = "white", ylines = 2,
   id = TRUE, mainlab = NULL, gp = gpar(), \dots)
@@ -111,6 +111,10 @@ node_mvar(obj, which = NULL, id = TRUE, pop = TRUE, ylines = NULL,
     a character or a \code{function(id, nobs)}.}
   \item{varlab}{logical. Should the individual variable labels be attached to
     the \code{mainlab} for multivariate responses?}
+  \item{text}{logical or character. Should percentage labels be drawn
+    for each bar? The default is \code{"none"} or equivalently \code{FALSE}.
+    Can be set to \code{TRUE} (or \code{"horizontal"}) or alternatively
+    \code{"vertical"}.}
   \item{\dots}{ additional arguments passed to callies 
                 (for example to \code{\link[survival]{survfit}}).}
 }

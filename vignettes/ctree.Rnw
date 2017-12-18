@@ -1,7 +1,7 @@
 \documentclass[nojss]{jss}
 
 %\VignetteIndexEntry{ctree: Conditional Inference Trees}
-%\VignetteDepends{coin, TH.data, survival, strucchange}
+%\VignetteDepends{coin, TH.data, survival, strucchange, Formula, sandwich, datasets}
 %\VignetteKeywords{conditional inference, non-parametric models, recursive partitioning}
 %\VignettePackage{partykit}
 
@@ -12,6 +12,7 @@
 \usepackage{thumbpdf}
 \usepackage{rotating}
 %% need no \usepackage{Sweave}
+\usepackage[utf8]{inputenc}
 
 %% commands
 \newcommand{\fixme}[1]{\emph{\marginpar{FIXME} (#1)}}
@@ -88,7 +89,7 @@
 
 \Address{
   Torsten Hothorn\\
-  Institut f\"ur Sozial- und Pr\"aventivmedizin, Abteilung Biostatistik \\
+  Institut f\"ur Epidemiologie, Biostatistik und Pr\"avention \\
   Universit\"at Z\"urich \\
   Hirschengraben 84\\
   CH-8001 Z\"urich, Switzerland \\
@@ -122,6 +123,10 @@ options(width = 70, SweaveHooks = list(leftpar =
 require("partykit")
 require("coin")
 require("strucchange")
+require("coin")
+require("Formula")
+require("survival")
+require("sandwich")
 set.seed(290875)
 @
 
@@ -129,41 +134,20 @@ set.seed(290875)
 
 \section{Overview}
 
-This vignette describes 
-conditional inference trees \citep{Hothorn+Hornik+Zeileis:2006} along with its
-new and improved reimplementation in package \pkg{partykit}. Originally, the
-method was implemented in the package \pkg{party} almost entirely in \proglang{C}
-while the new implementation is now almost entirely in \proglang{R} with only
-the more computationally intensive parts in \proglang{C}. In particular, this
-has the advantage that all the generic infrastructure from \pkg{partykit} can
-be reused, making many computations more modular and easily extensible. Hence,
-\code{partykit::ctree} is the new reference implementation that will be improved
-and developed further in the future.
+This vignette describes conditional inference trees
+\citep{Hothorn+Hornik+Zeileis:2006} along with its new and improved
+reimplementation in package \pkg{partykit}.  Originally, the method was
+implemented in the package \pkg{party} almost entirely in \proglang{C} while
+the new implementation is now almost entirely in \proglang{R}.  In
+particular, this has the advantage that all the generic infrastructure from
+\pkg{partykit} can be reused, making many computations more modular and
+easily extensible.  Hence, \code{partykit::ctree} is the new reference
+implementation that will be improved and developed further in the future.
 
-Both, \code{party::ctree} and \code{partykit::ctree} essentially produce the
-same output, with the following two limitations:
-\begin{itemize}
-  \item User-specified transformations of the explanatory variables are not yet
-    supported. This is only possible for the response.
-  \item Resampling distributions of the test statistics as an alternative to
-    the asymptotic distributions are not yet available.
-  %% \item extraction of split-statistics are not yet implemented in \code{partykit::ctree}.
-\end{itemize}
-Furthermore, \code{partykit::ctree_control} has a new additional argument \code{majority = FALSE}
-that enables random assignment of non-splitable observations to daugther nodes preserving
-the node distribution. With \code{majority = TRUE}, these observations go with the majority
-(the only available behaviour of in \code{party::ctree}). Both implementations do not
-fit surrogate splits by default (\code{maxsurrogate = 0}), so users need to make sure to set
-it to a positive value if missing values are a problem in their learning or testing data.
-\code{party::ctree} did an exhaustive search for finding such surrogate splits in
-ordered variables, the implementation in \code{partykit::ctree} now implements the
-same unbiased variable selection used for finding the primary splits also
-for the surrogate splits and also allows surrogate splits in nominal variables. Therefore,
-in the presence of missing values the results of the two procedures will differ slightly.
-
-Finally, the breaking of ties between variables with almost identical selection criterion (for example,
-a $p$-value being almost zero) is done with respect to the test statistics in \code{partykit::ctree},
-so in very rare cases there might be different split variables in some nodes.
+In almost all cases, the two implementations will produce identical trees.
+In exceptional cases, additional parameters have to be specified in order to
+ensure backward compatibility. These and novel features in
+\code{ctree:partykit} are introduced in Section~\ref{sec:novel}.
 
 \section{Introduction}
 
@@ -997,7 +981,8 @@ data("HuntingSpiders", package = "partykit")
 sptree <- ctree(arct.lute + pard.lugu + zora.spin + pard.nigr +
   pard.pull + aulo.albi + troc.terr + alop.cune + pard.mont + alop.acce +
   alop.fabr + arct.peri ~ herbs + reft + moss + sand + twigs + water,
-  data = HuntingSpiders, teststat = "max", minsplit = 5)
+  data = HuntingSpiders, teststat = "max", minsplit = 5,
+  pargs = GenzBretz(abseps = .1, releps = .1))
 @
 
 \setkeys{Gin}{width=\textwidth, keepaspectratio=TRUE}
@@ -1017,6 +1002,263 @@ plot(sptree)
 @
 \caption{Regression tree for hunting spider abundance with boxplots for each response. \label{spider2}}
 \end{figure}
+
+\section{Backward compatibility and novel functionality} \label{sec:novel}
+
+\code{partykit::ctree} is a complete reimplementation of
+\code{party::ctree}. The latter reference implementation is based on a
+monolithic \proglang{C} core and an \proglang{S4}-based \proglang{R}
+interface. The novel implementation of conditional inference trees in 
+\pkg{partykit} is much more modular and was almost entirely written in
+\proglang{R} (package \pkg{partykit} does not contain any foreign language
+code as of version 1.2-0). Permutation tests are computed in the dedicated
+\proglang{R} add-on package \pkg{libcoin}.
+
+Nevertheless, both implementations will almost every time produce the same
+tree. There are, naturally, exceptions where ensuring 
+backward-compatibility requires specific choices of hyper parameters in
+\code{partykit::ctree_control}. We will demonstrate how one can compute
+the same trees in \pkg{partykit} and \pkg{party} in this section. In
+addition, some novel features introduced in \pkg{partykit} 1.2-0 are
+described.
+
+\subsection{Regression}
+
+<<party-setup, echo = FALSE, results = hide>>=
+library("party")
+set.seed(290875)
+@
+
+We use the \code{airquality} data from package \pkg{party} and fit a
+regression tree after removal of missing response values. There are missing
+values in one of the explanatory variables, so we ask for three surrogate
+splits to be set-up:
+<<party-airq, echo = TRUE>>=
+data("airquality", package = "datasets")
+airq <- subset(airquality, !is.na(Ozone))
+(airct_party <- party::ctree(Ozone ~ ., data = airq, 
+     controls = party::ctree_control(maxsurrogate = 3)))
+mean((airq$Ozone - predict(airct_party))^2)
+@
+For this specific example, the same call produces the same tree under both
+\pkg{party} and \pkg{partykit}. To ensure this also for other patterns of
+missingness, the \code{numsurrogate} flag needs to be set in order to
+restrict the evaluation of surrogate splits to numeric variables only (this
+is a restriction hard-coded in \pkg{party}):
+<<partykit-airq, echo = TRUE>>=
+(airct_partykit <- partykit::ctree(Ozone ~ ., data = airq, 
+     control = partykit::ctree_control(maxsurrogate = 3, 
+                                       numsurrogate = TRUE)))
+mean((airq$Ozone - predict(airct_partykit))^2)
+table(predict(airct_party, type = "node"),
+      predict(airct_partykit, type = "node"))
+max(abs(predict(airct_party) - predict(airct_partykit)))
+@
+The results are identical as are the underlying test statistics:
+<<party-partykit-airq, echo = TRUE>>=
+airct_party@tree$criterion
+info_node(node_party(airct_partykit))
+@
+\code{partykit} has a nicer way or presenting the variable selection test
+statistics on the scale of the statistics and the $p$-values. In addition,
+the criterion to be maximised (here: $\log(1 - p-\text{value})$) is given.
+
+\subsection{Classification}
+
+For classification tasks with more than two classes, the default in
+\pkg{party} is a maximum-type test statistic on the multidimensional test
+statistic when computing splits. \pkg{partykit} employs a quadratic test
+statistic by default, because it was found to produce better splits
+empirically. One can switch-back to the old behaviour using the
+\code{splitstat} argument:
+<<party-partykit-iris, echo = TRUE>>=
+(irisct_party <- party::ctree(Species ~ .,data = iris))
+(irisct_partykit <- partykit::ctree(Species ~ .,data = iris, 
+control = partykit::ctree_control(splitstat = "maximum")))
+table(predict(irisct_party, type = "node"),
+      predict(irisct_partykit, type = "node"))
+@
+The interface for computing conditional class probabilities changed from
+<<party-iris, echo = TRUE>>=
+tr_party <- treeresponse(irisct_party, newdata = iris)
+@
+to
+<<partykit-iris, echo = TRUE>>=
+tr_partykit <- predict(irisct_partykit, type = "prob", 
+                       newdata = iris)
+max(abs(do.call("rbind", tr_party) - tr_partykit))
+@
+leading to identical results. For ordinal regression, the conditional class
+probabilities can be computed in the very same way:
+<<party-partykit-mammoexp, echo = TRUE>>=
+### ordinal regression
+data("mammoexp", package = "TH.data")
+(mammoct_party <- party::ctree(ME ~ ., data = mammoexp))
+### estimated class probabilities
+tr_party <- treeresponse(mammoct_party, newdata = mammoexp)
+(mammoct_partykit <- partykit::ctree(ME ~ ., data = mammoexp))
+### estimated class probabilities
+tr_partykit <- predict(mammoct_partykit, newdata = mammoexp, type = "prob")
+max(abs(do.call("rbind", tr_party) - tr_partykit))
+@
+
+\subsection{Survival Analysis}
+
+Like in classification analysis, the \code{treeresponse} function from
+package \code{party} was replaced by the \code{predict} function with
+argument \code{type = "prob"} in \pkg{partykit}. The default survival trees
+are identical:
+<<party-partykit-GBSG2, echo = TRUE>>=
+data("GBSG2", package = "TH.data")
+(GBSG2ct_party <- party::ctree(Surv(time, cens) ~ .,data = GBSG2))
+(GBSG2ct_partykit <- partykit::ctree(Surv(time, cens) ~ .,data = GBSG2))
+@
+as are the conditional Kaplan-Meier estimators
+<<party-partykit-KM, echo = TRUE>>=
+tr_party <- treeresponse(GBSG2ct_party, newdata = GBSG2)
+tr_partykit <- predict(GBSG2ct_partykit, newdata = GBSG2, type = "prob")
+all.equal(lapply(tr_party, function(x) unclass(x)[!(names(x) %in% "call")]),
+lapply(tr_partykit, function(x) unclass(x)[!(names(x) %in% "call")]),
+check.names = FALSE)
+@
+
+\subsection{New Features}
+
+\pkg{partykit} comes with additional arguments in \code{ctree_control}
+allowing a more detailed control over the tree growing. 
+
+\begin{description}
+
+\item[\code{alpha}]: The user can optionally change the default nominal
+level of $\alpha = 0.05$; \code{mincriterion} is updated to $1 - \alpha$ and
+\code{logmincriterion} is then $\log(1 - \alpha)$. The latter allows
+variable selection on the scale of $\log(1 - p\text{-value})$:
+<<nf-alpha, echo = TRUE>>=
+(airct_partykit_1 <- partykit::ctree(Ozone ~ ., data = airq, 
+     control = partykit::ctree_control(maxsurrogate = 3, alpha = 0.001,
+                                       numsurrogate = FALSE)))
+depth(airct_partykit_1)
+mean((airq$Ozone - predict(airct_partykit_1))^2)
+@
+Lower values of $\alpha$ lead to smaller trees.
+
+\item[\code{splittest}]: This enables the computation of $p$-values for
+maximally selected statistics for variable selection. The default test
+statistic is not particularly powerful against cutpoint-alternatives but much
+faster to compute. Currently, $p$-value approximations are not available, so
+one has to rely on resampling for $p$-value estimation
+<<nf-maxstat, echo = TRUE>>=
+(airct_partykit <- partykit::ctree(Ozone ~ ., data = airq, 
+     control = partykit::ctree_control(maxsurrogate = 3, splittest = TRUE,
+                                       testtype = "MonteCarlo"))) 
+@
+
+\item[\code{saveinfo}]: Reduces the memory footprint by not storing test
+results as part of the tree. The core information about trees is then
+roughly half the size needed by \code{party}.
+
+\item[\code{nmax}]: Restricts the number of possible cutpoints to
+\code{nmax}, basically by treating all explanatory variables as ordered
+factors defined at quantiles of underlying numeric variables. This is mainly
+implemented in package \pkg{libcoin}. For the standard \code{ctree}, it is
+only appropriate to use in classification problems, where is can lead to
+substantial speed-ups:
+<<nf-nmax, echo = TRUE>>=
+(irisct_partykit_1 <- partykit::ctree(Species ~ .,data = iris, 
+control = partykit::ctree_control(splitstat = "maximum", nmax = 25)))
+table(predict(irisct_partykit), predict(irisct_partykit_1))
+@
+
+\item[\code{multiway}]: Implements multiway splits in unordered factors,
+each level defines a corresponding daughter node:
+<<nf-multiway, echo = TRUE>>=
+GBSG2$tgrade <- factor(GBSG2$tgrade, ordered = FALSE)
+(GBSG2ct_partykit <- partykit::ctree(Surv(time, cens) ~ tgrade,
+    data = GBSG2, control = partykit::ctree_control(multiway = TRUE, 
+                                                    alpha = .5)))
+@
+
+\item[\code{majority = FALSE}]: enables random assignment of non-splitable
+observations to daughter nodes preserving the node distribution.  With
+\code{majority = TRUE}, these observations go with the majority (the only
+available behaviour of in \code{party::ctree}).
+
+\end{description}
+
+Two arguments of \code{ctree} are also interesting. The novel \code{cluster}
+argument allows conditional inference trees to be fitted to (simple forms
+of) correlated observations. For each cluster, the variance of the test
+statistics used for variable selection and also splitting is computed
+separately, leading to stratified permutation tests (in the sense that only
+observations within clusters are permuted). For example, we can cluster the
+data in the \code{airquality} dataset by month to be used as cluster
+variable:
+<<nf-cluster, echo = TRUE>>=
+airq$month <- factor(airq$Month)
+(airct_partykit_3 <- partykit::ctree(Ozone ~ Solar.R + Wind + Temp, data = airq,
+cluster = month, control = partykit::ctree_control(maxsurrogate = 3)))
+info_node(node_party(airct_partykit_3))
+mean((airq$Ozone - predict(airct_partykit_3))^2)
+@
+This reduces the number of partitioning variables and makes multiplicity
+adjustment less costly.
+
+The \code{ytrafo} argument has be made more general. \pkg{party} is not able
+to update influence functions $h$ within nodes. With the novel formula-based
+interface, users can create influence functions which are newly evaluated 
+in each node. The following example illustrates how one can compute a
+survival tree with updated logrank scores:
+<<nf-ytrafo-1, echo = TRUE>>=
+### with weight-dependent log-rank scores
+### log-rank trafo for observations in this node only (= weights > 0)
+h <- function(y, x, start = NULL, weights, offset, estfun = TRUE, object = FALSE, ...) {
+    if (is.null(weights)) weights <- rep(1, NROW(y))
+    s <- logrank_trafo(y[weights > 0,,drop = FALSE])
+    r <- rep(0, length(weights))
+    r[weights > 0] <- s
+    list(estfun = matrix(as.double(r), ncol = 1), converged = TRUE, unweighted = TRUE)
+}
+partykit::ctree(Surv(time, cens) ~ ., data = GBSG2, ytrafo = h)
+@
+The results are usually not very sensitive to (simple) updated influence
+functions. However, when one uses score functions of more complex models as
+influence functions (similar to the \code{mob} family of trees), it is
+necessary to refit models in each node. For example, we are interested in a
+normal linear model for ozone concentration given temperature; both the
+intercept and the regression coefficient for temperature shall vary across
+nodes of a tree. Such a ``permutation-based'' MOB, here taking clusters into
+account, can be set-up using
+
+<<nf-ytrafo-2, echo = TRUE>>=
+### normal varying intercept / varying coefficient model (aka "mob")
+h <- function(y, x, start = NULL, weights = NULL, offset = NULL, cluster = NULL, ...)
+  glm(y ~ 0 + x, family = gaussian(), start = start, weights = weights, ...)
+(airct_partykit_4 <- partykit::ctree(Ozone ~ Temp | Solar.R + Wind, 
+    data = airq, cluster = month, ytrafo = h, 
+    control = partykit::ctree_control(maxsurrogate = 3)))
+airq$node <- factor(predict(airct_partykit_4, type = "node"))
+summary(m <- glm(Ozone ~ node + node:Temp - 1, data = airq))
+mean((predict(m) - airq$Ozone)^2)
+@
+Both intercept and effect of temperature change considerably between nodes.
+The corresponding MOB can be fitted using
+<<airq-mob, echo = TRUE>>=
+airq_lmtree <- partykit::lmtree(Ozone ~ Temp | Solar.R + Wind, 
+                                data = airq, cluster = month)
+info_node(node_party(airq_lmtree))
+mean((predict(airq_lmtree, newdata = airq) - airq$Ozone)^2)
+@
+The $p$-values in the root node are similar but the two procedures find
+different splits. \code{mob} (and therefore \code{lmtree}) directly search
+for splits by optimising the objective function for all possible splits
+whereas \code{ctree} only works with the score functions.
+
+Argument \code{xtrafo} allowing the user to change the transformations $g_j$ of the
+covariates was removed from the user interface.
+
+<<closing, echo = FALSE, results = hide>>=
+detach(package:party)
+@
 
 \bibliography{party}
 

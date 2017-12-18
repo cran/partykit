@@ -1,7 +1,6 @@
 
-R version 2.13.1 (2011-07-08)
-Copyright (C) 2011 The R Foundation for Statistical Computing
-ISBN 3-900051-07-0
+R version 3.4.3 (2017-11-30) -- "Kite-Eating Tree"
+Copyright (C) 2017 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -18,6 +17,9 @@ Type 'q()' to quit R.
 
 > library("partykit")
 Loading required package: grid
+Loading required package: libcoin
+Loading required package: mvtnorm
+Loading required package: rpart
 > set.seed(1)
 > 
 > dat <- data.frame(v1 = as.double(1:100))
@@ -177,3 +179,6 @@ $levels
 
 > 
 > 
+> proc.time()
+   user  system elapsed 
+  0.848   0.024   0.868 

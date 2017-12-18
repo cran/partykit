@@ -1,4 +1,8 @@
 
+### length(x) == 1 will lead to sample.int instead of sample;
+### see example(sample)
+.resample <- function(x, ...) x[sample.int(length(x), ...)]   
+
 .median_survival_time <- function(x) {
     minmin <- function(y, xx) {
         if (any(!is.na(y) & y==.5)) {
@@ -12,6 +16,24 @@
     return(med)
 }
 
+get_paths <- function(obj, i) {
+
+    id0 <- nodeids(obj)
+    if (inherits(obj, "party")) obj <- node_party(obj)
+    if (!inherits(obj, "partynode"))
+        stop(sQuote("obj"), " is not an object of class partynode")
+
+    i <- as.integer(i)
+    if (!all(i %in% id0))
+        stop(sQuote("i"), " does not match node identifiers of ", 
+             sQuote("obj"))
+
+    lapply(i, function(id) {
+        if (id == 1L) return(1L)
+        .get_path(obj, id)
+    })
+}
+    
 ### get the recursive index
 ### obj is of class "partynode"
 .get_path <- function(obj, i) {
@@ -64,3 +86,31 @@
   obj
 }
 ### </TH>
+
+## determine all possible splits for a factor, both nominal and ordinal
+.mob_grow_getlevels <- function(z) {
+  nl <- nlevels(z)
+  if(inherits(z, "ordered")) {
+    indx <- diag(nl)
+    indx[lower.tri(indx)] <- 1
+    indx <- indx[-nl, , drop = FALSE]
+    rownames(indx) <- levels(z)[-nl]
+  } else {
+    mi <- 2^(nl - 1L) - 1L
+    indx <- matrix(0, nrow = mi, ncol = nl)
+    for (i in 1L:mi) {
+      ii <- i
+      for (l in 1L:nl) {
+        indx[i, l] <- ii %% 2L
+        ii <- ii %/% 2L   
+      }
+    }
+    rownames(indx) <- apply(indx, 1L, function(x) paste(levels(z)[x > 0], collapse = "+"))
+  }
+  colnames(indx) <- as.character(levels(z))
+  storage.mode(indx) <- "logical"
+  indx
+}
+
+.rfweights <- function(fdata, fnewdata, rw)
+    w <- .Call(R_rfweights, fdata, fnewdata, rw)
