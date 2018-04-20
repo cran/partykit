@@ -161,7 +161,7 @@ cforest <- function
 }
 
 predict.cforest <- function(object, newdata = NULL, type = c("response", "prob", "weights", "node"), 
-                            OOB = FALSE, FUN = NULL, simplify = TRUE, ...) {
+                            OOB = FALSE, FUN = NULL, simplify = TRUE, scale = TRUE, ...) {
 
     responses <- object$fitted[["(response)"]]
     forest <- object$nodes
@@ -199,7 +199,7 @@ predict.cforest <- function(object, newdata = NULL, type = c("response", "prob",
         fnewdata <- lapply(forest, fitted_node, data = nd, vmatch = vmatch, ...)
     }
 
-    w <- .rfweights(fdata, fnewdata, rw)
+    w <- .rfweights(fdata, fnewdata, rw, scale)
 
 #    for (b in 1:length(forest)) {
 #        ids <- nodeids(forest[[b]], terminal = TRUE)

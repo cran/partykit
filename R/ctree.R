@@ -159,18 +159,18 @@
     } else {
         nresample <- ifelse("MonteCarlo" %in% ctrl$testtype,
                         ctrl$nresample, 0L)
+        pvalue <- !("Teststatistic" %in% ctrl$testtype) 
         if (ctrl$splittest) {
             if (ctrl$teststat != ctrl$splitstat)
                 warning("Using different test statistics for testing and splitting")
             teststat <- ctrl$splitstat
-            if (nresample == 0) 
+            if (nresample == 0 && pvalue) 
                stop("MonteCarlo approximation mandatory for splittest = TRUE")
         } else {
            teststat <- ctrl$teststat
         }
         varonly <- "MonteCarlo" %in% ctrl$testtype && 
                    teststat == "maxtype"
-        pvalue <- !("Teststatistic" %in% ctrl$testtype) 
     }
 
     ### see libcoin
@@ -401,7 +401,8 @@ ctree <- function(formula, data, subset, weights, na.action = na.pass, offset, c
 
     ## set up model.frame() call
     mf <- match.call(expand.dots = FALSE)
-    m <- match(c("formula", "data", "subset", "na.action", "weights", "offset", "cluster", "scores"), names(mf), 0L)
+    m <- match(c("formula", "data", "subset", "na.action", "weights", 
+                 "offset", "cluster", "scores"), names(mf), 0L)
     mf <- mf[c(1L, m)]
     mf$yx <- "none"
     if (is.function(ytrafo)) {
@@ -410,7 +411,7 @@ ctree <- function(formula, data, subset, weights, na.action = na.pass, offset, c
     }
     mf$nmax <- control$nmax
     ## evaluate model.frame
-    mf[[1L]] <- quote(extree_data)
+    mf[[1L]] <- quote(partykit::extree_data)
 
     d <- eval(mf, parent.frame())
     subset <- .start_subset(d)

@@ -112,5 +112,5 @@ get_paths <- function(obj, i) {
   indx
 }
 
-.rfweights <- function(fdata, fnewdata, rw)
-    w <- .Call(R_rfweights, fdata, fnewdata, rw)
+.rfweights <- function(fdata, fnewdata, rw, scale)
+    w <- .Call(R_rfweights, fdata, fnewdata, rw, scale)

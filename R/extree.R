@@ -45,8 +45,8 @@
         ### (converged = TRUE)
         if (ctrl$lookahead & !is.null(ret)) {
             sp <- kidids_split(ret, model.frame(data), obs = subset)
-            conv <- sapply(unique(sp), function(i)
-                    isTRUE(trafo(subset[sp == i], weights = weights)$converged))
+            conv <- sapply(unique(na.omit(sp)), function(i)
+                    isTRUE(trafo(subset[sp == i & !is.na(sp)], weights = weights)$converged))
             if (!all(conv)) ret <- NULL
         }
         if (!is.null(ret)) break()

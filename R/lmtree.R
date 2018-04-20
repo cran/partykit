@@ -5,8 +5,8 @@ lmtree <- function(formula, data, subset, na.action, weights, offset, cluster, .
 
   ## use dots for setting up mob_control
   control <- mob_control(...)
-  if(control$vcov == "info") {
-    warning('vcov = "info" not supported in lmtree')
+  if(control$vcov != "opg") {
+    warning('only vcov = "opg" supported in lmtree')
     control$vcov <- "opg"
   }
   if(!is.null(control$prune)) {

@@ -46,6 +46,7 @@ node_inner <- function(obj, id = TRUE, pval = TRUE, abbreviate = FALSE, fill = "
 
   ### panel function for the inner nodes
   rval <- function(node) {  
+    pushViewport(viewport(gp = gp, name = paste("node_inner", id_node(node), "_gpar", sep = "")))
     node_vp <- viewport(
       x = unit(0.5, "npc"),
       y = unit(0.5, "npc"),
@@ -81,7 +82,7 @@ node_inner <- function(obj, id = TRUE, pval = TRUE, abbreviate = FALSE, fill = "
       grid.text(nam[id_node(node)])
       popViewport()
     }
-    upViewport()
+    upViewport(2)
   }
   
   return(rval)

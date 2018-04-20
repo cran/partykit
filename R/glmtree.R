@@ -26,10 +26,18 @@ glmtree <- function(formula, data, subset, na.action, weights, offset, cluster,
     if(is.function(family)) family <- family()
   }
 
+  ## distinguish whether glm should be fixed for case weights or not
+  glmfit0 <- function(y, x, start = NULL, weights = NULL, offset = NULL, cluster = NULL, ...,
+    estfun = FALSE, object = FALSE, caseweights = TRUE)
+  {
+    glmfit(y = y, x = x, start = start, weights = weights, offset = offset, cluster = cluster, ...,
+      estfun = estfun, object = object, caseweights = control$caseweights)
+  }
+
   ## call mob
   m <- match.call(expand.dots = FALSE)
   if(!is.null(f)) m$formula <- formula
-  m$fit <- glmfit
+  m$fit <- glmfit0
   m$control <- control
   m$epsilon <- epsilon
   m$maxit <- maxit
@@ -47,7 +55,7 @@ glmtree <- function(formula, data, subset, na.action, weights, offset, cluster,
 
 ## actual fitting function for mob()
 glmfit <- function(y, x, start = NULL, weights = NULL, offset = NULL, cluster = NULL, ...,
-  estfun = FALSE, object = FALSE)
+  estfun = FALSE, object = FALSE, caseweights = TRUE)
 {
   ## catch control arguments
   args <- list(...)
@@ -88,7 +96,12 @@ glmfit <- function(y, x, start = NULL, weights = NULL, offset = NULL, cluster = 
     dispersion <- if(substr(z$family$family, 1L, 17L) %in% c("poisson", "binomial", "Negative Binomial")) {
       1
     } else {
-      sum(wres^2, na.rm = TRUE)/sum(z$weights, na.rm = TRUE)
+      ## for case weights: fix dispersion estimate
+      if(!is.null(weights) && caseweights) {
+        sum(wres^2/weights, na.rm = TRUE)/sum(z$weights, na.rm = TRUE)
+      } else {
+        sum(wres^2, na.rm = TRUE)/sum(z$weights, na.rm = TRUE)
+      }
     }
     rval$estfun <- wres * x[, !is.na(z$coefficients), drop = FALSE]/dispersion
   }
@@ -105,6 +118,12 @@ glmfit <- function(y, x, start = NULL, weights = NULL, offset = NULL, cluster = 
     if(!is.null(offset)) cl$offset <- attr(x, "offset")
     z$call <- cl
     z$terms <- attr(x, "terms")
+
+    ## for case weights: change degrees of freedom
+    if(!is.null(weights) && caseweights) {
+      z$df.null     <- z$df.null     - sum(weights > 0) + sum(weights)
+      z$df.residual <- z$df.residual - sum(weights > 0) + sum(weights)
+    }
 
     rval$object <- z
   }

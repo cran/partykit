@@ -13,17 +13,17 @@
 }
 
 \usage{
-cforest(formula, data, weights, subset, offset, cluster, strata, 
+cforest(formula, data, weights, subset, offset, cluster, strata,
         na.action = na.pass,
-	control = ctree_control(teststat = "quad", testtype = "Univ", 
+	control = ctree_control(teststat = "quad", testtype = "Univ",
             mincriterion = 0, saveinfo = FALSE, \dots),
-        ytrafo = NULL, scores = NULL, ntree = 500L, 
-        perturb = list(replace = FALSE, fraction = 0.632), 
-        mtry = ceiling(sqrt(nvar)), applyfun = NULL, cores = NULL, 
+        ytrafo = NULL, scores = NULL, ntree = 500L,
+        perturb = list(replace = FALSE, fraction = 0.632),
+        mtry = ceiling(sqrt(nvar)), applyfun = NULL, cores = NULL,
         trace = FALSE, \dots)
-\method{predict}{cforest}(object, newdata = NULL, 
+\method{predict}{cforest}(object, newdata = NULL,
         type = c("response", "prob", "weights", "node"),
-        OOB = FALSE, FUN = NULL, simplify = TRUE, \dots)
+        OOB = FALSE, FUN = NULL, simplify = TRUE, scale = TRUE, \dots)
 \method{gettree}{cforest}(object, tree = 1L, \dots)
 }
 
@@ -54,7 +54,10 @@ cforest(formula, data, weights, subset, offset, cluster, strata,
                  \code{\link{ctree_control}}. The default values correspond to those
                  of the default values used by \code{\link[party]{cforest}} from the
                  \code{party} package. \code{saveinfo = FALSE} leads to less
-                 memory hungry representations of trees.}
+                 memory hungry representations of trees. Note that arguments
+                 \code{mtry}, \code{cores} and \code{applyfun} in
+                 \code{\link{ctree_control}} are ignored for \code{\link{cforest}},
+                 because they are already set.}
   \item{ytrafo}{an optional named list of functions to be applied to the response
                 variable(s) before testing their association with the explanatory
                 variables. Note that this transformation is only
@@ -63,7 +66,7 @@ cforest(formula, data, weights, subset, offset, cluster, strata,
                 which is almost certainly not a good idea).
                 Alternatively, \code{ytrafo} can be a function of \code{data} and
                 \code{weights}. In this case, the transformation is computed for
-                every node and the corresponding weights. This feature is experimental 
+                every node and the corresponding weights. This feature is experimental
                 and the user interface likely to change.}
   \item{scores}{an optional named list of scores to be attached to ordered
                 factors.}
@@ -111,13 +114,18 @@ cforest(formula, data, weights, subset, offset, cluster, strata,
   \item{OOB}{
     a logical defining out-of-bag predictions (only if \code{newdata = NULL}).}
   \item{FUN}{
-    a function to compute summary statistics. Predictions for each node have to be 
-    computed based on arguments \code{(y, w)} where \code{y} is the response and 
+    a function to compute summary statistics. Predictions for each node have to be
+    computed based on arguments \code{(y, w)} where \code{y} is the response and
     \code{w} are case weights.}
   \item{simplify}{
     a logical indicating whether the resulting list
                    of predictions should be converted to a suitable
                    vector or matrix (if possible).}
+  \item{scale}{a logical indicating scaling of the nearest neighbor weights
+               by the sum of weights in the corresponding terminal node of
+               each tree. In the simple regression forest, predicting
+               the conditional mean by nearest neighbor weights will be
+               equivalent to (but slower!) the aggregation of means.}
   \item{tree}{ an integer, the number of the tree to extract from the forest.}
   \item{\dots}{ additional arguments. }
 }
@@ -128,7 +136,7 @@ cforest(formula, data, weights, subset, offset, cluster, strata,
   with respect to the base learners used and the aggregation scheme applied.
 
   Conditional inference trees, see \code{\link{ctree}}, are fitted to each
-  of the \code{ntree} perturbed samples of the learning sample. Most of the hyper parameters in 
+  of the \code{ntree} perturbed samples of the learning sample. Most of the hyper parameters in
   \code{\link{ctree_control}} regulate the construction of the conditional inference trees.
 
   Hyper parameters you might want to change are:
@@ -148,29 +156,29 @@ cforest(formula, data, weights, subset, offset, cluster, strata,
   See Hothorn et al. (2004) and Meinshausen (2006) for a description.
 
   Predictions can be computed using \code{\link{predict}}. For observations
-  with zero weights, predictions are computed from the fitted tree 
-  when \code{newdata = NULL}. 
+  with zero weights, predictions are computed from the fitted tree
+  when \code{newdata = NULL}.
 
-  Ensembles of conditional inference trees have not yet been extensively   
+  Ensembles of conditional inference trees have not yet been extensively
   tested, so this routine is meant for the expert user only and its current
-  state is rather experimental. However, there are some things available 
-  in \code{\link{cforest}} that can't be done with \code{\link[randomForest]{randomForest}},  
+  state is rather experimental. However, there are some things available
+  in \code{\link{cforest}} that can't be done with \code{\link[randomForest]{randomForest}},
   for example fitting forests to censored response variables (see Hothorn et al., 2004, 2006a) or to
-  multivariate and ordered responses. Using the rich \code{partykit} infrastructure allows 
-  additional functionality in \code{cforest}, such as parallel tree growing and probabilistic 
+  multivariate and ordered responses. Using the rich \code{partykit} infrastructure allows
+  additional functionality in \code{cforest}, such as parallel tree growing and probabilistic
   forecasting (for example via quantile regression forests). Also plotting of single trees from
   a forest is much easier now.
 
   Unlike \code{\link[party]{cforest}}, \code{cforest} is entirely written in R which
   makes customisation much easier at the price of longer computing times. However, trees
-  can be grown in parallel with this R only implemention which renders speed less of an issue. 
+  can be grown in parallel with this R only implemention which renders speed less of an issue.
   Note that the default values are different from those used in package \code{party}, most
   importantly the default for mtry is now data-dependent. \code{predict(, type = "node")} replaces
-  the \code{\link[party]{where}} function and \code{predict(, type = "prob")} the 
+  the \code{\link[party]{where}} function and \code{predict(, type = "prob")} the
   \code{\link[party]{treeresponse}} function.
-  
-  Moreover, when predictors vary in their scale of measurement of number 
-  of categories, variable selection and computation of variable importance is biased 
+
+  Moreover, when predictors vary in their scale of measurement of number
+  of categories, variable selection and computation of variable importance is biased
   in favor of variables with many potential cutpoints in \code{\link[randomForest]{randomForest}},
   while in \code{\link{cforest}} unbiased trees and an adequate resampling scheme
   are used by default. See Hothorn et al. (2006b) and Strobl et al. (2007)
@@ -190,7 +198,7 @@ Hothorn T, Lausen B, Benner A, Radespiel-Troeger M (2004).
   Bagging Survival Trees.
   \emph{Statistics in Medicine}, \bold{23}(1), 77--91.
 
-Hothorn T, Bühlmann P, Dudoit S, Molinaro A, Van der Laan MJ (2006a).
+Hothorn T, B?hlmann P, Dudoit S, Molinaro A, Van der Laan MJ (2006a).
   Survival Ensembles.
   \emph{Biostatistics}, \bold{7}(3), 355--373.
 
@@ -203,7 +211,7 @@ Hothorn T, Zeileis A (2015).
   \emph{Journal of Machine Learning Research}, \bold{16}, 3905--3909.
 
 Meinshausen N (2006).
-  Quantile Regression Forests. 
+  Quantile Regression Forests.
   \emph{Journal of Machine Learning Research}, \bold{7}, 983--999.
 
 Strobl C, Boulesteix AL, Zeileis A, Hothorn T (2007).
@@ -271,7 +279,7 @@ if (require("TH.data") && require("survival")) {
 
     data("GBSG2", package = "TH.data")
     bst <- cforest(Surv(time, cens) ~ ., data = GBSG2, ntree = 50)
- 
+
     ### estimate conditional Kaplan-Meier curves
     print(predict(bst, newdata = GBSG2[1:2,], OOB = TRUE, type = "prob"))
 

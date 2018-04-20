@@ -7,7 +7,7 @@
 #define REGCALL(name) R_RegisterCCallable("partykit", #name, (DL_FUNC) &name)
 
 static const R_CallMethodDef callMethods[] = {
-    CALLDEF(R_rfweights, 3),    
+    CALLDEF(R_rfweights, 4),    
     {NULL, NULL, 0}
 };
 

@@ -1,6 +1,6 @@
 
-R version 3.4.3 (2017-11-30) -- "Kite-Eating Tree"
-Copyright (C) 2017 The R Foundation for Statistical Computing
+R Under development (unstable) (2018-04-18 r74618) -- "Unsuffered Consequences"
+Copyright (C) 2018 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -27,6 +27,7 @@ Loading required package: mvtnorm
 Loading required package: rpart
 > 
 > base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
+> base::assign(".old_wd", base::getwd(), pos = 'CheckExEnv')
 > cleanEx()
 > nameEx("HuntingSpiders")
 > ### * HuntingSpiders
@@ -227,7 +228,7 @@ Warning in doTest(lev, teststat = teststat, pvalue = pvalue, lower = TRUE,  :
 > ##D 
 > ##D     data("GBSG2", package = "TH.data")
 > ##D     bst <- cforest(Surv(time, cens) ~ ., data = GBSG2, ntree = 50)
-> ##D  
+> ##D 
 > ##D     ### estimate conditional Kaplan-Meier curves
 > ##D     print(predict(bst, newdata = GBSG2[1:2,], OOB = TRUE, type = "prob"))
 > ##D 
@@ -328,6 +329,13 @@ Number of terminal nodes: 4
 + }
 Loading required package: TH.data
 Loading required package: survival
+
+Attaching package: ‘survival’
+
+The following object is masked from ‘package:rpart’:
+
+    solder
+
 Loading required package: MASS
 
 Attaching package: ‘TH.data’
@@ -694,7 +702,7 @@ attr(,"assign")
 [1] 0 1 2
 attr(,"formula")
 Species ~ Sepal.Width + Sepal.Length
-<environment: 0x88e04f8>
+<environment: 0xb1eaa50>
 attr(,"terms")
 Species ~ Sepal.Width + Sepal.Length
 attr(,"variables")
@@ -713,7 +721,7 @@ attr(,"intercept")
 attr(,"response")
 [1] 1
 attr(,".Environment")
-<environment: 0x88e04f8>
+<environment: 0xb1eaa50>
 > 
 > 
 > 
@@ -954,6 +962,7 @@ p.value    0.3926249  0.1206412  0.6153455 0.8539893  0.6328381
 + }
 Loading required package: AER
 Loading required package: car
+Loading required package: carData
 Loading required package: lmtest
 Loading required package: zoo
 
@@ -965,6 +974,13 @@ The following objects are masked from ‘package:base’:
 
 Loading required package: sandwich
 Loading required package: survival
+
+Attaching package: ‘survival’
+
+The following object is masked from ‘package:rpart’:
+
+    solder
+
 
 -- Node 1 ---------------------------------
 Number of observations: 180
@@ -1093,7 +1109,7 @@ F-statistic: 112.2 on 1 and 125 DF,  p-value: < 2.2e-16
 + 1 - deviance(tr_lm)/deviance(tr_null)
 + 1 - deviance(tr_tree)/deviance(tr_null)
 + }
-[1] 0.38957
+[1] 0.3820419
 > 
 > 
 > 
@@ -1101,7 +1117,8 @@ F-statistic: 112.2 on 1 and 125 DF,  p-value: < 2.2e-16
 > cleanEx()
 
 detaching ‘package:AER’, ‘package:survival’, ‘package:sandwich’,
-  ‘package:lmtest’, ‘package:zoo’, ‘package:car’, ‘package:mlbench’
+  ‘package:lmtest’, ‘package:zoo’, ‘package:car’, ‘package:carData’,
+  ‘package:mlbench’
 
 > nameEx("mob")
 > ### * mob
@@ -2409,9 +2426,10 @@ nativeSpeaker           age      shoeSize
 > 
 > ### * <FOOTER>
 > ###
+> cleanEx()
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  13.376 0.088 13.506 0 0 
+Time elapsed:  20.592 0.348 20.977 0 0 
 > grDevices::dev.off()
 null device 
           1 

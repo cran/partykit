@@ -457,14 +457,13 @@ logLik(gbsg2_tree)
 ###################################################
 data("Topmodel2007", package = "psychotree")
 library("psychotools")
-estfun.btReg <- function(x, ...) x$estfun
 
 
 ###################################################
 ### code chunk number 52: btfit1
 ###################################################
 btfit1 <- function(y, x = NULL, start = NULL, weights = NULL,
-  offset = NULL, ...) btReg.fit(y, ...)
+  offset = NULL, ...) btmodel(y, ...)
 
 
 ###################################################
@@ -479,7 +478,7 @@ bt1 <- mob(preference ~ 1 | gender + age + q1 + q2 + q3,
 ###################################################
 btfit2 <- function(y, x = NULL, start = NULL, weights = NULL,
   offset = NULL, ..., estfun = FALSE, object = FALSE) {
-  rval <- btReg.fit(y, ..., estfun = estfun, vcov = object)
+  rval <- btmodel(y, ..., estfun = estfun, vcov = object)
   list(
     coefficients = rval$coefficients,
     objfun = -rval$loglik,

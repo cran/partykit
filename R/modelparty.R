@@ -233,11 +233,14 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL, cluster = NULL
       bread <- vcov(obj) * nobs
     }
     if(vcov != "info") {
+      ## correct scaling of estfun for variance estimate:
+      ## - caseweights=FALSE: weights are integral part of the estfun -> squared in estimate
+      ## - caseweights=TRUE: weights are just a factor in variance estimate -> require division by sqrt(weights)
       meat <- if(is.null(cluster)) {
-        crossprod(process/sqrt(weights))
+        crossprod(if(control$caseweights) process/sqrt(weights) else process)
       } else {
         ## nclus <- length(unique(cluster)) ## nclus / (nclus - 1L) * 
-        crossprod(as.matrix(apply(process/sqrt(weights), 2L, tapply, cluster, sum)))
+        crossprod(as.matrix(apply(if(control$caseweights) process/sqrt(weights) else process, 2L, tapply, cluster, sum)))
       }
     }
     J12 <- root.matrix(switch(vcov,

@@ -1396,17 +1396,15 @@ The \pkg{psychotree} package already provides an easy-to-use mobster called
 here.
 
 The only inputs required are a suitable data set with paired comparisons
-(\code{Topmodel2007} from \pkg{psychotree}), a parametric model for paired
-comparison data (\code{btReg.fit()} from \pkg{psychotools}, implementing the
-Bradley-Terry model), and an extractor method for the corresponding empirical
-estimating functions (which are computed by default in \code{btReg.fit()} already
-and just need to be extracted):
+(\code{Topmodel2007} from \pkg{psychotree}) and a parametric model for paired
+comparison data (\code{btmodel()} from \pkg{psychotools}, implementing the
+Bradley-Terry model). The latter optionally computes the empirical estimating functions
+and already comes with a suitable extractor method.
 <<bt-packages>>=
 data("Topmodel2007", package = "psychotree")
 library("psychotools")
-estfun.btReg <- function(x, ...) x$estfun
 @
-
+%
 The Bradley-Terry (or Bradley-Terry-Luce) model is a standard model for paired
 comparisons in social sciences. It parametrizes the probability $\pi_{ij}$
 for preferring some object $i$ over another object $j$ in terms of corresponding
@@ -1416,7 +1414,7 @@ for preferring some object $i$ over another object $j$ in terms of corresponding
   \mathsf{logit}(\pi_{ij}) & = & \log(\theta_i) - \log(\theta_j)
 \end{eqnarray*}
 This model can be easily estimated by maximum likelihood as a logistic or
-log-linear GLM. This is the approach used internally by \code{btReg.fit()}.
+log-linear GLM. This is the approach used internally by \code{btmodel()}.
 
 The \code{Topmodel2007} data provide paired comparisons of attractiveness among
 the six finalists of the TV show \emph{Germany's Next Topmodel~2007}:
@@ -1434,13 +1432,13 @@ interface described in Section~\ref{sec:fit}:
 %
 <<btfit1>>=
 btfit1 <- function(y, x = NULL, start = NULL, weights = NULL,
-  offset = NULL, ...) btReg.fit(y, ...)
+  offset = NULL, ...) btmodel(y, ...)
 @
 %
-The function \code{btfit1()} simply calls \code{btReg.fit()} ignoring all arguments
+The function \code{btfit1()} simply calls \code{btmodel()} ignoring all arguments
 except \code{y} as the others are not needed here. No more processing is required
-because \class{btReg} objects come with a \code{coef()} and \code{logLik()} method
-and an \code{estfun()} method was already defined above. Hence, we can call \code{mob()}
+because \class{btmodel} objects come with a \code{coef()}, \code{logLik()}, and
+\code{estfun()} method. Hence, we can call \code{mob()}
 now specifying the response and the partitioning variable (and no regressors because
 there are no regressors in this model).
 %
@@ -1455,7 +1453,7 @@ employ the extended interface described in Section~\ref{sec:fit}:
 <<btfit2>>=
 btfit2 <- function(y, x = NULL, start = NULL, weights = NULL,
   offset = NULL, ..., estfun = FALSE, object = FALSE) {
-  rval <- btReg.fit(y, ..., estfun = estfun, vcov = object)
+  rval <- btmodel(y, ..., estfun = estfun, vcov = object)
   list(
     coefficients = rval$coefficients,
     objfun = -rval$loglik,
@@ -1465,7 +1463,7 @@ btfit2 <- function(y, x = NULL, start = NULL, weights = NULL,
 }
 @
 %
-Still \code{btReg.fit()} is employed for fitting the model but the quantities
+Still \code{btmodel()} is employed for fitting the model but the quantities
 \code{estfun} and \code{vcov} are only computed if they are really required. This
 may save some computation time -- about 20\% on the authors' machine at the time of
 writing -- when computing the tree:
@@ -1525,7 +1523,7 @@ while the adapted plot (lower panel) shows the corresponding worth parameters.}
 To show a graphical display of these worth parameters rather than
 printing their numerical values, one can use a simply glyph-style plot.
 A simply way to generate these is to use the \code{plot()} method for
-\class{btReg} objects from \pkg{partykit} and \code{nodeapply} this to
+\class{btmodel} objects from \pkg{partykit} and \code{nodeapply} this to
 all terminal nodes (see Figure~\ref{fig:topmodel-plot2}):
 %
 <<bt2-nodeapply, eval=FALSE>>=

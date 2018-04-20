@@ -444,33 +444,25 @@ Fitted party:
 |   |   [3] age <= 50: n = 113
 |   |       (Intercept)      beauty 
 |   |            3.9968      0.1292 
-|   |   [4] age > 50
-|   |   |   [5] age <= 58
-|   |   |   |   [6] age <= 52: n = 33
-|   |   |   |       (Intercept)      beauty 
-|   |   |   |            4.0764      0.4796 
-|   |   |   |   [7] age > 52: n = 34
-|   |   |   |       (Intercept)      beauty 
-|   |   |   |            4.1293      0.3144 
-|   |   |   [8] age > 58: n = 70
-|   |   |       (Intercept)      beauty 
-|   |   |            4.1120      0.6611 
-|   [9] gender in female
-|   |   [10] age <= 40: n = 69
+|   |   [4] age > 50: n = 137
+|   |       (Intercept)      beauty 
+|   |            4.0857      0.5028 
+|   [5] gender in female
+|   |   [6] age <= 40: n = 69
 |   |       (Intercept)      beauty 
 |   |            4.0137      0.1222 
-|   |   [11] age > 40
-|   |   |   [12] age <= 44: n = 22
+|   |   [7] age > 40
+|   |   |   [8] division in upper: n = 81
 |   |   |       (Intercept)      beauty 
-|   |   |            3.4400      0.1328 
-|   |   |   [13] age > 44: n = 95
+|   |   |            3.7752     -0.1976 
+|   |   |   [9] division in lower: n = 36
 |   |   |       (Intercept)      beauty 
-|   |   |            3.8058     -0.1029 
+|   |   |            3.5900      0.4033 
 
-Number of inner nodes:    6
-Number of terminal nodes: 7
+Number of inner nodes:    4
+Number of terminal nodes: 5
 Number of parameters per node: 2
-Objective function (residual sum of squares): 2718
+Objective function (residual sum of squares): 2752
 
 > plot(tr_tree)
 
@@ -479,11 +471,11 @@ beauty
 0.2826 
 
 > coef(tr_tree)[, 2]
-      3       6       7       8      10      12      13 
- 0.1292  0.4796  0.3144  0.6611  0.1222  0.1328 -0.1029 
+      3       4       6       8       9 
+ 0.1292  0.5028  0.1222 -0.1976  0.4033 
 
 > 1 - c(deviance(tr_lm), deviance(tr_tree))/deviance(tr_null)
-[1] 0.2713 0.3896
+[1] 0.2713 0.3820
 
 > data("Titanic", package = "datasets")
 
@@ -532,6 +524,13 @@ Objective function (negative log-likelihood): 1061
 > GBSG2$time <- GBSG2$time/365
 
 > library("survival")
+
+Attaching package: 'survival'
+
+The following object is masked from 'package:rpart':
+
+    solder
+
 
 > wbreg <- function(y, x, start = NULL, weights = NULL, 
 +     offset = NULL, ...) {
@@ -588,17 +587,15 @@ Objective function: 809.9
 
 > library("psychotools")
 
-> estfun.btReg <- function(x, ...) x$estfun
-
 > btfit1 <- function(y, x = NULL, start = NULL, weights = NULL, 
-+     offset = NULL, ...) btReg.fit(y, ...)
++     offset = NULL, ...) btmodel(y, ...)
 
 > bt1 <- mob(preference ~ 1 | gender + age + q1 + q2 + 
 +     q3, data = Topmodel2007, fit = btfit1)
 
 > btfit2 <- function(y, x = NULL, start = NULL, weights = NULL, 
 +     offset = NULL, ..., estfun = FALSE, object = FALSE) {
-+     rval <- btReg.fit(y .... [TRUNCATED] 
++     rval <- btmodel(y,  .... [TRUNCATED] 
 
 > bt2 <- mob(preference ~ 1 | gender + age + q1 + q2 + 
 +     q3, data = Topmodel2007, fit = btfit2)
@@ -706,4 +703,4 @@ $`7`
  *** Run successfully completed ***
 > proc.time()
    user  system elapsed 
-  8.600   0.044   8.645 
+ 12.276   0.196  12.517 

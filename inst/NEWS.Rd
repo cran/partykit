@@ -2,9 +2,42 @@
 \name{NEWS}
 \title{NEWS file for the \pkg{partykit} package}
 
+\section{Changes in Version 1.2-1 (2018-04-20)}{
+  \subsection{New Features}{
+    \itemize{
+      \item{New \code{scale} argument for \code{predict} in \code{cforest}.
+            For simple regression forests, predicting
+            the conditional mean by nearest neighbor weights with
+            \code{scale = TRUE} is now
+            equivalent to the aggregation of means. The unscaled version
+            proposed in <doi:10.1002/sim.1593> can be obtained with
+            \code{scale = FALSE}.}
+    }
+  }
+  \subsection{Bugfixes}{
+  \itemize{
+    \item{Bug fix for case weights in \code{mob()} in previous version (1.2-0)
+      introduced a bug in the handling of proportionality weights. Both cases
+      are handled correctly now.}
+    \item{\code{glmtree} can now handle \code{caseweights = TRUE} correctly
+      for \code{vcov} other than the default \code{"opg"}. Internally,
+      the \code{glm} objects are adjusted by correcting the dispersion
+      estimate and the degrees of freedom.}
+    \item{\code{lookahead} did not work in the presence of missing values.}
+    \item{Calling \code{partykit::ctree} did not work when partykit was not
+      attached.}
+    \item{\code{node_inner} now allows to set a different \code{gpar(fontsize = ...)}
+      in the inner nodes compared to the overall tree.}
+    \item{\code{splittest} asked for Monte-Carlo p-values, even
+          when the test statistic was used as criterion.}
+  }
+  }
+}
+
 \section{Changes in Version 1.2-0 (2017-12-18)}{
   \subsection{New Features}{
     \itemize{
+      \item{We welcome Heidi Seibold as co-author!}
       \item{Internal re-organisation for \code{ctree} by means of new extensible
             tree infrastructure (available in  \code{extree_data} and 
             \code{extree_fit}). Certain parts of the new infrastructure
@@ -33,7 +66,7 @@
   }
   \subsection{Bugfixes}{
   \itemize{
-    \item{Bug fix in code{mob()} if \code{weights} are used and \code{caseweights = TRUE} (the default).
+    \item{Bug fix in \code{mob()} if \code{weights} are used and \code{caseweights = TRUE} (the default).
           The statistics for the parameter instability tests were computed incorrectly and
 	  consequently the selection of splitting variables and also the stopping criterion
 	  were affected/incorrect.} 
@@ -49,6 +82,11 @@
     \item{Out-of-bag predictions in \code{predict.cforest} were incorrect.}
     \item{\code{perm} in \code{predict} was only considered when
           \code{newdata} was given. Spotted by Heidi Seibold.}
+    \item{Don't try to search for binary splits in unordered factors with more than 31
+          levels. This potentially caused an integer overrun in previous versions.
+          \code{party::ctree()} uses an approximation for binary split
+          searches in unordered factors; thus, using \pkg{party} might be an
+          alternative.}
   }
   }
 }
