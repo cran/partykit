@@ -3,6 +3,8 @@
 
 > library("partykit")
 Loading required package: grid
+Loading required package: libcoin
+Loading required package: mvtnorm
 
 > set.seed(290875)
 
@@ -359,4 +361,4 @@ Levels: yes no
  *** Run successfully completed ***
 > proc.time()
    user  system elapsed 
-  0.627   0.037   0.659 
+  1.502   0.068   1.564 

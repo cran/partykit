@@ -1,5 +1,5 @@
 
-R Under development (unstable) (2018-04-18 r74618) -- "Unsuffered Consequences"
+R version 3.5.0 (2018-04-23) -- "Joy in Playing"
 Copyright (C) 2018 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -19,7 +19,6 @@ Type 'q()' to quit R.
 Loading required package: grid
 Loading required package: libcoin
 Loading required package: mvtnorm
-Loading required package: rpart
 > set.seed(1)
 > 
 > mysplit <- function(x) partysplit(1L, breaks = as.double(x))
@@ -41,4 +40,4 @@ Loading required package: rpart
 > 
 > proc.time()
    user  system elapsed 
-  1.684   0.160   1.836 
+  1.643   0.115   1.727 

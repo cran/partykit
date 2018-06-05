@@ -240,7 +240,7 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL, cluster = NULL
         crossprod(if(control$caseweights) process/sqrt(weights) else process)
       } else {
         ## nclus <- length(unique(cluster)) ## nclus / (nclus - 1L) * 
-        crossprod(as.matrix(apply(if(control$caseweights) process/sqrt(weights) else process, 2L, tapply, cluster, sum)))
+        crossprod(as.matrix(apply(if(control$caseweights) process/sqrt(weights) else process, 2L, tapply, as.numeric(cluster), sum)))
       }
     }
     J12 <- root.matrix(switch(vcov,
@@ -1128,37 +1128,37 @@ plot.modelparty <- function(x, terminal_panel = NULL, FUN = NULL, tp_args = NULL
 }
 
 ### AIC-based pruning
+prune.lmtree <- function(tree, type = "AIC", ...)
+{
+  ## special handling for AIC and BIC
+  ptype <- pmatch(tolower(type), c("aic", "bic"), nomatch = 0L)
+  if(ptype == 1L) {
+    type <- function(objfun, df, nobs) (nobs[1L] * log(objfun[1L]) + 2 * df[1L]) < (nobs[1L] * log(objfun[2L]) + 2 * df[2L])  
+  } else if(ptype == 2L) {
+    type <- function(objfun, df, nobs) (nobs[1L] * log(objfun[1L]) + log(nobs[2L]) * df[1L]) < (nobs[1L] * log(objfun[2L]) + log(nobs[2L]) * df[2L])  
+  }
+  NextMethod()
+}
+
 prune.modelparty <- function(tree, type = "AIC", ...)
 {
-  
   ## prepare pruning function
   if(is.character(type)) {
     type <- tolower(type)
     type <- match.arg(type, c("aic", "bic", "none"))
-    
-    if("lmtree" %in% class(tree)) {
-      type <- switch(type,
-                     "aic" = {
-                       function(objfun, df, nobs) (nobs[1L] * log(objfun[1L]) + 2 * df[1L]) < (nobs[1L] * log(objfun[2L]) + 2 * df[2L])
-                     }, "bic" = {
-                       function(objfun, df, nobs) (nobs[1L] * log(objfun[1L]) + log(nobs[2L]) * df[1L]) < (nobs[1L] * log(objfun[2L]) + log(nobs[2L]) * df[2L])
-                     }, "none" = {
-                       NULL
-                     })
-    } else {
-      type <- switch(type,
-                     "aic" = {
-                       function(objfun, df, nobs) (2 * - objfun[1L] + 2 * df[1L]) < (2 * - objfun[2L] + 2 * df[2L])
-                     }, "bic" = {
-                       function(objfun, df, nobs) (2 * - objfun[1L] + log(n) * df[1L]) < (2 * - objfun[2L] + log(n) * df[2L])
-                     }, "none" = {
-                       NULL
-                     })   
-    }
+    type <- switch(type,
+      "aic" = {
+        function(objfun, df, nobs) (2 * objfun[1L] + 2 * df[1L]) < (2 * objfun[2L] + 2 * df[2L])
+      }, "bic" = {
+        function(objfun, df, nobs) (2 * objfun[1L] + log(n) * df[1L]) < (2 * objfun[2L] + log(n) * df[2L])
+      }, "none" = {
+        NULL
+      }
+    )
   }
   if(!is.function(type)) {
-    warning("Unknown specification of 'prune'")
-    type <- NULL
+    warning("Unknown specification of 'type'")
+    return(tree)
   }
   
   ## degrees of freedom
@@ -1167,9 +1167,6 @@ prune.modelparty <- function(tree, type = "AIC", ...)
   ## turn node to list
   node <- tree$node
   nd <- as.list(node)
-  
-  ## if no pruning selected
-  if(is.null(type)) return(nd)
   
   ## node information (IDs, kids, ...)
   id <- seq_along(nd)

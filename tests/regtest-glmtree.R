@@ -64,7 +64,24 @@ logLik(glm(y ~ x, data = d))
 AIC(mmfluc3)
 AIC(mmfluc3_dfsplit)
 
+## check pruning
+pr2 <- prune.modelparty(mmfluc2)
+AIC(mmfluc2)
+AIC(pr2)
 
+mmfluc_dfsplit3 <- glmtree(formula = fmla, data = d, alpha = 0.5, dfsplit = 3)
+mmfluc_dfsplit4 <- glmtree(formula = fmla, data = d, alpha = 0.5, dfsplit = 4)
+pr_dfsplit3 <- prune.modelparty(mmfluc_dfsplit3)
+pr_dfsplit4 <- prune.modelparty(mmfluc_dfsplit4)
+AIC(mmfluc_dfsplit3)
+AIC(mmfluc_dfsplit4)
+AIC(pr_dfsplit3)
+AIC(pr_dfsplit4)
+
+width(mmfluc_dfsplit3)
+width(mmfluc_dfsplit4)
+width(pr_dfsplit3)
+width(pr_dfsplit4)
 
 ## check inner and terminal
 options <- list(NULL,

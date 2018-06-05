@@ -5,7 +5,6 @@
 Loading required package: grid
 Loading required package: libcoin
 Loading required package: mvtnorm
-Loading required package: rpart
 
 > set.seed(290875)
 
@@ -366,4 +365,4 @@ Levels: No Yes
  *** Run successfully completed ***
 > proc.time()
    user  system elapsed 
-  6.800   0.172   6.103 
+  6.003   0.251   5.344 

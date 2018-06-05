@@ -1,7 +1,7 @@
 Package: partykit
 Title: A Toolkit for Recursive Partytioning
-Date: 2018-04-20
-Version: 1.2-1
+Date: 2018-06-05
+Version: 1.2-2
 Authors@R: c(person(given = "Torsten", family = "Hothorn", role = c("aut", "cre"), email = "Torsten.Hothorn@R-project.org",
                     comment = c(ORCID = "0000-0001-8301-0471")),
              person(given = "Heidi", family = "Seibold", role = "ctb", email = "heidi@seibold.co",
@@ -17,10 +17,9 @@ Description: A toolkit with infrastructure for representing, summarizing, and
   recursive partitioning (mob()) from the 'party' package are provided based
   on the new infrastructure. A description of this package was published
   by Hothorn and Zeileis (2015) <http://jmlr.org/papers/v16/hothorn15a.html>.
-Depends: R (>= 3.1.0), graphics, grid, libcoin (>= 1.0-0), mvtnorm,
-        rpart (>= 4.1-11)
+Depends: R (>= 3.1.0), graphics, grid, libcoin (>= 1.0-0), mvtnorm
 Imports: grDevices, stats, utils, survival, Formula (>= 1.2-1), inum
-        (>= 1.0-0)
+        (>= 1.0-0), rpart (>= 4.1-11)
 Suggests: XML, pmml, rJava, sandwich, strucchange, vcd, AER, mlbench,
         TH.data (>= 1.0-3), coin (>= 1.1-0), RWeka (>= 0.4-19),
         datasets, parallel, psychotools (>= 0.3-0), psychotree, party
@@ -29,10 +28,10 @@ LazyData: yes
 License: GPL-2 | GPL-3
 URL: http://partykit.R-Forge.R-project.org/partykit
 NeedsCompilation: yes
-Packaged: 2018-04-20 18:12:06 UTC; hothorn
+Packaged: 2018-06-04 23:28:49 UTC; zeileis
 Author: Torsten Hothorn [aut, cre] (<https://orcid.org/0000-0001-8301-0471>),
   Heidi Seibold [ctb] (<https://orcid.org/0000-0002-8960-9642>),
   Achim Zeileis [aut] (<https://orcid.org/0000-0003-0918-3766>)
 Maintainer: Torsten Hothorn <Torsten.Hothorn@R-project.org>
 Repository: CRAN
-Date/Publication: 2018-04-20 18:45:42 UTC
+Date/Publication: 2018-06-05 07:19:23 UTC

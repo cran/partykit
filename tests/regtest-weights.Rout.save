@@ -1,5 +1,5 @@
 
-R Under development (unstable) (2018-04-18 r74618) -- "Unsuffered Consequences"
+R version 3.5.0 (2018-04-23) -- "Joy in Playing"
 Copyright (C) 2018 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -19,7 +19,6 @@ Type 'q()' to quit R.
 Loading required package: grid
 Loading required package: libcoin
 Loading required package: mvtnorm
-Loading required package: rpart
 > 
 > 
 > ## artificial data ---------------------------------------------------------------------------------
@@ -123,4 +122,4 @@ Loading required package: rpart
 > 
 > proc.time()
    user  system elapsed 
-  2.008   0.136   2.137 
+  1.457   0.072   1.516 

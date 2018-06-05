@@ -3,7 +3,6 @@
 Loading required package: grid
 Loading required package: libcoin
 Loading required package: mvtnorm
-Loading required package: rpart
 
 > options(prompt = "R> ", continue = "+  ", digits = 4, 
 +     useFancyQuotes = FALSE)
@@ -525,13 +524,6 @@ Objective function (negative log-likelihood): 1061
 
 > library("survival")
 
-Attaching package: 'survival'
-
-The following object is masked from 'package:rpart':
-
-    solder
-
-
 > wbreg <- function(y, x, start = NULL, weights = NULL, 
 +     offset = NULL, ...) {
 +     survreg(y ~ 0 + x, weights = weights, dist = "weibull", ... .... [TRUNCATED] 
@@ -703,4 +695,4 @@ $`7`
  *** Run successfully completed ***
 > proc.time()
    user  system elapsed 
- 12.276   0.196  12.517 
+  8.054   0.111   8.160 

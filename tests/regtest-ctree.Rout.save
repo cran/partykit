@@ -1,5 +1,5 @@
 
-R Under development (unstable) (2018-04-18 r74618) -- "Unsuffered Consequences"
+R version 3.5.0 (2018-04-23) -- "Joy in Playing"
 Copyright (C) 2018 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -20,7 +20,6 @@ Type 'q()' to quit R.
 Loading required package: grid
 Loading required package: libcoin
 Loading required package: mvtnorm
-Loading required package: rpart
 > 
 > ## iris data
 > data("iris", package = "datasets")
@@ -75,4 +74,4 @@ Number of terminal nodes: 5
 > 
 > proc.time()
    user  system elapsed 
-  2.004   0.136   2.153 
+  1.322   0.064   1.372 
