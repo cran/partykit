@@ -36,6 +36,7 @@ summary(v_partykit)
 party::varimp(cf_party, conditional = TRUE)
 partykit::varimp(cf_partykit, conditional = TRUE)
 
+
 ### classification
 set.seed(29)
 mtry <- ncol(iris) - 1L
@@ -104,4 +105,21 @@ for (i in 1:length(lw)) {
 }
 
 stopifnot(isTRUE(all.equal(mean(m), sum(w * cars$dist) / sum(w))))
+
+### check parallel variable importance (make this reproducible)
+if(.Platform$OS.type == "unix") {
+    RNGkind("L'Ecuyer-CMRG")
+    v1 <- partykit::varimp(cf_partykit, risk = "misclass", conditional = TRUE, cores = 2)
+    v2 <- partykit::varimp(cf_partykit, risk = "misclass", conditional = TRUE, cores = 2)
+    stopifnot(all.equal(v1, v2))
+}
+
+### check weights argument
+cf_partykit <- partykit::cforest(Species ~ ., data = iris,
+    ntree = ntree, mtry = 4)
+w <- do.call("cbind", cf_partykit$weights)
+cf_2 <- partykit::cforest(Species ~ ., data = iris,
+    ntree = ntree, mtry = 4, weights = w)
+stopifnot(max(abs(predict(cf_2, type = "prob") - 
+                  predict(cf_partykit, type = "prob"))) < sqrt(.Machine$double.eps))
 

@@ -1,5 +1,5 @@
 
-R version 3.5.0 (2018-04-23) -- "Joy in Playing"
+R version 3.5.2 (2018-12-20) -- "Eggshell Igloo"
 Copyright (C) 2018 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -142,6 +142,7 @@ The following objects are masked from 'package:partykit':
    Solar.R       Wind       Temp      Month        Day 
  27.520179 144.897612 476.407961   0.308407  -0.655686 
 > 
+> 
 > ### classification
 > set.seed(29)
 > mtry <- ncol(iris) - 1L
@@ -251,7 +252,24 @@ Sepal.Length  Sepal.Width Petal.Length  Petal.Width
 > 
 > stopifnot(isTRUE(all.equal(mean(m), sum(w * cars$dist) / sum(w))))
 > 
+> ### check parallel variable importance (make this reproducible)
+> if(.Platform$OS.type == "unix") {
++     RNGkind("L'Ecuyer-CMRG")
++     v1 <- partykit::varimp(cf_partykit, risk = "misclass", conditional = TRUE, cores = 2)
++     v2 <- partykit::varimp(cf_partykit, risk = "misclass", conditional = TRUE, cores = 2)
++     stopifnot(all.equal(v1, v2))
++ }
+> 
+> ### check weights argument
+> cf_partykit <- partykit::cforest(Species ~ ., data = iris,
++     ntree = ntree, mtry = 4)
+> w <- do.call("cbind", cf_partykit$weights)
+> cf_2 <- partykit::cforest(Species ~ ., data = iris,
++     ntree = ntree, mtry = 4, weights = w)
+> stopifnot(max(abs(predict(cf_2, type = "prob") - 
++                   predict(cf_partykit, type = "prob"))) < sqrt(.Machine$double.eps))
+> 
 > 
 > proc.time()
    user  system elapsed 
-  6.911   0.090   6.995 
+  5.245   0.192   5.095 

@@ -50,11 +50,8 @@ ctree(formula, data, subset, weights, na.action = na.pass, offset, cluster,
 \details{
   Function \code{partykit::ctree} is a reimplementation of (most of)
   \code{party::ctree} employing the new \code{\link{party}} infrastructure
-  of the \pkg{partykit} infrastructure. Although the new code was already 
-  extensively tested, it is not yet as mature as the old code. If you notice
-  differences in the structure/predictions of the resulting trees, please
-  contact the package maintainers. See also \code{vignette("ctree", package = "partykit")}
-  for some remarks about the internals of the different implementations.
+  of the \pkg{partykit} infrastructure. The vignette \code{vignette("ctree", package = "partykit")}
+  explains internals of the different implementations.
   
   Conditional inference trees estimate a regression relationship by binary recursive
   partitioning in a conditional inference framework. Roughly, the algorithm

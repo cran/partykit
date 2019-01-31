@@ -23,7 +23,9 @@ register_s3_method <- function(pkg, generic, class, fun = NULL) {
 }
 
 .onLoad <- function(libname, pkgname) {
-  register_s3_method("strucchange", "sctest", "constparty")
-  register_s3_method("strucchange", "sctest", "modelparty")
+  if(getRversion() < "3.6.0") {
+    register_s3_method("strucchange", "sctest", "constparty")
+    register_s3_method("strucchange", "sctest", "modelparty")
+  }
   invisible()
 }

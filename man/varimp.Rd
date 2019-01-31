@@ -13,7 +13,8 @@
        mincriterion = 0, ...)
 \method{varimp}{cforest}(object, nperm = 1L, 
        OOB = TRUE, risk = c("loglik", "misclassification"),
-       conditional = FALSE, threshold = .2, ...)
+       conditional = FALSE, threshold = .2, applyfun = NULL, 
+       cores = NULL, ...)
 }
 \arguments{
   \item{object}{ an object as returned by \code{cforest}.}
@@ -33,6 +34,15 @@
               sample or the learning sample (not suggested).}
   \item{risk}{ a character determining the risk to be evaluated.}
   \item{conditions}{ a list of conditions. }
+  \item{applyfun}{an optional \code{\link[base]{lapply}}-style function with arguments
+                  \code{function(X, FUN, \dots)}. It is used for computing the variable importances for each tree. 
+                  The default is to use the basic \code{lapply}
+                  function unless the \code{cores} argument is specified (see below).
+                  Extra care is needed to ensure correct seeds are used in
+                  the parallel runs (\code{RNGkind("L'Ecuyer-CMRG")} for
+                  example).}
+  \item{cores}{numeric. If set to an integer the \code{applyfun} is set to
+               \code{\link[parallel]{mclapply}} with the desired number of \code{cores}.}
   \item{\dots}{additional arguments, not used.}
 }
 \details{

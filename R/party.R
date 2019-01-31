@@ -305,7 +305,11 @@ predict.party <- function(object, newdata = NULL, perm = NULL, ...)
             if (!is.null(object$terms)) {
                 ### <FIXME> this won't work for multivariate responses
                 ### </FIXME>
-                mf <- model.frame(delete.response(object$terms), newdata)
+                xlev <- lapply(unames[factors], 
+                               function(x) levels(object$data[[x]]))
+                names(xlev) <- unames[factors]
+                mf <- model.frame(delete.response(object$terms), newdata,
+                                  xlev = xlev)
                 fitted_node(node_party(object), data = mf, 
                             vmatch = match(vnames, names(mf)), perm = perm)
             } else

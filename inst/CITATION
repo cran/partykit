@@ -25,13 +25,14 @@ citEntry(entry="Article",
          year         = "2006",
          volume       = "15",
          number       = "3",
+         doi          =  "10.1198/106186006X133933",
          pages        = "651--674",
 
          textVersion =
          paste("Torsten Hothorn, Kurt Hornik and Achim Zeileis (2006).",
                "Unbiased Recursive Partitioning: A Conditional Inference Framework.",
-               "Journal of Computational and Graphical Statistics, 15(3), 651--674."),
-	 header = "If ctree() is used additionally cite:"
+               "Journal of Computational and Graphical Statistics, 15(3), 651--674, DOI: 10.1198/106186006X133933"),
+         header = "If ctree() is used additionally cite:"
 )
 
 citEntry(entry="Article",
@@ -42,11 +43,12 @@ citEntry(entry="Article",
          year         = "2008",
          volume       = "17",
          number       = "2",
+         doi          = "10.1198/106186008X319331",
          pages        = "492--514",
 
          textVersion =
          paste("Achim Zeileis, Torsten Hothorn and Kurt Hornik (2008).",
                "Model-Based Recursive Partitioning.",
-               "Journal of Computational and Graphical Statistics, 17(2), 492--514."),
+               "Journal of Computational and Graphical Statistics, 17(2), 492--514, DOI: 10.1198/106186008X319331"),
 	 header = "If mob() is used additionally cite:"
 )

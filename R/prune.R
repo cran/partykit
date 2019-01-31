@@ -45,13 +45,7 @@ nodeprune.party <- function(x, ids, ...) {
   class(x) <- cls
   oldids <- nodeids(x)
   newids <- 1:length(nodeids(x))
-  nodeids(x) <- newids
-  
-  for (i in seq_along(oldids)) {
-    if (oldids[i] != newids[i]) {
-      x$fitted[["(fitted)"]][x$fitted[["(fitted)"]] == oldids[i]] <- newids[i]
-    }
-  }
-  
+  nodeids(x) <- newids ### this takes also care of $fitted!
+
   return(x)
 }

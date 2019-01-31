@@ -202,7 +202,8 @@ gettree.cforest <- function(object, tree = 1L, ...) {
 }
 
 varimp.cforest <- function(object, nperm = 1L, OOB = TRUE, risk = c("loglik", "misclassification"), 
-                           conditional = FALSE, threshold = .2, ...) {
+                           conditional = FALSE, threshold = .2,    
+                           applyfun = NULL, cores = NULL, ...) {
 
     ret <- matrix(NA, nrow = length(object$nodes), ncol = ncol(object$data))
     colnames(ret) <- names(object$data)
@@ -213,7 +214,17 @@ varimp.cforest <- function(object, nperm = 1L, OOB = TRUE, risk = c("loglik", "m
         conditions <- NULL
     }
 
-    for (b in 1:length(object$nodes)) {
+    ## apply infrastructure 
+    if (is.null(applyfun)) {
+        applyfun <- if(is.null(cores)) {
+            lapply  
+        } else {
+            function(X, FUN, ...)
+                parallel::mclapply(X, FUN, ..., mc.set.seed = TRUE, mc.cores = cores)
+        }
+    }
+
+    vi <- applyfun(1:length(object$nodes), function(b) {
         tree <- gettree(object, b)
         if (OOB) {
             oobw <- as.integer(object$weights[[b]] == 0)
@@ -223,8 +234,12 @@ varimp.cforest <- function(object, nperm = 1L, OOB = TRUE, risk = c("loglik", "m
             vi <- varimp(tree, nperm = nperm, risk = risk, conditions = conditions, 
                          ...)
         }
-        ret[b, match(names(vi), colnames(ret))] <- vi
-    }
+        return(vi)
+    })
+
+    for (b in 1:length(object$nodes))
+        ret[b, match(names(vi[[b]]), colnames(ret))] <- vi[[b]]
+
     ret <- colMeans(ret, na.rm = TRUE)
     ret[!sapply(ret, is.na)]
 }

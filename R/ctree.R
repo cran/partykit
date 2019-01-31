@@ -21,8 +21,8 @@
 
     if (!is.null(iy)) {
         stopifnot(NROW(levels(iy)) == (NROW(Y) - 1))
-        return(.ctree_test_2d(data = data, j = j, Y = Y, iy = iy, 
-                              subset = subset, weights = weights, 
+        return(.ctree_test_2d(data = data, j = j, Y = Y, iy = iy,
+                              subset = subset, weights = weights,
                               SPLITONLY = SPLITONLY, ctrl = ctrl))
     }
 
@@ -36,13 +36,13 @@
         subsetNArm <- subset[!(subset %in% c(NAyx, NAz))]
     }
 
-    return(.ctree_test_1d(data = data, j = j, Y = Y, subset = subsetNArm, 
+    return(.ctree_test_1d(data = data, j = j, Y = Y, subset = subsetNArm,
                           weights = weights, SPLITONLY = SPLITONLY, ctrl = ctrl))
 }
 
-.partysplit <- function(varid, breaks = NULL, index = NULL, right = TRUE, 
+.partysplit <- function(varid, breaks = NULL, index = NULL, right = TRUE,
                         prob = NULL, info = NULL) {
-    ret <- list(varid = varid, breaks = breaks, index = index, right = right, 
+    ret <- list(varid = varid, breaks = breaks, index = index, right = right,
                 prob = prob, info = info)
     class(ret) <- "partysplit"
     ret
@@ -65,7 +65,7 @@
     ORDERED <- is.ordered(x) || is.numeric(x)
 
     ux <- Xleft <- Xright <- NULL
-    
+
     if (ctrl$splittest || SPLITONLY) {
         MAXSELECT <- TRUE
         if (is.numeric(x)) {
@@ -80,7 +80,7 @@
             Xright[NAs] <- as.integer(length(Xlev) + 1L)
             attr(Xleft, "levels") <- c(NA, Xlev)
             attr(Xright, "levels") <- c(Xlev, NA)
-        } 
+        }
     } else {
         MAXSELECT <- FALSE
         if (is.numeric(x)) {
@@ -94,10 +94,10 @@
     }
     cluster <- data[["(cluster)"]]
 
-    .ctree_test_internal(x = x, X = X, ix = NULL, Xleft = Xleft, Xright = Xright, 
-                         ixleft = NULL, ixright = NULL, ux = ux, scores = scores, 
-                         j = j, Y = Y, iy = NULL, subset = subset, weights = weights, 
-                         cluster = cluster, MIA = MIA, SPLITONLY = SPLITONLY, 
+    .ctree_test_internal(x = x, X = X, ix = NULL, Xleft = Xleft, Xright = Xright,
+                         ixleft = NULL, ixright = NULL, ux = ux, scores = scores,
+                         j = j, Y = Y, iy = NULL, subset = subset, weights = weights,
+                         cluster = cluster, MIA = MIA, SPLITONLY = SPLITONLY,
                          MAXSELECT = MAXSELECT, ORDERED = ORDERED, ctrl = ctrl)
 }
 
@@ -130,7 +130,7 @@
             attr(ixleft, "levels") <- c(NA, Xlev)
             attr(ixright, "levels") <- c(Xlev, NA)
             Xleft <- Xright <- X
-        } 
+        }
     } else {
         MAXSELECT <- FALSE
         MIA <- FALSE
@@ -139,16 +139,16 @@
     }
     cluster <- data[["(cluster)"]]
 
-    .ctree_test_internal(x = x, X = X, ix = ix, Xleft = Xleft, Xright = Xright, 
-                         ixleft = ixleft, ixright = ixright, ux = ux, scores = scores, 
-                         j = j, Y = Y, iy = iy, subset = subset, weights = weights, 
-                         cluster = cluster, MIA = MIA, SPLITONLY = SPLITONLY, 
+    .ctree_test_internal(x = x, X = X, ix = ix, Xleft = Xleft, Xright = Xright,
+                         ixleft = ixleft, ixright = ixright, ux = ux, scores = scores,
+                         j = j, Y = Y, iy = iy, subset = subset, weights = weights,
+                         cluster = cluster, MIA = MIA, SPLITONLY = SPLITONLY,
                          MAXSELECT = MAXSELECT, ORDERED = ORDERED, ctrl = ctrl)
 }
 
 
 
-.ctree_test_internal <- function(x, X, ix, Xleft, Xright, ixleft, ixright, ux, scores, j, Y , iy, 
+.ctree_test_internal <- function(x, X, ix, Xleft, Xright, ixleft, ixright, ux, scores, j, Y , iy,
                                  subset, weights, cluster, MIA, SPLITONLY, MAXSELECT, ORDERED, ctrl) {
 
     if (SPLITONLY) {
@@ -159,17 +159,17 @@
     } else {
         nresample <- ifelse("MonteCarlo" %in% ctrl$testtype,
                         ctrl$nresample, 0L)
-        pvalue <- !("Teststatistic" %in% ctrl$testtype) 
+        pvalue <- !("Teststatistic" %in% ctrl$testtype)
         if (ctrl$splittest) {
             if (ctrl$teststat != ctrl$splitstat)
                 warning("Using different test statistics for testing and splitting")
             teststat <- ctrl$splitstat
-            if (nresample == 0 && pvalue) 
+            if (nresample == 0 && pvalue)
                stop("MonteCarlo approximation mandatory for splittest = TRUE")
         } else {
            teststat <- ctrl$teststat
         }
-        varonly <- "MonteCarlo" %in% ctrl$testtype && 
+        varonly <- "MonteCarlo" %in% ctrl$testtype &&
                    teststat == "maxtype"
     }
 
@@ -177,8 +177,8 @@
     if (MAXSELECT) {
         if (!is.null(cluster)) varonly <- FALSE
     } else {
-        if (is.ordered(x) && !ctrl$splittest) 
-            varonly <- FALSE 
+        if (is.ordered(x) && !ctrl$splittest)
+            varonly <- FALSE
     }
 
     ### if (MIA) use tst as fallback
@@ -205,7 +205,7 @@
     }
 
     if (!MAXSELECT) {
-        if (is.ordered(x) && !ctrl$splittest) 
+        if (is.ordered(x) && !ctrl$splittest)
             lev <- libcoin::lmult(matrix(scores, nrow = 1), lev)
     }
 
@@ -217,7 +217,7 @@
 
     ### compute test statistic and log(1 - p-value)
     tst <- doTest(lev, teststat = teststat, pvalue = pvalue,
-                  lower = TRUE, log = TRUE, ordered = ORDERED, 
+                  lower = TRUE, log = TRUE, ordered = ORDERED,
                   maxselect = MAXSELECT,
                   minbucket = ctrl$minbucket, pargs = ctrl$pargs)
 
@@ -228,7 +228,7 @@
                              nresample = nresample, varonly = varonly, checkNAs = FALSE)
         ### compute test statistic and log(1 - p-value)
         tstleft <- doTest(lev, teststat = teststat, pvalue = pvalue,
-                          lower = TRUE, log = TRUE, ordered = ORDERED, 
+                          lower = TRUE, log = TRUE, ordered = ORDERED,
                           minbucket = ctrl$minbucket, pargs = ctrl$pargs)
         ### compute linear statistic + expecation and covariance
         lev <- LinStatExpCov(X = Xright, Y = Y, ix = ixright, iy = iy, subset = subset,
@@ -236,7 +236,7 @@
                              nresample = nresample, varonly = varonly, checkNAs = FALSE)
         ### compute test statistic and log(1 - p-value)
         tstright <- doTest(lev, teststat = teststat, pvalue = pvalue,
-                           lower = TRUE, log = TRUE, ordered = ORDERED, 
+                           lower = TRUE, log = TRUE, ordered = ORDERED,
                            minbucket = ctrl$minbucket, pargs = ctrl$pargs)
     }
 
@@ -245,8 +245,8 @@
             tst <- tstleft
             if (tst$TestStatistic < tstright$TestStatistic)
                 tst <- tstright
-        }        
-        return(list(statistic = log(pmax(tst$TestStatistic, .Machine$double.eps)), 
+        }
+        return(list(statistic = log(pmax(tst$TestStatistic, .Machine$double.eps)),
                     p.value = tst$p.value))
     }
 
@@ -255,7 +255,7 @@
         if (ORDERED) {
             if (tstleft$TestStatistic >= tstright$TestStatistic) {
                 if (all(tst$index == 1)) { ### case C
-                    ret <- .partysplit(as.integer(j), breaks = Inf, 
+                    ret <- .partysplit(as.integer(j), breaks = Inf,
                                       index = 1L:2L, prob = as.double(0:1))
                 } else {
                     sp <- tstleft$index - 1L ### case A
@@ -290,7 +290,7 @@
                 ret <- .partysplit(as.integer(j), index = as.integer(tst$index) + 1L)
             } else { ### always case A
                 ret <- .partysplit(as.integer(j),
-                                  index = as.integer(sp) + 1L, 
+                                  index = as.integer(sp) + 1L,
                                   prob = as.double(rev(0:1)))
             }
         }
@@ -301,7 +301,7 @@
             if (!is.ordered(x))
                 ### interpolate split-points, see https://arxiv.org/abs/1611.04561
                 if (ctrl$intersplit & sp < length(ux)) {
-                    sp <- (ux[sp] + ux[sp + 1]) / 2 
+                    sp <- (ux[sp] + ux[sp + 1]) / 2
                 } else {
                     sp <- ux[sp]  ### X <= sp vs. X > sp
                 }
@@ -318,34 +318,34 @@
 
 ctree_control <- function
 (
-    teststat = c("quadratic", "maximum"), 
+    teststat = c("quadratic", "maximum"),
     splitstat = c("quadratic", "maximum"), ### much better for q > 1, max was default
     splittest = FALSE,
-    testtype = c("Bonferroni", "MonteCarlo", 
+    testtype = c("Bonferroni", "MonteCarlo",
                  "Univariate", "Teststatistic"),
     pargs = GenzBretz(),
     nmax = c("yx" = Inf, "z" = Inf),
-    alpha = 0.05, 
-    mincriterion = 1 - alpha, 
-    logmincriterion = log(mincriterion), 
-    minsplit = 20L, 
-    minbucket = 7L, 
-    minprob = 0.01, 
-    stump = FALSE, 
+    alpha = 0.05,
+    mincriterion = 1 - alpha,
+    logmincriterion = log(mincriterion),
+    minsplit = 20L,
+    minbucket = 7L,
+    minprob = 0.01,
+    stump = FALSE,
     lookahead = FALSE,	### try trafo() for daugther nodes before implementing the split
     MIA = FALSE,	### DOI: 10.1016/j.patrec.2008.01.010
-    nresample = 9999L, 
+    nresample = 9999L,
     tol = sqrt(.Machine$double.eps),
-    maxsurrogate = 0L, 
+    maxsurrogate = 0L,
     numsurrogate = FALSE,
-    mtry = Inf, 
-    maxdepth = Inf, 
-    multiway = FALSE, 
-    splittry = 2L, 
+    mtry = Inf,
+    maxdepth = Inf,
+    multiway = FALSE,
+    splittry = 2L,
     intersplit = FALSE,
-    majority = FALSE, 
-    caseweights = TRUE, 
-    applyfun = NULL, 
+    majority = FALSE,
+    caseweights = TRUE,
+    applyfun = NULL,
     cores = NULL,
     saveinfo = TRUE,
     update = NULL,
@@ -374,21 +374,21 @@ ctree_control <- function
 
     splitflavour <- match.arg(splitflavour)
 
-    c(extree_control(criterion = ifelse("Teststatistic" %in% testtype, 
+    c(extree_control(criterion = ifelse("Teststatistic" %in% testtype,
                                       "statistic", "p.value"),
-                     logmincriterion = logmincriterion, minsplit = minsplit, 
-                     minbucket = minbucket, minprob = minprob, 
+                     logmincriterion = logmincriterion, minsplit = minsplit,
+                     minbucket = minbucket, minprob = minprob,
                      nmax = nmax, stump = stump, lookahead = lookahead,
-                     mtry = mtry, maxdepth = maxdepth, multiway = multiway, 
-                     splittry = splittry, maxsurrogate = maxsurrogate, 
+                     mtry = mtry, maxdepth = maxdepth, multiway = multiway,
+                     splittry = splittry, maxsurrogate = maxsurrogate,
                      numsurrogate = numsurrogate,
-                     majority = majority, caseweights = caseweights, 
+                     majority = majority, caseweights = caseweights,
                      applyfun = applyfun, saveinfo = saveinfo,  ### always
                      selectfun = .ctree_select(),
                      splitfun = if (splitflavour == "ctree") .ctree_split() else .objfun_test(),
                      svselectfun = .ctree_select(),
                      svsplitfun =.ctree_split(minbucket = 0),
-                     bonferroni = "Bonferroni" %in% testtype, 
+                     bonferroni = "Bonferroni" %in% testtype,
                      update = update),
       list(teststat = teststat, splitstat = splitstat, splittest = splittest, pargs = pargs,
            testtype = ttesttype, nresample = nresample, tol = tol,
@@ -396,12 +396,12 @@ ctree_control <- function
 }
 
 ctree <- function(formula, data, subset, weights, na.action = na.pass, offset, cluster,
-                  control = ctree_control(...), ytrafo = NULL, converged = NULL, scores = NULL, 
+                  control = ctree_control(...), ytrafo = NULL, converged = NULL, scores = NULL,
                   doFit = TRUE, ...) {
 
     ## set up model.frame() call
     mf <- match.call(expand.dots = FALSE)
-    m <- match(c("formula", "data", "subset", "na.action", "weights", 
+    m <- match(c("formula", "data", "subset", "na.action", "weights",
                  "offset", "cluster", "scores"), names(mf), 0L)
     mf <- mf[c(1L, m)]
     mf$yx <- "none"
@@ -442,9 +442,9 @@ ctree <- function(formula, data, subset, weights, na.action = na.pass, offset, c
         Y <- .y2infl(mfyx, response = d$variables$y, ytrafo = ytrafo)
         if (!is.null(iy <- d[["yx", type = "index"]])) {
             Y <- rbind(0, Y)
-        } 
-        ytrafo <- function(subset, weights, info, estfun, object, ...) 
-            list(estfun = Y, unweighted = TRUE) 
+        }
+        ytrafo <- function(subset, weights, info, estfun, object, ...)
+            list(estfun = Y, unweighted = TRUE)
             ### unweighted = TRUE prevents estfun / w in extree_fit
     }
     if (is.function(converged)) {
@@ -452,25 +452,25 @@ ctree <- function(formula, data, subset, weights, na.action = na.pass, offset, c
         converged <- converged(d, weights, control = control)
     } else {
         converged <- TRUE
-    }            
+    }
 
     update <- function(subset, weights, control, doFit = TRUE)
-        extree_fit(data = d, trafo = ytrafo, converged = converged, partyvars = d$variables$z, 
+        extree_fit(data = d, trafo = ytrafo, converged = converged, partyvars = d$variables$z,
                    subset = subset, weights = weights, ctrl = control, doFit = doFit)
     if (!doFit) return(list(d = d, update = update))
     tree <- update(subset = subset, weights = weights, control = control)
     trafo <- tree$trafo
     tree <- tree$nodes
-    
+
     mf <- model.frame(d)
     if (is.null(weights)) weights <- rep(1, nrow(mf))
 
-    fitted <- data.frame("(fitted)" = fitted_node(tree, mf), 
+    fitted <- data.frame("(fitted)" = fitted_node(tree, mf),
                          "(weights)" = weights,
                          check.names = FALSE)
     fitted[[3]] <- mf[, d$variables$y, drop = TRUE]
     names(fitted)[3] <- "(response)"
-    ret <- party(tree, data = mf, fitted = fitted, 
+    ret <- party(tree, data = mf, fitted = fitted,
                  info = list(call = match.call(), control = control))
     ret$update <- update
     ret$trafo <- trafo
@@ -505,7 +505,7 @@ ctree <- function(formula, data, subset, weights, na.action = na.pass, offset, c
 
         infl <- switch(rtype,
             "user-defined" = yfun(response),
-            "factor" = { 
+            "factor" = {
                 X <- model.matrix(~ response - 1)
                 if (nlevels(response) > 2) return(X)
                 return(X[,-1, drop = FALSE])

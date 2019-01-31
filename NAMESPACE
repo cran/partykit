@@ -224,3 +224,9 @@ S3method("as.party", "Weka_tree")
 S3method("as.party", "XMLNode")
 S3method("as.simpleparty", "XMLNode")
 S3method("as.party", "rpart")
+
+## conditional registration of strucchange methods
+if(getRversion() >= "3.6.0") {
+  S3method(strucchange::sctest, "constparty")
+  S3method(strucchange::sctest, "modelparty")
+}

@@ -1,5 +1,5 @@
 
-R version 3.5.0 (2018-04-23) -- "Joy in Playing"
+R version 3.5.1 (2018-07-02) -- "Feather Spray"
 Copyright (C) 2018 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -377,7 +377,9 @@ attr(,"class")
 > library("mlbench")
 > data("Vowel")
 > ct <- ctree(V2 ~ V1, data = Vowel[1:200,]) ### only levels 1:4 in V1
-> p1 <- predict(ct, newdata = Vowel) ### 14 levels in V1
+> try(p1 <- predict(ct, newdata = Vowel)) ### 14 levels in V1
+Error in model.frame.default(delete.response(object$terms), newdata, xlev = xlev) : 
+  factor V1 has new levels 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
 > 
 > ### deal with empty levels for teststat = "quad" by
 > ### removing elements of the teststatistic with zero variance
@@ -823,13 +825,12 @@ The following object is masked from 'package:rpart':
 > 
 > nd <- data.frame(outlook = factor("overcast", levels = levels(WeatherPlay$outlook)), 
 +                  humidity = 10, temperature = 10, windy = "yes")
-> predict(cp, type = "node", newdata = nd)
-1 
-6 
-> predict(cp, type = "response", newdata = nd)
-   1 
-<NA> 
-Levels: yes no
+> try(predict(cp, type = "node", newdata = nd))
+Error in model.frame.default(delete.response(object$terms), newdata, xlev = xlev) : 
+  factor windy has new level yes
+> try(predict(cp, type = "response", newdata = nd))
+Error in model.frame.default(delete.response(object$terms), newdata, xlev = xlev) : 
+  factor windy has new level yes
 > as.simpleparty(cp)
 
 Model formula:
@@ -1037,6 +1038,55 @@ Number of terminal nodes: 3
 > n2 <- nodeapply(airct, ids = c(6, 3, 5), function(x) x$info$nobs)
 > stopifnot(all.equal(n1[names(n2)], n2))
 > 
+> ### pruning got "fitted" wrong, spotted by Jason Parker
+> data("Titanic")
+> titan <- as.data.frame(Titanic)
+> (tree <- ctree(Survived ~ Class + Sex + Age, data = titan, weights = Freq))
+
+Model formula:
+Survived ~ Class + Sex + Age
+
+Fitted party:
+[1] root
+|   [2] Sex in Male
+|   |   [3] Class in 1st: No (n = 180, err = 34.4%)
+|   |   [4] Class in 2nd, 3rd, Crew
+|   |   |   [5] Age in Child
+|   |   |   |   [6] Class in 2nd: Yes (n = 11, err = 0.0%)
+|   |   |   |   [7] Class in 3rd: No (n = 48, err = 27.1%)
+|   |   |   [8] Age in Adult
+|   |   |   |   [9] Class in 2nd, 3rd
+|   |   |   |   |   [10] Class in 2nd: No (n = 168, err = 8.3%)
+|   |   |   |   |   [11] Class in 3rd: No (n = 462, err = 16.2%)
+|   |   |   |   [12] Class in Crew: No (n = 862, err = 22.3%)
+|   [13] Sex in Female
+|   |   [14] Class in 1st, 2nd, Crew
+|   |   |   [15] Class in 1st: Yes (n = 145, err = 2.8%)
+|   |   |   [16] Class in 2nd, Crew: Yes (n = 129, err = 12.4%)
+|   |   [17] Class in 3rd: No (n = 196, err = 45.9%)
+
+Number of inner nodes:    8
+Number of terminal nodes: 9
+> ### prune off nodes 5-12 and check if the other nodes are not affected
+> nodeprune(tree, 4)
+
+Model formula:
+Survived ~ Class + Sex + Age
+
+Fitted party:
+[1] root
+|   [2] Sex in Male
+|   |   [3] Class in 1st: No (n = 180, err = 34.4%)
+|   |   [4] Class in 2nd, 3rd, Crew: No (n = 1551, err = 19.7%)
+|   [5] Sex in Female
+|   |   [6] Class in 1st, 2nd, Crew
+|   |   |   [7] Class in 1st: Yes (n = 145, err = 2.8%)
+|   |   |   [8] Class in 2nd, Crew: Yes (n = 129, err = 12.4%)
+|   |   [9] Class in 3rd: No (n = 196, err = 45.9%)
+
+Number of inner nodes:    4
+Number of terminal nodes: 5
+> 
 > proc.time()
    user  system elapsed 
-  3.577   0.116   3.691 
+  2.784   0.060   2.842 
