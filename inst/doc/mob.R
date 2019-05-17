@@ -3,6 +3,7 @@
 ###################################################
 ### code chunk number 1: setup
 ###################################################
+suppressWarnings(RNGversion("3.5.2"))
 library("partykit")
 options(prompt = "R> ", continue = "+  ", digits = 4, useFancyQuotes = FALSE)
 
@@ -114,13 +115,13 @@ summary(pid_tree, node = 1)
 
 
 ###################################################
-### code chunk number 18: mob.Rnw:782-783
+### code chunk number 18: mob.Rnw:783-784
 ###################################################
 exp(coef(pid_tree)[,2])
 
 
 ###################################################
-### code chunk number 19: mob.Rnw:786-787
+### code chunk number 19: mob.Rnw:787-788
 ###################################################
 risk <- round(100 * (exp(coef(pid_tree)[,2])-1), digits = 1)
 
@@ -162,7 +163,7 @@ pid_tree[3]
 
 
 ###################################################
-### code chunk number 25: mob.Rnw:874-877
+### code chunk number 25: mob.Rnw:875-878
 ###################################################
 predict(pid_tree2, newdata = pid, type = "node")
 predict(pid_tree2, newdata = pid, type = "response")

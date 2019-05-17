@@ -15,6 +15,8 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
+> suppressWarnings(RNGversion("3.5.2"))
+>
 > library("partykit")
 Loading required package: grid
 Loading required package: libcoin

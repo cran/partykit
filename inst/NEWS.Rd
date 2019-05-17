@@ -2,6 +2,14 @@
 \name{NEWS}
 \title{NEWS file for the \pkg{partykit} package}
 
+\section{Changes in Version 1.2-4 (2019-05-17)}{
+  \subsection{Bugfixes}{
+  \itemize{
+    \item{update reference output, fix RNGversion}
+  }
+}
+}
+
 \section{Changes in Version 1.2-3 (2019-01-28)}{
  \subsection{New Features}{
     \itemize{
@@ -23,6 +31,7 @@
   }
 }
 }
+
 
 \section{Changes in Version 1.2-2 (2018-06-05)}{
   \subsection{Bugfixes}{

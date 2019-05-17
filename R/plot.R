@@ -724,7 +724,7 @@ node_boxplot <- function(obj,
 }
 class(node_boxplot) <- "grapcon_generator"
 
-node_surv <- function(obj, col = "black", bg = "white", ylines = 2,
+node_surv <- function(obj, col = "black", bg = "white", yscale = c(0, 1), ylines = 2,
 		      id = TRUE, mainlab = NULL, gp = gpar(), ...)
 {
     ## extract response
@@ -783,7 +783,7 @@ node_surv <- function(obj, col = "black", bg = "white", ylines = 2,
         a <- dostep(km$time, km$surv)
 
         ## set up plot
-        yscale <- c(0, 1)
+        yscale <- yscale
         xscale <- c(0, max(y[,1]))
 
         top_vp <- viewport(layout = grid.layout(nrow = 2, ncol = 3,
@@ -814,7 +814,7 @@ node_surv <- function(obj, col = "black", bg = "white", ylines = 2,
         popViewport()
 	
         plot <- viewport(layout.pos.col=2, layout.pos.row=2,
-                         xscale=xscale, yscale=yscale,
+                         xscale=xscale, yscale = yscale,
 			 name = paste0("node_surv", nid, "plot"),
 			 clip = FALSE)
 

@@ -1,4 +1,6 @@
 
+> suppressWarnings(RNGversion("3.5.2"))
+
 > options(width = 70)
 
 > library("partykit")

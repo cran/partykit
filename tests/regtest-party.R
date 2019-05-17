@@ -1,3 +1,5 @@
+suppressWarnings(RNGversion("3.5.2"))
+
 ## load package and fix seed
 library("partykit")
 set.seed(1)

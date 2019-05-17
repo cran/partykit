@@ -14,6 +14,7 @@
 \SweaveOpts{engine=R, eps=FALSE, keep.source=TRUE}
 
 <<setup, echo=FALSE, results=hide>>=
+suppressWarnings(RNGversion("3.5.2"))
 library("partykit")
 options(prompt = "R> ", continue = "+  ", digits = 4, useFancyQuotes = FALSE)
 @

@@ -4,6 +4,7 @@
 ###################################################
 ### code chunk number 1: setup
 ###################################################
+suppressWarnings(RNGversion("3.5.2"))
 options(width = 70, SweaveHooks = list(leftpar = 
     function() par(mai = par("mai") * c(1, 1.1, 1, 1))))
 require("partykit")

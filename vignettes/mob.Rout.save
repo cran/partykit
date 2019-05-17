@@ -1,0 +1,700 @@
+
+> suppressWarnings(RNGversion("3.5.2"))
+
+> library("partykit")
+Loading required package: grid
+Loading required package: libcoin
+Loading required package: mvtnorm
+
+> options(prompt = "R> ", continue = "+  ", digits = 4, 
++     useFancyQuotes = FALSE)
+
+> data("PimaIndiansDiabetes", package = "mlbench")
+
+> pid_formula <- diabetes ~ glucose | pregnant + pressure + 
++     triceps + insulin + mass + pedigree + age
+
+> logit <- function(y, x, start = NULL, weights = NULL, 
++     offset = NULL, ...) {
++     glm(y ~ 0 + x, family = binomial, start = start, ...)
++ }
+
+> pid_tree <- mob(pid_formula, data = PimaIndiansDiabetes, 
++     fit = logit)
+
+> pid_tree
+Model-based recursive partitioning (logit)
+
+Model formula:
+diabetes ~ glucose | pregnant + pressure + triceps + insulin + 
+    mass + pedigree + age
+
+Fitted party:
+[1] root
+|   [2] mass <= 26.3: n = 167
+|       x(Intercept)     xglucose 
+|           -9.95151      0.05871 
+|   [3] mass > 26.3
+|   |   [4] age <= 30: n = 304
+|   |       x(Intercept)     xglucose 
+|   |           -6.70559      0.04684 
+|   |   [5] age > 30: n = 297
+|   |       x(Intercept)     xglucose 
+|   |           -2.77095      0.02354 
+
+Number of inner nodes:    2
+Number of terminal nodes: 3
+Number of parameters per node: 2
+Objective function: 355.5
+
+> pid_tree2 <- glmtree(diabetes ~ glucose | pregnant + 
++     pressure + triceps + insulin + mass + pedigree + age, data = PimaIndiansDiabetes, 
++     .... [TRUNCATED] 
+
+> plot(pid_tree)
+
+> plot(pid_tree2, tp_args = list(ylines = 1, margins = c(1.5, 
++     1.5, 1.5, 2.5)))
+Loading required namespace: vcd
+
+> library("strucchange")
+Loading required package: zoo
+
+Attaching package: 'zoo'
+
+The following objects are masked from 'package:base':
+
+    as.Date, as.Date.numeric
+
+Loading required package: sandwich
+
+> sctest(pid_tree, node = 1)
+           pregnant pressure  triceps insulin      mass pedigree       age
+statistic 2.989e+01   7.5024 15.94095  6.5969 4.881e+01 18.33476 4.351e+01
+p.value   9.779e-05   0.9104  0.06474  0.9701 8.317e-09  0.02253 1.183e-07
+
+> sctest(pid_tree, node = 2)
+          pregnant pressure triceps insulin    mass pedigree    age
+statistic  10.3924   4.3537  5.9112   3.786 10.4749    3.626 6.0979
+p.value     0.4903   0.9998  0.9869   1.000  0.4785    1.000 0.9818
+
+> sctest(pid_tree, node = 3)
+           pregnant pressure triceps insulin   mass pedigree       age
+statistic 2.674e+01   6.1758  7.3468   7.896 9.1546 17.96439 3.498e+01
+p.value   4.434e-04   0.9845  0.9226   0.870 0.7033  0.02647 8.099e-06
+
+> names(pid_tree$info)
+[1] "call"    "formula" "Formula" "terms"   "fit"     "control" "dots"   
+[8] "nreg"   
+
+> names(pid_tree$node$info)
+[1] "coefficients" "objfun"       "object"       "nobs"         "p.value"     
+[6] "test"        
+
+> print(pid_tree, node = 3)
+Model-based recursive partitioning (logit) 
+-- Node 3 --
+
+Estimated parameters:
+x(Intercept)     xglucose 
+    -4.61015      0.03426 
+
+Objective function:
+344.2
+
+Parameter instability tests:
+           pregnant pressure triceps insulin   mass pedigree       age
+statistic 2.674e+01   6.1758  7.3468   7.896 9.1546 17.96439 3.498e+01
+p.value   4.434e-04   0.9845  0.9226   0.870 0.7033  0.02647 8.099e-06
+
+> coef(pid_tree)
+  x(Intercept) xglucose
+2       -9.952  0.05871
+4       -6.706  0.04684
+5       -2.771  0.02354
+
+> coef(pid_tree, node = 1)
+x(Intercept)     xglucose 
+    -5.35008      0.03787 
+
+> summary(pid_tree, node = 1)
+
+Call:
+glm(formula = y ~ 0 + x, family = binomial, start = start)
+
+Deviance Residuals: 
+   Min      1Q  Median      3Q     Max  
+-2.110  -0.784  -0.536   0.857   3.273  
+
+Coefficients:
+             Estimate Std. Error z value Pr(>|z|)    
+x(Intercept) -5.35008    0.42083   -12.7   <2e-16 ***
+xglucose      0.03787    0.00325    11.7   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1064.67  on 768  degrees of freedom
+Residual deviance:  808.72  on 766  degrees of freedom
+AIC: 812.7
+
+Number of Fisher Scoring iterations: 4
+
+
+> exp(coef(pid_tree)[, 2])
+    2     4     5 
+1.060 1.048 1.024 
+
+> risk <- round(100 * (exp(coef(pid_tree)[, 2]) - 1), 
++     digits = 1)
+
+> logLik(pid_tree)
+'log Lik.' -355.5 (df=8)
+
+> AIC(pid_tree)
+[1] 726.9
+
+> BIC(pid_tree)
+[1] 764.1
+
+> mean(residuals(pid_tree)^2)
+[1] 0.9257
+
+> deviance(pid_tree)/sum(weights(pid_tree))
+[1] 0.9257
+
+> deviance(pid_tree)/nobs(pid_tree)
+[1] 0.9257
+
+> pid <- head(PimaIndiansDiabetes)
+
+> predict(pid_tree, newdata = pid, type = "node")
+1 2 3 4 5 6 
+5 5 2 4 5 2 
+
+> width(pid_tree)
+[1] 3
+
+> depth(pid_tree)
+[1] 2
+
+> pid_tree[3]
+Model-based recursive partitioning (logit)
+
+Model formula:
+diabetes ~ glucose | pregnant + pressure + triceps + insulin + 
+    mass + pedigree + age
+
+Fitted party:
+[3] root
+|   [4] age <= 30: n = 304
+|       x(Intercept)     xglucose 
+|           -6.70559      0.04684 
+|   [5] age > 30: n = 297
+|       x(Intercept)     xglucose 
+|           -2.77095      0.02354 
+
+Number of inner nodes:    1
+Number of terminal nodes: 2
+Number of parameters per node: 2
+Objective function: 325.2
+
+> predict(pid_tree2, newdata = pid, type = "node")
+1 2 3 4 5 6 
+5 5 2 4 5 2 
+
+> predict(pid_tree2, newdata = pid, type = "response")
+      1       2       3       4       5       6 
+0.67092 0.31639 0.68827 0.07330 0.61146 0.04143 
+
+> predict(pid_tree2, newdata = pid, type = "link")
+      1       2       3       4       5       6 
+ 0.7123 -0.7704  0.7920 -2.5371  0.4535 -3.1414 
+
+> data("Journals", package = "AER")
+
+> Journals <- transform(Journals, age = 2000 - foundingyear, 
++     chars = charpp * pages)
+
+> j_tree <- lmtree(log(subs) ~ log(price/citations) | 
++     price + citations + age + chars + society, data = Journals, 
++     minsize = 10, verbose  .... [TRUNCATED] 
+
+-- Node 1 ---------------------------------
+Number of observations: 180
+
+Parameter instability tests:
+           price citations       age  chars society
+statistic 6.5617    5.2614 4.220e+01 4.5638  3.2797
+p.value   0.9218    0.9881 1.629e-07 0.9977  0.6599
+
+Best splitting variable: age
+Perform split? yes
+Selected split: <= 18 | > 18
+
+-- Node 2 ---------------------------------
+Number of observations: 53
+
+Parameter instability tests:
+           price citations    age  chars society
+statistic 3.3415    3.7259 5.6132 6.0400  0.6495
+p.value   0.9996    0.9984 0.9354 0.8979  0.9984
+
+Best splitting variable: chars
+Perform split? no
+
+-- Node 3 ---------------------------------
+Number of observations: 127
+
+Parameter instability tests:
+          price citations    age  chars society
+statistic  3.37    6.8391 5.9868 3.6769  0.6083
+p.value    1.00    0.8944 0.9598 0.9999  0.9988
+
+Best splitting variable: citations
+Perform split? no
+
+
+> plot(j_tree)
+
+> j_tree
+Linear model tree
+
+Model formula:
+log(subs) ~ log(price/citations) | price + citations + age + 
+    chars + society
+
+Fitted party:
+[1] root
+|   [2] age <= 18: n = 53
+|                (Intercept) log(price/citations) 
+|                     4.3528              -0.6049 
+|   [3] age > 18: n = 127
+|                (Intercept) log(price/citations) 
+|                      5.011               -0.403 
+
+Number of inner nodes:    1
+Number of terminal nodes: 2
+Number of parameters per node: 2
+Objective function (residual sum of squares): 77.05
+
+> coef(j_tree, node = 1:3)
+  (Intercept) log(price/citations)
+1       4.766              -0.5331
+2       4.353              -0.6049
+3       5.011              -0.4030
+
+> summary(j_tree, node = 1:3)
+$`1`
+
+Call:
+lm(formula = log(subs) ~ log(price/citations))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.7248 -0.5361  0.0372  0.4662  1.8481 
+
+Coefficients:
+                     Estimate Std. Error t value Pr(>|t|)    
+(Intercept)            4.7662     0.0559    85.2   <2e-16 ***
+log(price/citations)  -0.5331     0.0356   -15.0   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.75 on 178 degrees of freedom
+Multiple R-squared:  0.557,	Adjusted R-squared:  0.555 
+F-statistic:  224 on 1 and 178 DF,  p-value: <2e-16
+
+
+$`2`
+
+Call:
+lm(formula = log(subs) ~ log(price/citations))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.1297 -0.3788 -0.0506  0.3569  1.5788 
+
+Coefficients:
+                     Estimate Std. Error t value Pr(>|t|)    
+(Intercept)            4.3528     0.1169   37.24  < 2e-16 ***
+log(price/citations)  -0.6049     0.0748   -8.08  1.1e-10 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.668 on 51 degrees of freedom
+Multiple R-squared:  0.562,	Adjusted R-squared:  0.553 
+F-statistic: 65.3 on 1 and 51 DF,  p-value: 1.08e-10
+
+
+$`3`
+
+Call:
+lm(formula = log(subs) ~ log(price/citations))
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-2.160 -0.390  0.084  0.414  1.521 
+
+Coefficients:
+                     Estimate Std. Error t value Pr(>|t|)    
+(Intercept)            5.0113     0.0598    83.7   <2e-16 ***
+log(price/citations)  -0.4030     0.0380   -10.6   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.659 on 125 degrees of freedom
+Multiple R-squared:  0.473,	Adjusted R-squared:  0.469 
+F-statistic:  112 on 1 and 125 DF,  p-value: <2e-16
+
+
+
+> sctest(j_tree, node = 1:3)
+$`1`
+           price citations       age  chars society
+statistic 6.5617    5.2614 4.220e+01 4.5638  3.2797
+p.value   0.9218    0.9881 1.629e-07 0.9977  0.6599
+
+$`2`
+           price citations    age  chars society
+statistic 3.3415    3.7259 5.6132 6.0400  0.6495
+p.value   0.9996    0.9984 0.9354 0.8979  0.9984
+
+$`3`
+          price citations    age  chars society
+statistic  3.37    6.8391 5.9868 3.6769  0.6083
+p.value    1.00    0.8944 0.9598 0.9999  0.9988
+
+
+> data("BostonHousing", package = "mlbench")
+
+> BostonHousing <- transform(BostonHousing, chas = factor(chas, 
++     levels = 0:1, labels = c("no", "yes")), rad = factor(rad, 
++     ordered = TRUE .... [TRUNCATED] 
+
+> bh_tree <- lmtree(medv ~ log(lstat) + I(rm^2) | zn + 
++     indus + chas + nox + age + dis + rad + tax + crim + b + ptratio, 
++     data = BostonHou .... [TRUNCATED] 
+
+> bh_tree
+Linear model tree
+
+Model formula:
+medv ~ log(lstat) + I(rm^2) | zn + indus + chas + nox + age + 
+    dis + rad + tax + crim + b + ptratio
+
+Fitted party:
+[1] root
+|   [2] tax <= 432
+|   |   [3] ptratio <= 15.2: n = 72
+|   |       (Intercept)  log(lstat)     I(rm^2) 
+|   |            9.2349     -4.9391      0.6859 
+|   |   [4] ptratio > 15.2
+|   |   |   [5] ptratio <= 19.6
+|   |   |   |   [6] tax <= 265: n = 63
+|   |   |   |       (Intercept)  log(lstat)     I(rm^2) 
+|   |   |   |            3.9637     -2.7663      0.6881 
+|   |   |   |   [7] tax > 265: n = 162
+|   |   |   |       (Intercept)  log(lstat)     I(rm^2) 
+|   |   |   |           -1.7984     -0.2677      0.6539 
+|   |   |   [8] ptratio > 19.6: n = 56
+|   |   |       (Intercept)  log(lstat)     I(rm^2) 
+|   |   |           17.5865     -4.6190      0.3387 
+|   [9] tax > 432: n = 153
+|       (Intercept)  log(lstat)     I(rm^2) 
+|           68.2971    -16.3540     -0.1478 
+
+Number of inner nodes:    4
+Number of terminal nodes: 5
+Number of parameters per node: 3
+Objective function (residual sum of squares): 6090
+
+> plot(bh_tree)
+
+> mean(residuals(bh_tree)^2)
+[1] 12.04
+
+> logLik(bh_tree)
+'log Lik.' -1311 (df=24)
+
+> AIC(bh_tree)
+[1] 2669
+
+> data("TeachingRatings", package = "AER")
+
+> tr <- subset(TeachingRatings, credits == "more")
+
+> tr_null <- lm(eval ~ 1, data = tr, weights = students)
+
+> tr_lm <- lm(eval ~ beauty + gender + minority + native + 
++     tenure + division, data = tr, weights = students)
+
+> (tr_tree <- lmtree(eval ~ beauty | minority + age + 
++     gender + division + native + tenure, data = tr, weights = students, 
++     caseweights =  .... [TRUNCATED] 
+Linear model tree
+
+Model formula:
+eval ~ beauty | minority + age + gender + division + native + 
+    tenure
+
+Fitted party:
+[1] root
+|   [2] gender in male
+|   |   [3] age <= 50: n = 113
+|   |       (Intercept)      beauty 
+|   |            3.9968      0.1292 
+|   |   [4] age > 50: n = 137
+|   |       (Intercept)      beauty 
+|   |            4.0857      0.5028 
+|   [5] gender in female
+|   |   [6] age <= 40: n = 69
+|   |       (Intercept)      beauty 
+|   |            4.0137      0.1222 
+|   |   [7] age > 40
+|   |   |   [8] division in upper: n = 81
+|   |   |       (Intercept)      beauty 
+|   |   |            3.7752     -0.1976 
+|   |   |   [9] division in lower: n = 36
+|   |   |       (Intercept)      beauty 
+|   |   |            3.5900      0.4033 
+
+Number of inner nodes:    4
+Number of terminal nodes: 5
+Number of parameters per node: 2
+Objective function (residual sum of squares): 2752
+
+> plot(tr_tree)
+
+> coef(tr_lm)[2]
+beauty 
+0.2826 
+
+> coef(tr_tree)[, 2]
+      3       4       6       8       9 
+ 0.1292  0.5028  0.1222 -0.1976  0.4033 
+
+> 1 - c(deviance(tr_lm), deviance(tr_tree))/deviance(tr_null)
+[1] 0.2713 0.3820
+
+> data("Titanic", package = "datasets")
+
+> ttnc <- as.data.frame(Titanic)
+
+> ttnc <- ttnc[rep(1:nrow(ttnc), ttnc$Freq), 1:4]
+
+> names(ttnc)[2] <- "Gender"
+
+> ttnc <- transform(ttnc, Treatment = factor(Gender == 
++     "Female" | Age == "Child", levels = c(FALSE, TRUE), labels = c("Male&Adult", 
++     "Fem ..." ... [TRUNCATED] 
+
+> ttnc_tree <- glmtree(Survived ~ Treatment | Class + 
++     Gender + Age, data = ttnc, family = binomial, alpha = 0.01)
+
+> ttnc_tree
+Generalized linear model tree (family: binomial)
+
+Model formula:
+Survived ~ Treatment | Class + Gender + Age
+
+Fitted party:
+[1] root
+|   [2] Class in 3rd: n = 706
+|                 (Intercept) TreatmentFemale|Child 
+|                      -1.641                 1.327 
+|   [3] Class in 1st, 2nd, Crew
+|   |   [4] Class in 2nd: n = 285
+|   |                 (Intercept) TreatmentFemale|Child 
+|   |                      -2.398                 4.477 
+|   |   [5] Class in 1st, Crew: n = 1210
+|   |                 (Intercept) TreatmentFemale|Child 
+|   |                      -1.152                 4.318 
+
+Number of inner nodes:    2
+Number of terminal nodes: 3
+Number of parameters per node: 2
+Objective function (negative log-likelihood): 1061
+
+> plot(ttnc_tree, tp_args = list(ylines = 1, margins = c(1.5, 
++     1.5, 1.5, 2.5)))
+
+> data("GBSG2", package = "TH.data")
+
+> GBSG2$time <- GBSG2$time/365
+
+> library("survival")
+
+> wbreg <- function(y, x, start = NULL, weights = NULL, 
++     offset = NULL, ...) {
++     survreg(y ~ 0 + x, weights = weights, dist = "weibull", ... .... [TRUNCATED] 
+
+> logLik.survreg <- function(object, ...) structure(object$loglik[2], 
++     df = sum(object$df), class = "logLik")
+
+> gbsg2_tree <- mob(Surv(time, cens) ~ horTh + pnodes | 
++     age + tsize + tgrade + progrec + estrec + menostat, data = GBSG2, 
++     fit = wbreg, c .... [TRUNCATED] 
+
+> plot(gbsg2_tree)
+
+> gbsg2node <- function(mobobj, col = "black", linecol = "red", 
++     cex = 0.5, pch = NULL, jitter = FALSE, xscale = NULL, yscale = NULL, 
++     yli .... [TRUNCATED] 
+
+> class(gbsg2node) <- "grapcon_generator"
+
+> plot(gbsg2_tree, terminal_panel = gbsg2node, tnex = 2, 
++     tp_args = list(xscale = c(0, 52), yscale = c(-0.5, 8.7)))
+
+> gbsg2_tree
+Model-based recursive partitioning (wbreg)
+
+Model formula:
+Surv(time, cens) ~ horTh + pnodes | age + tsize + tgrade + progrec + 
+    estrec + menostat
+
+Fitted party:
+[1] root
+|   [2] progrec <= 24: n = 299
+|       x(Intercept)    xhorThyes      xpnodes 
+|            1.77331      0.17364     -0.06535 
+|   [3] progrec > 24: n = 387
+|       x(Intercept)    xhorThyes      xpnodes 
+|             1.9730       0.4451      -0.0302 
+
+Number of inner nodes:    1
+Number of terminal nodes: 2
+Number of parameters per node: 3
+Objective function: 809.9
+
+> coef(gbsg2_tree)
+  x(Intercept) xhorThyes  xpnodes
+2        1.773    0.1736 -0.06535
+3        1.973    0.4451 -0.03020
+
+> logLik(gbsg2_tree)
+'log Lik.' -809.9 (df=9)
+
+> data("Topmodel2007", package = "psychotree")
+
+> library("psychotools")
+
+> btfit1 <- function(y, x = NULL, start = NULL, weights = NULL, 
++     offset = NULL, ...) btmodel(y, ...)
+
+> bt1 <- mob(preference ~ 1 | gender + age + q1 + q2 + 
++     q3, data = Topmodel2007, fit = btfit1)
+
+> btfit2 <- function(y, x = NULL, start = NULL, weights = NULL, 
++     offset = NULL, ..., estfun = FALSE, object = FALSE) {
++     rval <- btmodel(y,  .... [TRUNCATED] 
+
+> bt2 <- mob(preference ~ 1 | gender + age + q1 + q2 + 
++     q3, data = Topmodel2007, fit = btfit2)
+
+> bt2
+Model-based recursive partitioning (btfit2)
+
+Model formula:
+preference ~ 1 | gender + age + q1 + q2 + q3
+
+Fitted party:
+[1] root
+|   [2] age <= 52
+|   |   [3] q2 in yes: n = 35
+|   |       Barbara    Anni    Hana   Fiona   Mandy 
+|   |        1.3378  1.2318  2.0499  0.8339  0.6217 
+|   |   [4] q2 in no
+|   |   |   [5] gender in male: n = 71
+|   |   |        Barbara     Anni     Hana    Fiona    Mandy 
+|   |   |        0.43866  0.08877  0.84629  0.69424 -0.10003 
+|   |   |   [6] gender in female: n = 56
+|   |   |       Barbara    Anni    Hana   Fiona   Mandy 
+|   |   |        0.9475  0.7246  0.4452  0.6350 -0.4965 
+|   [7] age > 52: n = 30
+|       Barbara    Anni    Hana   Fiona   Mandy 
+|        0.2178 -1.3166 -0.3059 -0.2591 -0.2357 
+
+Number of inner nodes:    3
+Number of terminal nodes: 4
+Number of parameters per node: 5
+Objective function: 1829
+
+> coef(bt2)
+  Barbara     Anni    Hana   Fiona   Mandy
+3  1.3378  1.23183  2.0499  0.8339  0.6217
+5  0.4387  0.08877  0.8463  0.6942 -0.1000
+6  0.9475  0.72459  0.4452  0.6350 -0.4965
+7  0.2178 -1.31663 -0.3059 -0.2591 -0.2357
+
+> plot(bt2)
+
+> worthf <- function(info) paste(info$object$labels, 
++     format(round(worth(info$object), digits = 3)), sep = ": ")
+
+> plot(bt2, FUN = worthf)
+
+> par(mfrow = c(2, 2))
+
+> nodeapply(bt2, ids = c(3, 5, 6, 7), FUN = function(n) plot(n$info$object, 
++     main = n$id, ylim = c(0, 0.4)))
+$`3`
+[1] 1 2 3 4 5 6
+
+$`5`
+[1] 1 2 3 4 5 6
+
+$`6`
+[1] 1 2 3 4 5 6
+
+$`7`
+[1] 1 2 3 4 5 6
+
+
+> node_btplot <- function(mobobj, id = TRUE, worth = TRUE, 
++     names = TRUE, abbreviate = TRUE, index = TRUE, ref = TRUE, 
++     col = "black", lin .... [TRUNCATED] 
+
+> class(node_btplot) <- "grapcon_generator"
+
+> plot(bt2, drop = TRUE, tnex = 2, terminal_panel = node_btplot(bt2, 
++     abbreviate = 1, yscale = c(0, 0.5)))
+
+> tm <- data.frame(age = c(60, 25, 35), gender = c("male", 
++     "female", "female"), q1 = "no", q2 = c("no", "no", "yes"), 
++     q3 = "no")
+
+> tm
+  age gender q1  q2 q3
+1  60   male no  no no
+2  25 female no  no no
+3  35 female no yes no
+
+> tm
+  age gender q1  q2 q3
+1  60   male no  no no
+2  25 female no  no no
+3  35 female no yes no
+
+> predict(bt2, tm, type = "node")
+1 2 3 
+7 6 3 
+
+> predict(bt2, tm, type = function(object) t(worth(object)))
+  Barbara    Anni   Hana  Fiona   Mandy    Anja
+1  0.2585 0.05573 0.1531 0.1605 0.16427 0.20792
+2  0.2659 0.21278 0.1609 0.1945 0.06275 0.10310
+3  0.1889 0.16993 0.3851 0.1142 0.09232 0.04958
+
+> predict(bt2, tm, type = function(object) t(rank(-worth(object))))
+  Barbara Anni Hana Fiona Mandy Anja
+1       1    6    5     4     3    2
+2       1    2    4     3     6    5
+3       2    3    1     4     5    6
+
+ *** Run successfully completed ***
+> proc.time()
+   user  system elapsed 
+ 11.464   0.136  11.598 

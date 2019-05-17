@@ -3,6 +3,7 @@
 ###################################################
 ### code chunk number 1: setup
 ###################################################
+suppressWarnings(RNGversion("3.5.2"))
 options(width = 70)
 library("partykit")
 set.seed(290875)

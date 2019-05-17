@@ -1,6 +1,6 @@
 
-R version 3.5.0 (2018-04-23) -- "Joy in Playing"
-Copyright (C) 2018 The R Foundation for Statistical Computing
+R version 3.6.0 (2019-04-26) -- "Planting of a Tree"
+Copyright (C) 2019 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -40,34 +40,16 @@ Loading required package: mvtnorm
 > 
 > ### ** Examples
 > 
+> 
 > ## load data
 > data("HuntingSpiders", package = "partykit")
 > 
 > ## fit multivariate tree for 12-dimensional species abundance
-> sptree <- ctree(arct.lute + pard.lugu + zora.spin + pard.nigr + pard.pull +
+> ## (warnings by mvtnorm are suppressed)
+> suppressWarnings(sptree <- ctree(arct.lute + pard.lugu + zora.spin + pard.nigr + pard.pull +
 +   aulo.albi + troc.terr + alop.cune + pard.mont + alop.acce + alop.fabr +
 +   arct.peri ~ herbs + reft + moss + sand + twigs + water, data = HuntingSpiders,
-+   teststat = "max", minsplit = 5)
-Warning in doTest(lev, teststat = teststat, pvalue = pvalue, lower = TRUE,  :
-  cmvnorm: completion with ERROR > EPS
-Warning in doTest(lev, teststat = teststat, pvalue = pvalue, lower = TRUE,  :
-  cmvnorm: completion with ERROR > EPS
-Warning in doTest(lev, teststat = teststat, pvalue = pvalue, lower = TRUE,  :
-  cmvnorm: completion with ERROR > EPS
-Warning in doTest(lev, teststat = teststat, pvalue = pvalue, lower = TRUE,  :
-  cmvnorm: completion with ERROR > EPS
-Warning in doTest(lev, teststat = teststat, pvalue = pvalue, lower = TRUE,  :
-  cmvnorm: completion with ERROR > EPS
-Warning in doTest(lev, teststat = teststat, pvalue = pvalue, lower = TRUE,  :
-  cmvnorm: completion with ERROR > EPS
-Warning in doTest(lev, teststat = teststat, pvalue = pvalue, lower = TRUE,  :
-  cmvnorm: completion with ERROR > EPS
-Warning in doTest(lev, teststat = teststat, pvalue = pvalue, lower = TRUE,  :
-  cmvnorm: completion with ERROR > EPS
-Warning in doTest(lev, teststat = teststat, pvalue = pvalue, lower = TRUE,  :
-  cmvnorm: completion with ERROR > EPS
-Warning in doTest(lev, teststat = teststat, pvalue = pvalue, lower = TRUE,  :
-  cmvnorm: completion with ERROR > EPS
++   teststat = "max", minsplit = 5))
 > plot(sptree, terminal_panel = node_barplot)
 > 
 > 
@@ -694,7 +676,7 @@ attr(,"assign")
 [1] 0 1 2
 attr(,"formula")
 Species ~ Sepal.Width + Sepal.Length
-<environment: 0x5603efaa8678>
+<environment: 0x563beb6f5178>
 attr(,"terms")
 Species ~ Sepal.Width + Sepal.Length
 attr(,"variables")
@@ -713,7 +695,7 @@ attr(,"intercept")
 attr(,"response")
 [1] 1
 attr(,".Environment")
-<environment: 0x5603efaa8678>
+<environment: 0x563beb6f5178>
 > 
 > 
 > 
@@ -1778,7 +1760,7 @@ detaching ‘package:rpart’
 >   ## mean predictions
 >   predict(pr, newdata = solder[c(3, 541, 640),])
        3      541      640 
-1.036111 1.683333 4.366667 
+1.030952 1.030952 1.030952 
 > 
 >   ## ecdf
 >   predict(pr, newdata = solder[c(3, 541, 640),], type = "prob")
@@ -1790,24 +1772,24 @@ Call: ecdf(y)
 $`541`
 Empirical CDF 
 Call: ecdf(y)
- x[1:10] =      0,      1,      2,  ...,      9,     10
+ x[1:11] =      0,      1,      2,  ...,      9,     12
 
 $`640`
 Empirical CDF 
 Call: ecdf(y)
- x[1:9] =      0,      1,      3,  ...,      8,      9
+ x[1:11] =      0,      1,      2,  ...,      9,     12
 
 > 
 >   ## terminal node identifiers
 >   predict(pr, newdata = solder[c(3, 541, 640),], type = "node")
   3 541 640 
-  3   5   7 
+  3   3   3 
 > 
 >   ## median predictions
 >   predict(pr, newdata = solder[c(3, 541, 640),], 
 +           FUN = function(y, w = 1) median(y))
   3 541 640 
-  0   1   4 
+  0   0   0 
 > 
 > 
 > 
@@ -2206,7 +2188,7 @@ NULL
 +     obs = !complete.cases(iris_NA)))
 
  2  3 
-21 29 
+23 27 
 > 
 > ## a stump defined by a primary split in `Sepal.Length'
 > ## and a surrogate split in `Sepal.Width' which
@@ -2225,7 +2207,7 @@ $`2`
 [1] 2.3 3.0
 
 $`3`
-[1] 3.1 4.4
+[1] 3.1 4.2
 
 > 
 > 
@@ -2357,9 +2339,9 @@ $levels
 > glm_big <- glmtree(formula = fmla, data = d, maxdepth = 3, alpha = 1)
 > 
 > AIC(lm_big)
-[1] 5137.236
+[1] 5129.346
 > AIC(glm_big)
-[1] 5137.206
+[1] 5126.784
 > 
 > ## load rpart for prune() generic
 > ## (otherwise: use prune.modelparty directly)
@@ -2411,12 +2393,12 @@ detaching ‘package:rpart’
 >    # standard importance
 >    varimp(readingSkills.cf)
 nativeSpeaker           age      shoeSize 
-     12.61542      62.56897      19.87619 
+     12.17150      65.18361      16.09479 
 > 
 >    # conditional importance, may take a while...
 >    varimp(readingSkills.cf, conditional = TRUE)
 nativeSpeaker           age      shoeSize 
-   12.6477554    38.6486123     0.7026978 
+   12.3017295    39.5830711     0.4435327 
 > 
 > 
 > 
@@ -2426,7 +2408,7 @@ nativeSpeaker           age      shoeSize
 > cleanEx()
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  13.121 0.107 13.268 0 0 
+Time elapsed:  9.355 0.127 9.543 0 0 
 > grDevices::dev.off()
 null device 
           1 

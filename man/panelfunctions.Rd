@@ -41,7 +41,7 @@ node_barplot(obj, col = "black", fill = NULL, bg = "white",
   reverse = NULL, rot = 0, just = c("center", "top"), id = TRUE,
   mainlab = NULL, text = c("none", "horizontal", "vertical"), gp = gpar())
 
-node_surv(obj, col = "black", bg = "white", ylines = 2,
+node_surv(obj, col = "black", bg = "white", yscale = c(0, 1), ylines = 2,
   id = TRUE, mainlab = NULL, gp = gpar(), \dots)
 
 node_ecdf(obj, col = "black", bg = "white", ylines = 2,

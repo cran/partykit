@@ -58,14 +58,16 @@ De'ath G (2002).
 }
 
 \examples{
+
 ## load data
 data("HuntingSpiders", package = "partykit")
 
 ## fit multivariate tree for 12-dimensional species abundance
-sptree <- ctree(arct.lute + pard.lugu + zora.spin + pard.nigr + pard.pull +
+## (warnings by mvtnorm are suppressed)
+suppressWarnings(sptree <- ctree(arct.lute + pard.lugu + zora.spin + pard.nigr + pard.pull +
   aulo.albi + troc.terr + alop.cune + pard.mont + alop.acce + alop.fabr +
   arct.peri ~ herbs + reft + moss + sand + twigs + water, data = HuntingSpiders,
-  teststat = "max", minsplit = 5)
+  teststat = "max", minsplit = 5))
 plot(sptree, terminal_panel = node_barplot)
 }
 

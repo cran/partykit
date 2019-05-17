@@ -76,6 +76,7 @@
 \SweaveOpts{eps=FALSE, keep.source=TRUE, eval = TRUE}
 
 <<setup, echo = FALSE, results = hide>>=
+suppressWarnings(RNGversion("3.5.2"))
 options(width = 70)
 library("partykit")
 set.seed(290875)

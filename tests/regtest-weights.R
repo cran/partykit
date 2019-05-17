@@ -1,3 +1,5 @@
+suppressWarnings(RNGversion("3.5.2"))
+
 library("partykit")
 
 
