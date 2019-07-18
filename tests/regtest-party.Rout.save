@@ -1,5 +1,5 @@
 
-R Under development (unstable) (2019-05-15 r76506) -- "Unsuffered Consequences"
+R Under development (unstable) (2019-07-17 r76847) -- "Unsuffered Consequences"
 Copyright (C) 2019 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -1640,111 +1640,111 @@ Call: ecdf(y)
 $`1`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<bytecode: 0x6328b40>
-<environment: 0x6130b70>
+<bytecode: 0x5ef2980>
+<environment: 0x5d0bfc8>
 
 $`2`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<bytecode: 0x6328b40>
-<environment: 0x6130b70>
+<bytecode: 0x5ef2980>
+<environment: 0x5d0bfc8>
 
 $`3`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<bytecode: 0x6328b40>
-<environment: 0x6130b70>
+<bytecode: 0x5ef2980>
+<environment: 0x5d0bfc8>
 
 $`4`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<bytecode: 0x6328b40>
-<environment: 0x6130b70>
+<bytecode: 0x5ef2980>
+<environment: 0x5d0bfc8>
 
 $`5`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<bytecode: 0x6328b40>
-<environment: 0x6130b70>
+<bytecode: 0x5ef2980>
+<environment: 0x5d0bfc8>
 
 $`6`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<bytecode: 0x6328b40>
-<environment: 0x6131120>
+<bytecode: 0x5ef2980>
+<environment: 0x5d08748>
 
 $`7`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<bytecode: 0x6328b40>
-<environment: 0x6131120>
+<bytecode: 0x5ef2980>
+<environment: 0x5d08748>
 
 $`8`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<bytecode: 0x6328b40>
-<environment: 0x6131120>
+<bytecode: 0x5ef2980>
+<environment: 0x5d08748>
 
 $`9`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<bytecode: 0x6328b40>
-<environment: 0x612b980>
+<bytecode: 0x5ef2980>
+<environment: 0x5d08cf8>
 
 > predict(ct, newdata = nd, type = "density")
 $`1`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f, na.rm)
-<bytecode: 0x3f5cf60>
-<environment: 0x5fb4910>
+<bytecode: 0x633bde0>
+<environment: 0x5b5eb60>
 
 $`2`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f, na.rm)
-<bytecode: 0x3f5cf60>
-<environment: 0x5fb4910>
+<bytecode: 0x633bde0>
+<environment: 0x5b5eb60>
 
 $`3`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f, na.rm)
-<bytecode: 0x3f5cf60>
-<environment: 0x5fb4910>
+<bytecode: 0x633bde0>
+<environment: 0x5b5eb60>
 
 $`4`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f, na.rm)
-<bytecode: 0x3f5cf60>
-<environment: 0x5fb4910>
+<bytecode: 0x633bde0>
+<environment: 0x5b5eb60>
 
 $`5`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f, na.rm)
-<bytecode: 0x3f5cf60>
-<environment: 0x5fb4910>
+<bytecode: 0x633bde0>
+<environment: 0x5b5eb60>
 
 $`6`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f, na.rm)
-<bytecode: 0x3f5cf60>
-<environment: 0x5f62690>
+<bytecode: 0x633bde0>
+<environment: 0x5b3dae8>
 
 $`7`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f, na.rm)
-<bytecode: 0x3f5cf60>
-<environment: 0x5f62690>
+<bytecode: 0x633bde0>
+<environment: 0x5b3dae8>
 
 $`8`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f, na.rm)
-<bytecode: 0x3f5cf60>
-<environment: 0x5f62690>
+<bytecode: 0x633bde0>
+<environment: 0x5b3dae8>
 
 $`9`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f, na.rm)
-<bytecode: 0x3f5cf60>
-<environment: 0x5f41180>
+<bytecode: 0x633bde0>
+<environment: 0x5b04050>
 
 > predict(ct, newdata = nd, type = "density", at = (1:9) / 10)
         [,1]       [,2]       [,3]       [,4]       [,5]       [,6]      [,7]
@@ -1770,4 +1770,4 @@ function (v)
 > 
 > proc.time()
    user  system elapsed 
-  4.836   0.408   3.610 
+  4.184   0.392   3.257 

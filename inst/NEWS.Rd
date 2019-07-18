@@ -2,6 +2,15 @@
 \name{NEWS}
 \title{NEWS file for the \pkg{partykit} package}
 
+\section{Changes in Version 1.2-5 (2019-07-17)}{
+  \subsection{Bugfixes}{
+  \itemize{
+    \item{Trying to split in a variable where all observations were missing
+          nevertheless produced a split, as reported by Kevin Ummel.}
+  }
+}
+}
+
 \section{Changes in Version 1.2-4 (2019-05-17)}{
   \subsection{Bugfixes}{
   \itemize{
@@ -9,6 +18,7 @@
   }
 }
 }
+
 
 \section{Changes in Version 1.2-3 (2019-01-28)}{
  \subsection{New Features}{

@@ -35,6 +35,10 @@
     } else {
         subsetNArm <- subset[!(subset %in% c(NAyx, NAz))]
     }
+    ### report by Kevin Ummel: _all_ obs being missing lead to
+    ### subset being ignored completely
+    if (length(subsetNArm) == 0) 
+        return(list(statistic = NA, p.value = NA))
 
     return(.ctree_test_1d(data = data, j = j, Y = Y, subset = subsetNArm,
                           weights = weights, SPLITONLY = SPLITONLY, ctrl = ctrl))

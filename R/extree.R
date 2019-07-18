@@ -219,6 +219,8 @@
 
     ### determine observations for splitting (only non-missings)
     snotNA <- subset[!subset %in% data[[varid_split(thissplit), type = "missings"]]]
+    if (length(snotNA) == 0)
+        return(partynode(as.integer(id), info = info))
     ### and split observations
     kidids <- kidids_node(ret, model.frame(data), obs = snotNA)
 
