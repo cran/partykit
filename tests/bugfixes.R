@@ -335,10 +335,11 @@ plot(f,tp_args = list(id = FALSE))
 f[10]$node$split
 
 ### factors with empty levels in learning sample
-library("mlbench")
-data("Vowel")
-ct <- ctree(V2 ~ V1, data = Vowel[1:200,]) ### only levels 1:4 in V1
-try(p1 <- predict(ct, newdata = Vowel)) ### 14 levels in V1
+if (require("mlbench")) {
+    data("Vowel", package = "mlbench")
+    ct <- ctree(V2 ~ V1, data = Vowel[1:200,]) ### only levels 1:4 in V1
+    try(p1 <- predict(ct, newdata = Vowel)) ### 14 levels in V1
+}
 
 ### deal with empty levels for teststat = "quad" by
 ### removing elements of the teststatistic with zero variance
@@ -699,32 +700,33 @@ tdata$ytrain <- factor(tdata$ytrain)
 model <- ctree(ytrain ~ ., data = tdata, 
     control = ctree_control(testtype = "Univariate", splitstat = "maximum"))
 
-library("coin")
-### check against coin (independence_test automatically
-### removes empty levels)
-p <- info_node(node_party(model))$criterion["p.value",]
-p[is.na(p)] <- 0
-p2 <- sapply(names(p), function(n)
+if (require("coin")) {
+  ### check against coin (independence_test automatically
+  ### removes empty levels)
+  p <- info_node(node_party(model))$criterion["p.value",]
+  p[is.na(p)] <- 0
+  p2 <- sapply(names(p), function(n)
     pvalue(independence_test(ytrain ~ .,
     data = tdata[, c("ytrain", n)], teststat = "quad")))
-stopifnot(max(abs(p - p2)) < sqrt(.Machine$double.eps))
+  stopifnot(max(abs(p - p2)) < sqrt(.Machine$double.eps))
 
-p <- info_node(node_party(model[2]))$criterion["p.value",]
-p[is.na(p)] <- 0
-p2 <- sapply(names(p), function(n)
+  p <- info_node(node_party(model[2]))$criterion["p.value",]
+  p[is.na(p)] <- 0
+  p2 <- sapply(names(p), function(n)
     pvalue(independence_test(ytrain ~ .,
     data = tdata[tdata$language != "8", c("ytrain", n)], 
     teststat = "quad")))
-stopifnot(max(abs(p - p2)) < sqrt(.Machine$double.eps))
+  stopifnot(max(abs(p - p2)) < sqrt(.Machine$double.eps))
 
-p <- info_node(node_party(model[3]))$criterion["p.value",]
-p[is.na(p)] <- 0
-p2 <- sapply(names(p), function(n)
+  p <- info_node(node_party(model[3]))$criterion["p.value",]
+  p[is.na(p)] <- 0
+  p2 <- sapply(names(p), function(n)
     pvalue(independence_test(ytrain ~ .,
     data = tdata[!(tdata$language %in% c("2", "4", "8")), 
                  c("ytrain", n)], 
     teststat = "quad")))
-stopifnot(max(abs(p - p2)) < sqrt(.Machine$double.eps))
+  stopifnot(max(abs(p - p2)) < sqrt(.Machine$double.eps))
+}
 
 ### check coersion of constparties to simpleparties
 ### containing terminal nodes without corresponding observations
@@ -822,7 +824,6 @@ stopifnot(all.equal(ct12$node$info$p.value,
 
 ### spotted by Peter Philip Stephensen (DREAM) <PSP@dreammodel.dk>
 ### splits x >= max(x) where possible in partykit::ctree
-library("partykit")
 nAge <- 30
 d <- data.frame(Age=rep(1:nAge,2),y=c(rep(1,nAge),rep(0,nAge)), 
                 n = rep(0,2*nAge))
@@ -854,3 +855,11 @@ titan <- as.data.frame(Titanic)
 (tree <- ctree(Survived ~ Class + Sex + Age, data = titan, weights = Freq))
 ### prune off nodes 5-12 and check if the other nodes are not affected
 nodeprune(tree, 4)
+
+### this gave a warning "ME is not a factor"
+if (require("TH.data")) {
+    data("mammoexp", package = "TH.data")
+    a <- cforest(ME ~ PB + SYMPT, data = mammoexp, ntree = 5)
+    print(predict(a, newdata=mammoexp[1:3,]))
+}
+

@@ -1,5 +1,5 @@
 
-R Under development (unstable) (2019-05-15 r76506) -- "Unsuffered Consequences"
+R version 3.6.2 (2019-12-12) -- "Dark and Stormy Night"
 Copyright (C) 2019 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -375,10 +375,12 @@ attr(,"class")
 [1] "partysplit"
 > 
 > ### factors with empty levels in learning sample
-> library("mlbench")
-> data("Vowel")
-> ct <- ctree(V2 ~ V1, data = Vowel[1:200,]) ### only levels 1:4 in V1
-> try(p1 <- predict(ct, newdata = Vowel)) ### 14 levels in V1
+> if (require("mlbench")) {
++     data("Vowel", package = "mlbench")
++     ct <- ctree(V2 ~ V1, data = Vowel[1:200,]) ### only levels 1:4 in V1
++     try(p1 <- predict(ct, newdata = Vowel)) ### 14 levels in V1
++ }
+Loading required package: mlbench
 Error in model.frame.default(delete.response(object$terms), newdata, xlev = xlev) : 
   factor V1 has new levels 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
 > 
@@ -741,33 +743,35 @@ Error in model.frame.default(delete.response(object$terms), newdata, xlev = xlev
 > model <- ctree(ytrain ~ ., data = tdata, 
 +     control = ctree_control(testtype = "Univariate", splitstat = "maximum"))
 > 
-> library("coin")
-Loading required package: survival
-> ### check against coin (independence_test automatically
-> ### removes empty levels)
-> p <- info_node(node_party(model))$criterion["p.value",]
-> p[is.na(p)] <- 0
-> p2 <- sapply(names(p), function(n)
+> if (require("coin")) {
++   ### check against coin (independence_test automatically
++   ### removes empty levels)
++   p <- info_node(node_party(model))$criterion["p.value",]
++   p[is.na(p)] <- 0
++   p2 <- sapply(names(p), function(n)
 +     pvalue(independence_test(ytrain ~ .,
 +     data = tdata[, c("ytrain", n)], teststat = "quad")))
-> stopifnot(max(abs(p - p2)) < sqrt(.Machine$double.eps))
-> 
-> p <- info_node(node_party(model[2]))$criterion["p.value",]
-> p[is.na(p)] <- 0
-> p2 <- sapply(names(p), function(n)
++   stopifnot(max(abs(p - p2)) < sqrt(.Machine$double.eps))
++ 
++   p <- info_node(node_party(model[2]))$criterion["p.value",]
++   p[is.na(p)] <- 0
++   p2 <- sapply(names(p), function(n)
 +     pvalue(independence_test(ytrain ~ .,
 +     data = tdata[tdata$language != "8", c("ytrain", n)], 
 +     teststat = "quad")))
-> stopifnot(max(abs(p - p2)) < sqrt(.Machine$double.eps))
-> 
-> p <- info_node(node_party(model[3]))$criterion["p.value",]
-> p[is.na(p)] <- 0
-> p2 <- sapply(names(p), function(n)
++   stopifnot(max(abs(p - p2)) < sqrt(.Machine$double.eps))
++ 
++   p <- info_node(node_party(model[3]))$criterion["p.value",]
++   p[is.na(p)] <- 0
++   p2 <- sapply(names(p), function(n)
 +     pvalue(independence_test(ytrain ~ .,
 +     data = tdata[!(tdata$language %in% c("2", "4", "8")), 
 +                  c("ytrain", n)], 
 +     teststat = "quad")))
-> stopifnot(max(abs(p - p2)) < sqrt(.Machine$double.eps))
++   stopifnot(max(abs(p - p2)) < sqrt(.Machine$double.eps))
++ }
+Loading required package: coin
+Loading required package: survival
 > 
 > ### check coersion of constparties to simpleparties
 > ### containing terminal nodes without corresponding observations
@@ -915,7 +919,6 @@ Number of terminal nodes: 6
 > 
 > ### spotted by Peter Philip Stephensen (DREAM) <PSP@dreammodel.dk>
 > ### splits x >= max(x) where possible in partykit::ctree
-> library("partykit")
 > nAge <- 30
 > d <- data.frame(Age=rep(1:nAge,2),y=c(rep(1,nAge),rep(0,nAge)), 
 +                 n = rep(0,2*nAge))
@@ -1081,6 +1084,26 @@ Fitted party:
 Number of inner nodes:    4
 Number of terminal nodes: 5
 > 
+> ### this gave a warning "ME is not a factor"
+> if (require("TH.data")) {
++     data("mammoexp", package = "TH.data")
++     a <- cforest(ME ~ PB + SYMPT, data = mammoexp, ntree = 5)
++     print(predict(a, newdata=mammoexp[1:3,]))
++ }
+Loading required package: TH.data
+Loading required package: MASS
+
+Attaching package: 'TH.data'
+
+The following object is masked from 'package:MASS':
+
+    geyser
+
+    1     2     3 
+Never Never Never 
+Levels: Never < Within a Year < Over a Year
+> 
+> 
 > proc.time()
    user  system elapsed 
-  4.416   0.148   4.567 
+  2.969   0.070   3.034 

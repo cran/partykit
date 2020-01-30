@@ -1,7 +1,6 @@
 suppressWarnings(RNGversion("3.5.2"))
 
 library("partykit")
-library("sandwich")
 
 set.seed(29)
 n <- 1000
@@ -47,8 +46,8 @@ w[1:10] <- 2
 
 
 ## check tests
-library("strucchange")
-sctest(mmfluc3, node = 1) # does not yet work
+if (require("strucchange"))
+    print(sctest(mmfluc3, node = 1)) # does not yet work
 
 x <- mmfluc3
 (tst3 <- nodeapply(x, ids = nodeids(x), function(n) n$info$criterion))

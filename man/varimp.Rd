@@ -79,7 +79,7 @@
 
     Alexander Hapfelmeier, Torsten Hothorn, Kurt Ulm, and Carolin Strobl (2012).
     A New Variable Importance Measure for Random Forests with Missing Data.
-    \emph{Statistics and Computing}, \url{http://dx.doi.org/10.1007/s11222-012-9349-1}
+    \emph{Statistics and Computing}, \url{https://dx.doi.org/10.1007/s11222-012-9349-1}
 
     Torsten Hothorn, Kurt Hornik, and Achim Zeileis (2006b). Unbiased
     Recursive Partitioning: A Conditional Inference Framework.

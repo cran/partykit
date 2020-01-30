@@ -207,6 +207,7 @@ predict.cforest <- function(object, newdata = NULL, type = c("response", "prob",
         factors <- which(sapply(nd, is.factor))
         xlev <- lapply(factors, function(x) levels(nd[[x]]))
         names(xlev) <- names(nd)[factors]
+        xlev <- xlev[attr(object$predictf, "term.labels")]
         nd <- model.frame(object$predictf, ### all variables W/O response
                           data = newdata, na.action = na.pass, xlev = xlev)
         OOB <- FALSE

@@ -1,6 +1,6 @@
 
-R Under development (unstable) (2018-06-03 r74839) -- "Unsuffered Consequences"
-Copyright (C) 2018 The R Foundation for Statistical Computing
+R version 3.6.2 (2019-12-12) -- "Dark and Stormy Night"
+Copyright (C) 2019 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -21,7 +21,6 @@ Type 'q()' to quit R.
 Loading required package: grid
 Loading required package: libcoin
 Loading required package: mvtnorm
-> library("sandwich")
 > 
 > set.seed(29)
 > n <- 1000
@@ -157,7 +156,9 @@ Objective function (negative log-likelihood): 2551.673
 > 
 > 
 > ## check tests
-> library("strucchange")
+> if (require("strucchange"))
++     print(sctest(mmfluc3, node = 1)) # does not yet work
+Loading required package: strucchange
 Loading required package: zoo
 
 Attaching package: 'zoo'
@@ -166,7 +167,7 @@ The following objects are masked from 'package:base':
 
     as.Date, as.Date.numeric
 
-> sctest(mmfluc3, node = 1) # does not yet work
+Loading required package: sandwich
                      z   z_noise
 statistic 2.292499e+01 0.6165335
 p.value   7.780038e-04 0.9984952
@@ -563,4 +564,4 @@ NULL
 > 
 > proc.time()
    user  system elapsed 
- 40.720   0.212  40.948 
+ 19.373   0.084  19.439 
