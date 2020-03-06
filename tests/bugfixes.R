@@ -834,7 +834,9 @@ d[d$y==0,]$n = ntot - d[d$y==1,]$n
 d$n <- as.integer(d$n)
 ctrl <- partykit::ctree_control(maxdepth=3, minbucket = min(d$n) + 1)
 tree <- partykit::ctree(y ~ Age, weights=n, data=d, control=ctrl)
+## IGNORE_RDIFF_BEGIN
 tree
+## IGNORE_RDIFF_END
 
 (w1 <- predict(tree, type = "node"))
 

@@ -2,7 +2,15 @@
 \name{NEWS}
 \title{NEWS file for the \pkg{partykit} package}
 
-\section{Changes in Version 1.2-6 (2019-09-23)}{
+\section{Changes in Version 1.2-7 (2020-03-06)}{
+  \subsection{Bugfixes}{
+  \itemize{
+    \item{NAMESPACE fixes: party is only suggested.}
+  }
+}
+}
+
+\section{Changes in Version 1.2-6 (2020-01-30)}{
   \subsection{Bugfixes}{
   \itemize{
     \item{Remove warning about response not being a factor in
@@ -10,6 +18,7 @@
   }
 }
 }
+
 
 \section{Changes in Version 1.2-5 (2019-07-17)}{
   \subsection{Bugfixes}{

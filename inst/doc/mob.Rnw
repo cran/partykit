@@ -774,7 +774,9 @@ Information about the model and coefficients can for example be extracted by:
 <<PimaIndiansDiabetes-coef>>=
 coef(pid_tree)
 coef(pid_tree, node = 1)
+## IGNORE_RDIFF_BEGIN
 summary(pid_tree, node = 1)
+## IGNORE_RDIFF_END
 @
 %
 As the coefficients pertain to a logistic regression, they can be easily

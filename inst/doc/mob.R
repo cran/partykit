@@ -111,17 +111,19 @@ print(pid_tree, node = 3)
 ###################################################
 coef(pid_tree)
 coef(pid_tree, node = 1)
+## IGNORE_RDIFF_BEGIN
 summary(pid_tree, node = 1)
+## IGNORE_RDIFF_END
 
 
 ###################################################
-### code chunk number 18: mob.Rnw:783-784
+### code chunk number 18: mob.Rnw:785-786
 ###################################################
 exp(coef(pid_tree)[,2])
 
 
 ###################################################
-### code chunk number 19: mob.Rnw:787-788
+### code chunk number 19: mob.Rnw:789-790
 ###################################################
 risk <- round(100 * (exp(coef(pid_tree)[,2])-1), digits = 1)
 
@@ -163,7 +165,7 @@ pid_tree[3]
 
 
 ###################################################
-### code chunk number 25: mob.Rnw:875-878
+### code chunk number 25: mob.Rnw:877-880
 ###################################################
 predict(pid_tree2, newdata = pid, type = "node")
 predict(pid_tree2, newdata = pid, type = "response")

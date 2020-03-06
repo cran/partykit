@@ -1,6 +1,6 @@
 
-R version 3.6.2 (2019-12-12) -- "Dark and Stormy Night"
-Copyright (C) 2019 The R Foundation for Statistical Computing
+R Under development (unstable) (2020-03-05 r77909) -- "Unsuffered Consequences"
+Copyright (C) 2020 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -929,6 +929,7 @@ Number of terminal nodes: 6
 > d$n <- as.integer(d$n)
 > ctrl <- partykit::ctree_control(maxdepth=3, minbucket = min(d$n) + 1)
 > tree <- partykit::ctree(y ~ Age, weights=n, data=d, control=ctrl)
+> ## IGNORE_RDIFF_BEGIN
 > tree
 
 Model formula:
@@ -951,6 +952,7 @@ Fitted party:
 
 Number of inner nodes:    6
 Number of terminal nodes: 7
+> ## IGNORE_RDIFF_END
 > 
 > (w1 <- predict(tree, type = "node"))
  4  4  4  4  5  5  5  7  7  7  7  8  8  8  8 10 10 10 10 10 10 10 12 12 12 12 
@@ -1106,4 +1108,4 @@ Levels: Never < Within a Year < Over a Year
 > 
 > proc.time()
    user  system elapsed 
-  2.969   0.070   3.034 
+  4.720   0.120   4.837 
