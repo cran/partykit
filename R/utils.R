@@ -73,7 +73,7 @@ get_paths <- function(obj, i) {
   return(x)
 }
 
-"nodeids<-.constparty" <- function(obj, value) {
+"nodeids<-.constparty" <- "nodeids<-.modelparty" <- function(obj, value) {
 
   id0 <- nodeids(obj)
   cls <- class(obj)

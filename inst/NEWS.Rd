@@ -2,6 +2,15 @@
 \name{NEWS}
 \title{NEWS file for the \pkg{partykit} package}
 
+\section{Changes in Version 1.2-8 (2020-06-09)}{
+  \subsection{Bugfixes}{
+  \itemize{
+    \item{pruning of modelparty objects failed to get the fitted slot right.}
+    \item{In R-devel, c(<factor>) now returns factors, rendering code in .simplify_pred overly pedantic.}
+  }
+}
+}
+
 \section{Changes in Version 1.2-7 (2020-03-06)}{
   \subsection{Bugfixes}{
   \itemize{
@@ -9,6 +18,7 @@
   }
 }
 }
+
 
 \section{Changes in Version 1.2-6 (2020-01-30)}{
   \subsection{Bugfixes}{

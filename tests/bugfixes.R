@@ -865,3 +865,7 @@ if (require("TH.data")) {
     print(predict(a, newdata=mammoexp[1:3,]))
 }
 
+### pruning didn't work properly
+mt <- lmtree(dist ~ speed, data = cars)
+mt2 <- nodeprune(mt, 2)
+stopifnot(all(mt2$fitted[["(fitted)"]] %in% c(2, 3)))

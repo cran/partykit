@@ -1,5 +1,5 @@
 
-R Under development (unstable) (2020-03-05 r77909) -- "Unsuffered Consequences"
+R version 3.6.3 (2020-02-29) -- "Holding the Windsock"
 Copyright (C) 2020 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -1105,7 +1105,11 @@ The following object is masked from 'package:MASS':
 Never Never Never 
 Levels: Never < Within a Year < Over a Year
 > 
+> ### pruning didn't work properly
+> mt <- lmtree(dist ~ speed, data = cars)
+> mt2 <- nodeprune(mt, 2)
+> stopifnot(all(mt2$fitted[["(fitted)"]] %in% c(2, 3)))
 > 
 > proc.time()
    user  system elapsed 
-  4.720   0.120   4.837 
+  2.212   0.039   2.246 

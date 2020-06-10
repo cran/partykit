@@ -499,7 +499,9 @@ predict_party.constparty <- function(party, id, newdata = NULL,
     if (all(sapply(tab, length) == 1) & all(sapply(tab, is.atomic))) {
         ret <- do.call("c", tab)
         names(ret) <- names(tab)
-        ret <- if (is.factor(tab[[1]]))
+        ### R 4.1.x allows to call c() on factors, this is needed for
+        ### backward-compatibility
+        ret <- if (is.factor(tab[[1]]) & !is.factor(ret))
             factor(ret[as.character(id)], levels = 1:length(levels(tab[[1]])),
 		   labels = levels(tab[[1]]), ordered = is.ordered(tab[[1]]))
         else 
