@@ -68,6 +68,15 @@
         .split(model, trafo, data, subset, weights, whichvar, ctrl, FUN = .objfun_test) 
     }
 
+### which.max(x) gives first max in case of ties
+### order(x) puts length(x) last. This lead to confusion
+### regarding the selected p-value and split variable
+.which.max <- function(x) {
+    x[!is.finite(x)] <- -Inf
+    order(x)[length(x)]
+}
+
+
 ### unbiased recursive partitioning: set up new node
 .extree_node <- function
 (
@@ -177,8 +186,8 @@
         p <- rbind(p, criterion = crit)
         p["statistic",] <- exp(p["statistic",])
         p["p.value",] <- -expm1(p["p.value",])
-        pmin <- p["p.value", which.max(crit)]
-        names(pmin) <- colnames(model.frame(data))[which.max(crit)]
+        pmin <- p["p.value", .which.max(crit)]
+        names(pmin) <- colnames(model.frame(data))[.which.max(crit)]
 
         ### report on tests actually performed only
         p <- p[,!is.na(p["statistic",]) & is.finite(p["statistic",]),
@@ -228,7 +237,7 @@
     prob <- tabulate(kidids) / length(kidids) 
     # names(dimnames(prob)) <- NULL
     if (ctrl$majority)  ### go with majority
-        prob <- as.double((1L:length(prob)) %in% which.max(prob))
+        prob <- as.double((1L:length(prob)) %in% .which.max(prob))
     if (is.null(ret$split$prob))
         ret$split$prob <- prob
 
@@ -306,7 +315,7 @@
                                                 ctrl$maxsurrogate)))
 
     for (i in 1L:length(ret)) {
-        jsel <- which.max(crit)
+        jsel <- .which.max(crit)
         thisctrl <- ctrl
         thisctrl$minbucket <- 0L
         sp <- splitfun(model = thismodel, trafo = NULL, data = data, subset = subset, 
@@ -323,7 +332,7 @@
             ret[[i]]$index[indx == 2] <- 1L
         }
         ### </FIXME>
-        crit[which.max(crit)] <- -Inf
+        crit[.which.max(crit)] <- -Inf
     }
     ret <- ret[!sapply(ret, is.null)]
     if (length(ret) == 0L) ret <- NULL

@@ -1,0 +1,98 @@
+---
+title: "Exercise: Titanic"
+output: html_document
+---
+
+
+```{r, include = FALSE}
+file <- "data/titanic.rds"
+stopifnot(file.exists(file))
+data <- readRDS(file)
+head(data)
+```
+
+
+
+
+In this exercise we will use the 'titanic' data set. As the data set presented on the slides, this version describes the survival status of individual passengers on the Titanic, however, it provides additional information on the passengers given by 10 covriates but does not include information on the crew.
+
+Simply download the file `r xfun::embed_file(file, text = "titanic.rds")` by clicking or download it from OpenOLAT or from the corresponding homepage
+<http://biostat.mc.vanderbilt.edu/wiki/pub/Main/DataSets/titanic.html>
+which also provides more detailed information on the data set.
+
+We can import/read this file using `data <- readRDS(...)`. The file
+contains the following information:
+
+* `name`: passenger's name (character).
+* `gender.`: 'male' or 'female' (factor) .
+* `age`: age in years (numeric).
+* `class`:  passenger class or the type of service aboard for crew members (factor).
+* `embarked`: place of embarkment (factor; C = Cherbourg, Q = Queenstown, S = Southampthon).
+* `country`: home country (factor).
+* `ticketno`:  ticket number (integer; NA for crew members).
+* `fare`: ticket price (numeric; NA for crew members, musicians and employees of the shipyard company).
+* `sibsp`: number if siblings/spouses aboard (ordered factor).
+* `parch`: number of parents/children aboard (ordered factor).
+* `survived`: Did the passenger survive? (factor).
+
+# The Tasks
+
+We would like to find out how the survival status of a passenger on the Titanic depends on the provided additional attributes.
+By employing a tree model we are looking for a separation into homogeneous subgroups based on the additional information.
+
+Our response in this case is the binary variable `survived`, as covariates we use the additional variables `gender`, `age`, `class`, `embarked`, `fare`, `sibsp` and `parch`.
+
+Apply the CTree algorithm to build the tree models described in the following steps:
+
+* Load the data set `"titanic.rds"`.
+* Build a tree using pre-pruning with a significance level of 0.01, with a maximum depth of 5 levels and the segment size of terminal nodes not being smaller than 20.
+* Evaluate the performance on the learning data by calculating the corresponding confusion matrix. How large is the misclassification rate?
+* Predict the survival status of a 30-years-old female passenger, travelling with her husband and her two parents who all embarked in Southampton and paid 25 Pounds each for a 2nd class ticket. Does the prediction change if she had a ticket for the 3rd class?
+* Separate the data set into a learning set (2/3 of the full data) and a testing set (1/3 of the full data). Note that for observations in the test data which include NAs predictions can not be made. Build a tree on the learning data set and predict the survival status on the testing data set. Evaluate the performance based on the number of misclassifications. How do parameters such as a minimal segment size or the significance level applied for pre-pruning influence the performance?
+
+```{r, include = FALSE}
+formula <- survived ~  gender + age + class + embarked + fare + sibsp + parch
+
+library("partykit")
+ct <- ctree(formula, data = data)
+ct <- ctree(formula, data = data, control = ctree_control(alpha = 0.01, minbucket = 20, maxdepth = 5))
+
+library("caret")
+caret::confusionMatrix(data$survived, predict(ct, newdata = data))
+
+newpassenger <- data.frame(gender = "female",
+                           age = 30,
+                           class = "2nd",
+                           embarked = "S",
+                           fare = 25,
+                           sibsp = "1",
+                           parch = "2")
+predict(ct, newdata = newpassenger)
+
+newpassenger2 <- newpassenger
+newpassenger2$class <- "3rd"
+predict(ct, newdata = newpassenger2)
+```
+
+```{r, include = FALSE, echo = FALSE, out.width = "100%", fig.width = 10, fig.height = 5}
+plot(ct)
+```
+```{r, include = FALSE}
+set.seed(4)
+trainid <- sample(1:NROW(data), size = 1471, replace = FALSE)
+train <- data[trainid,]
+test <- data[-trainid,]
+test <- na.omit(test)
+
+ctrain <- ctree(formula, data = train)
+predtest <- predict(ctrain, newdata = test)
+
+library("caret")
+caret::confusionMatrix(test$survived, predtest)
+
+
+ctrain <- ctree(formula, data = train, control = ctree_control(alpha = 0.01))
+plot(ctrain)
+predtest <- predict(ctrain, newdata = test)
+caret::confusionMatrix(test$survived, predtest)
+```

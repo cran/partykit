@@ -1,0 +1,131 @@
+---
+title: "Exercise: South German Credit"
+output: html_document
+---
+
+
+```{r, include = FALSE}
+file <- "data/german.rds"
+stopifnot(file.exists(file))
+data <- readRDS(file)
+head(data)
+```
+
+
+
+
+In this exercise we will use the 'South German Credit' data set. It contains a classification
+of the credit risk of 1000 individuals into 'good' and 'bad' together with 20 additional attributes.
+
+Simply download the file `r xfun::embed_file(file, text = "german.rds")` by clicking or
+download it from the corresponding homepage
+<http://archive.ics.uci.edu/ml/datasets/South+German+Credit>
+which also provides more detailed information on the data set.
+
+We can import/read this file using `data <- readRDS(...)`. The file
+contains the following information:
+
+* `status`: status of the debtor's checking account with the bank (factor).
+* `duration`: credit duration in months (integer).
+* `credit_history`: history of compliance with previous or concurrent credit contracts (factor).
+* `purpose`: purpose for which the credit is needed (factor).
+* `amount`: credit amount in DM (integer).
+* `savings`: debtor's savings (factor).
+* `employment_duration`: duration of debtor's employment with current employer (factor; discretized quantitative).
+* `installment_rate`: credit installments as a percentage of debtor's disposable income (ordered factor; discretized quantitative).
+* `personal_status_sex`: combined information on sex and marital status (factor; sex cannot be recovered from the variable, because male singles and female non-singles are coded with the same code (2); female widows cannot be easily classified, because the code table does not list them in any of the female categories).
+* `other_debtors`: Is there another debtor or a guarantor for the credit? (factor).
+* `present_residence`: length of time (in years) the debtor lives in the present residence (ordered factor; discretized quantitative).
+* `property`: the debtor's most valuable property, i.e. the highest possible code is used. Code 2 is used, if codes 3 or 4 are not applicable and there is a car or any other relevant property that does not fall under variable `savings` (factor).
+* `age`: age in years (integer).
+* `other_installment_plans`: installment plans from providers other than the credit-giving bank (factor).
+* `housing`: type of housing the debtor lives in (factor)
+* `number_credits`: number of credits including the current one the debtor has (or had) at this bank (ordered factor, discretized quantitative).
+* `job`: quality of debtor's job (ordinal)
+* `people_liable`: number of persons who financially depend on the debtor (i.e., are entitled to maintenance) (factor, discretized quantitative).
+* `telephone`: Is there a telephone landline registered on the debtor's name? (factor; remember that the data are from the 1970s)
+* `foreign_worker`: Is the debtor a foreign worker? (factor)
+* `credit_risk`: Has the credit contract been complied with (good) or not (bad)? (factor)
+
+
+# The Tasks
+
+We would like to find out how the credit risk of a person depends on the provided additional attributes of the person and the considered credit itself.
+Therefore, our response in this case is the binary variable `credit_risk`, as covariates we have 20 additional variables (17 categorical, 3 numeric).
+
+Apply the forest-building function `cforest` to build a forest model as described in the following points:
+
+* Load the data set `"german.rds"`.
+* Build a forest model with 50 trees.
+* Predict the credit risk of a new client who doesn't have a checking account, has never taken a credit before, is a 40-year-old married male who is a skilled employee working in a business in his home town for already 6 years now, and who plans to take one credit of 5000 DM for repairs in his own house where he moved in 3 years ago. The credit duration is one year, the installment rate is 15 %. There is no information provided on his savings and no registered telephone number on the client's name. There are no other installment plans or other debtors and there is no other person depending financially on the client.
+Does it have an impact on the prediction if he plans to spend the money on furniture?
+* Which covariates have the highest influence on the model?
+* Separate the data set into a learning set (2/3 of the full data) and a testing set (1/3 of the full data). Build a forest on the learning data set and predict the credit risk on the testing data set. Assess the performance by evaluating the number of misclassifications on the testing data. How do parameters such as the number of trees influence the performance?
+* Apply the function `ranger` to build a forest model using the same parameters and compare it to the cforest model, e.g., based on predictions, the number of misclassifications on the testing data or variable importance.
+
+```{r, include = FALSE}
+# data <- readRDS("data/german.rds")
+f <- credit_risk ~  status + duration + credit_history + purpose  + amount + savings + employment_duration + installment_rate + personal_status_sex + other_debtors + present_residence + property + age + other_installment_plans + housing + number_credits + job + people_liable + telephone + foreign_worker
+
+library("partykit")
+cf <- cforest(formula = f, data = data, ntree = 50)
+
+newclient <- data.frame(status = "no checking account",
+                        duration = 12,
+                        credit_history = "no credits taken/all credits paid back duly",
+                        purpose = "repairs",
+                        amount = 5000,
+                        savings = "unknown/no savings account",
+                        employment_duration = "4 <= ... < 7 yrs",
+                        installment_rate =  "< 20",
+                        personal_status_sex = "male : married/widowed",
+                        other_debtors = "none",
+                        present_residence = "1 <= ... < 4 yrs",
+                        property = "real estate",
+                        age = 40,
+                        other_installment_plans = "none",
+                        housing = "own",
+                        number_credits = "1",
+                        job = "skilled employee/official",
+                        people_liable = "0 to 2",
+                        telephone = "no",
+                        foreign_worker = "no"
+                        )
+
+newclient2 <- newclient
+newclient2$purpose <- "furniture/equipment"
+
+predict(cf, newdata = newclient)
+predict(cf, newdata = newclient2)
+
+```
+
+```{r, include = FALSE}
+set.seed(4)
+trainid <- sample(1:NROW(data), size = 667, replace = FALSE)
+train <- data[trainid,]
+test <- data[-trainid,]
+
+```
+
+```{r, include = FALSE}
+library("ranger")
+library("caret")
+
+rf <- ranger(formula = f, data = train, num.trees = 50)
+rf$confusion.matrix
+rf <- ranger(formula = f, data = train, num.trees = 500)
+rf$confusion.matrix
+
+rf <- ranger(formula = f, data = train, num.trees = 50)
+
+pred_cf <- predict(cf, newdata = test)
+confusionMatrix(pred_cf, test$credit_risk)
+
+pred_rf <- predict(rf, data = test)$prediction
+confusionMatrix(pred_rf, test$credit_risk)
+
+varimp(cf)
+rf <- ranger(f, data = train, num.trees = 50, importance = "impurity")
+importance(rf)
+```

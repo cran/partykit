@@ -869,3 +869,18 @@ if (require("TH.data")) {
 mt <- lmtree(dist ~ speed, data = cars)
 mt2 <- nodeprune(mt, 2)
 stopifnot(all(mt2$fitted[["(fitted)"]] %in% c(2, 3)))
+
+###
+a <- rep('N',87)
+a[77] <- 'Y'
+b <- rep(FALSE, 87)
+b[c(7,10,11,33,56,77)] <- TRUE
+d <- rep(1,87)
+d[c(29,38,40,42,65,77)] <- 0
+dfb <- data.frame(a = as.factor(a), b = as.factor(b), d = as.factor(d))
+tr <- ctree(a ~ ., data = dfb, control = ctree_control(minsplit = 10,minbucket = 5,
+                                                       maxsurrogate = 2, alpha = 0.05))
+tNodes <- node_party(tr)
+nodeInfo <- info_node(tNodes)
+stopifnot(names(nodeInfo$p.value) == "d")
+stopifnot(split_node(tNodes)$varid == 3)

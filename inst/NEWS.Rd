@@ -2,6 +2,14 @@
 \name{NEWS}
 \title{NEWS file for the \pkg{partykit} package}
 
+\section{Changes in Version 1.2-9 (2020-07-08)}{
+  \subsection{Bugfixes}{
+  \itemize{
+    \item{Fix an issue with printing of tied p-values.}
+  }
+}
+}
+
 \section{Changes in Version 1.2-8 (2020-06-09)}{
   \subsection{Bugfixes}{
   \itemize{
@@ -10,6 +18,7 @@
   }
 }
 }
+
 
 \section{Changes in Version 1.2-7 (2020-03-06)}{
   \subsection{Bugfixes}{
@@ -63,8 +72,7 @@
   \subsection{Bugfixes}{
   \itemize{
     \item{\code{predict} did not pay attention to \code{xlev}; this caused
-          problems when empty factor levels were removed prior to tree fitting. See
-         \url{https://stackoverflow.com/questions/51043870/lmtree-suspect-behavior-with-factors}.}
+          problems when empty factor levels were removed prior to tree fitting.}
     \item{\code{nodeprune} may have got fitted terminal node numbers wrong,
           spotted by Jason Parker.}
   }

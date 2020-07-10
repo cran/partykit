@@ -1,0 +1,125 @@
+---
+title: "Exercise: South German Credit"
+output: html_document
+---
+
+
+```{r, include = FALSE}
+file <- "data/german.rds"
+stopifnot(file.exists(file))
+data <- readRDS(file)
+head(data)
+```
+
+
+
+
+In this exercise we will use the 'South German Credit' data set. It contains a classification of the credit risk of 1000 individuals into 'good' and 'bad' together with 20 additional attributes.
+
+Simply download the file `r xfun::embed_file(file, text = "german.rds")` by clicking or
+download it from the corresponding homepage
+<http://archive.ics.uci.edu/ml/datasets/South+German+Credit>
+which also provides more detailed information on the data set.
+
+We can import/read this file using `data <- readRDS(...)`. The file
+contains the following information:
+
+* `status`: status of the debtor's checking account with the bank (factor).
+* `duration`: credit duration in months (integer).
+* `credit_history`: history of compliance with previous or concurrent credit contracts (factor).
+* `purpose`: purpose for which the credit is needed (factor).
+* `amount`: credit amount in DM (integer).
+* `savings`: debtor's savings (factor).
+* `employment_duration`: duration of debtor's employment with current employer (factor; discretized quantitative).
+* `installment_rate`: credit installments as a percentage of debtor's disposable income (ordered factor; discretized quantitative).
+* `personal_status_sex`: combined information on sex and marital status (factor; sex cannot be recovered from the variable, because male singles and female non-singles are coded with the same code (2); female widows cannot be easily classified, because the code table does not list them in any of the female categories).
+* `other_debtors`: Is there another debtor or a guarantor for the credit? (factor).
+* `present_residence`: length of time (in years) the debtor lives in the present residence (ordered factor; discretized quantitative).
+* `property`: the debtor's most valuable property, i.e. the highest possible code is used. Code 2 is used, if codes 3 or 4 are not applicable and there is a car or any other relevant property that does not fall under variable `savings` (factor).
+* `age`: age in years (integer).
+* `other_installment_plans`: installment plans from providers other than the credit-giving bank (factor).
+* `housing`: type of housing the debtor lives in (factor)
+* `number_credits`: number of credits including the current one the debtor has (or had) at this bank (ordered factor, discretized quantitative).
+* `job`: quality of debtor's job (ordinal)
+* `people_liable`: number of persons who financially depend on the debtor (i.e., are entitled to maintenance) (factor, discretized quantitative).
+* `telephone`: Is there a telephone landline registered on the debtor's name? (factor; remember that the data are from the 1970s)
+* `foreign_worker`: Is the debtor a foreign worker? (factor)
+* `credit_risk`: Has the credit contract been complied with (good) or not (bad)? (factor)
+
+
+# The Tasks
+
+We would like to find out how the credit risk of a person depends on the provided additional attributes of the person and the considered credit itself.
+By employing a tree model we are looking for a separation into homogeneous subgroups based on the additional information.
+
+Our response in this case is the binary variable `credit_risk`, as covariates we have 20 additional variables (17 categorical, 3 numeric).
+
+Apply the CTree algorithm to build the tree models described in the following steps:
+
+* Load the data set `"german.rds"`.
+* Build a tree using pre-pruning with a significance level of 0.04, with a maximum depth of 4 levels and the segment size of terminal nodes not being smaller than 15.
+* Evaluate the performance on the learning data by calculating the corresponding confusion matrix. How large is the misclassification rate?
+* Predict the credit risk of a new client who doesn't have a checking account, has never taken a credit before, is a 35-year-old married male who is a skilled employee working in a business in his home town for already 5 years now, and who plans to take one credit of 4000 DM for repairs in his own house where he moved in 2 years ago. The credit duration is 24 months, the installment rate is 30 %. There is no information provided on his savings and no registered telephone number on the client's name. There are no other installment plans or other debtors and there is no other person depending financially on the client.
+Does it have an impact on the prediction if the duration is reduced to only 12 months?
+* Separate the data set into a learning set (2/3 of the full data) and a testing set (1/3 of the full data). Build a tree on the learning data set and predict the credit risk on the testing data set. Evaluate the performance based on the number of misclassifications. How do parameters such as a minimal segment size or the significance level applied for pre-pruning influence the performance?
+
+```{r, include = FALSE}
+# data <- readRDS("data/german.rds")
+formula <- credit_risk ~  status + duration + credit_history + purpose  + amount + savings + employment_duration + installment_rate + personal_status_sex + other_debtors + present_residence + property + age + other_installment_plans + housing + number_credits + job + people_liable + telephone + foreign_worker
+
+library("partykit")
+ct <- ctree(formula, data = data)
+ct <- ctree(formula, data = data, control = ctree_control(alpha = 0.04, minbucket = 15, maxdepth = 4))
+
+library("caret")
+caret::confusionMatrix(data$credit_risk, predict(ct, newdata = data))
+
+newclient <- data.frame(status = "no checking account",
+                        duration = 24,
+                        credit_history = "no credits taken/all credits paid back duly",
+                        purpose = "repairs",
+                        amount = 4000,
+                        savings = "unknown/no savings account",
+                        employment_duration = "4 <= ... < 7 yrs",
+                        installment_rate =  "25 <= ... < 35",
+                        personal_status_sex = "male : married/widowed",
+                        other_debtors = "none",
+                        present_residence = "1 <= ... < 4 yrs",
+                        property = "real estate",
+                        age = 35,
+                        other_installment_plans = "none",
+                        housing = "own",
+                        number_credits = "1",
+                        job = "skilled employee/official",
+                        people_liable = "0 to 2",
+                        telephone = "no",
+                        foreign_worker = "no"
+                        )
+predict(ct, newdata = newclient)
+
+newclient2 <- newclient
+newclient2$duration <- 12
+predict(ct, newdata = newclient2)
+```
+
+```{r, include = FALSE, echo = FALSE, out.width = "100%", fig.width = 10, fig.height = 5}
+plot(ct)
+```
+```{r, include = FALSE}
+set.seed(4)
+trainid <- sample(1:NROW(data), size = 667, replace = FALSE)
+train <- data[trainid,]
+test <- data[-trainid,]
+
+ctrain <- ctree(formula, data = train)
+predtest <- predict(ctrain, newdata = test)
+
+library("caret")
+caret::confusionMatrix(test$credit_risk, predtest)
+
+
+ctrain <- ctree(formula, data = train, control = ctree_control(alpha = 0.01))
+plot(ctrain)
+predtest <- predict(ctrain, newdata = test)
+caret::confusionMatrix(test$credit_risk, predtest)
+```

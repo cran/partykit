@@ -1,0 +1,95 @@
+---
+title: "Exercise: Wage"
+output: html_document
+---
+
+
+```{r, include = FALSE}
+file <- "data/CPS1985.rds"
+stopifnot(file.exists(file))
+data <- readRDS(file)
+head(data)
+```
+
+In this exercise we will use the CPS1985 data set, a random sample from the May 1985 US Current Population Survey.
+The data set provides information on the hourly wage in US dollars of 534 individuals together with 10 additional variables such as education, age and experience.
+
+Simply download the file `r xfun::embed_file(file, text = "CPS1985.rds")` by clicking or download it from the source
+<http://lib.stat.cmu.edu/datasets/CPS_85_Wages>
+which also provides more detailed information on the data set.
+
+We can import/read this file using `data <- readRDS(...)`. The file
+contains the following information:
+
+* `wage`: wage in US dollars per hour (numeric).
+* `education`: education in years (numeric).
+* `experience`: potential work experience in years; age - education - 6 (numeric).
+* `age`: age in years (numeric).
+* `ethnicity`: Caucasian, Hispanic, other (factor).
+* `gender`: male or female (factor).
+* `union`: Does the individual work on a union job? (factor).
+
+# The Tasks
+
+We would like to find out how wage depends on the provided additional attributes.
+Our response variable is the logarithm of the numeric variable `wage`.
+As covariates we use the additional variables `education`, `experience`, `age`, `ethnicity`, `gender` and `union`.
+
+Apply the forest-building function `cforest` to build a forest model as described in the following points:
+
+* Load the data set `"CPS1985.rds"`.
+* Build a forest model with 50 trees.
+* Predict the hourly log(wage) for a 37-year old hispanic female with 10 years of experience and 17 years of education who is not working on a union job. Does the prediction change if she was working on a union job?
+* Which covariates have the highest influence on the model?
+* Separate the data set into a learning set (2/3 of the full data) and a testing set (1/3 of the full data). Build a forest on the learning data set and predict the log(wage) on the testing data set. Evaluate the performance by calculating the root-mean-squared error (RMSE) on the testing data. How do parameters such as the number of trees influence the performance?
+* Apply the function `ranger` to build a forest model using the same parameters and compare it to the cforest model, e.g., based on predictions, the RMSE on the testing data or variable importance.
+
+
+```{r, include = FALSE}
+f <- log(wage) ~ education + experience + age + ethnicity + gender + union
+
+library("partykit")
+
+set.seed(4)
+cf <- cforest(formula = f, data = data, ntree = 50)
+  
+newworker <- data.frame(education = 17,
+                        experience = 10,
+                        age = 37,
+                        ethnicity = "hispanic",
+                        gender = "female",
+                        union = "no")
+
+
+predict(cf, newdata = newworker)
+
+newworker2 <- newworker
+newworker2$union <- "yes"
+predict(cf, newdata = newworker2)
+```
+
+```{r, include = FALSE}
+set.seed(4)
+trainid <- sample(1:NROW(data), size = 356, replace = FALSE)
+train <- data[trainid,]
+test <- data[-trainid,]
+```
+
+```{r, include = FALSE}
+set.seed(4)
+library("ranger")
+rf <- ranger(f, data = train, num.trees = 50)
+
+cf <- cforest(f, data = train, ntree = 50)
+
+pred_cf <- predict(cf, newdata = test)
+rmse_cf <- sqrt(sum((log(test$wage) - pred_cf)^2))
+
+pred_rf <- predict(rf, data = test)$prediction
+rmse_rf <- sqrt(sum((log(test$wage) - pred_rf)^2))
+
+varimp(cf)
+rf <- ranger(f, data = train, num.trees = 50, importance = "impurity")
+importance(rf)
+
+```
