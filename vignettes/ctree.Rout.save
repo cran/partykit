@@ -95,7 +95,7 @@ function (X, FUN, ...)
         X <- as.list(X)
     .Internal(lapply(X, FUN))
 }
-<bytecode: 0x55bd2836d3b0>
+<bytecode: 0x555b725063b0>
 <environment: namespace:base>
 
 $saveinfo
@@ -115,8 +115,8 @@ function (model, trafo, data, subset, weights, whichvar, ctrl)
     .select(model, trafo, data, subset, weights, whichvar, ctrl, 
         FUN = .ctree_test)
 }
-<bytecode: 0x55bd347c9548>
-<environment: 0x55bd347c8978>
+<bytecode: 0x555b7e9ce318>
+<environment: 0x555b7e9d39b8>
 
 $splitfun
 function (model, trafo, data, subset, weights, whichvar, ctrl) 
@@ -126,8 +126,8 @@ function (model, trafo, data, subset, weights, whichvar, ctrl)
     .split(model, trafo, data, subset, weights, whichvar, ctrl, 
         FUN = .ctree_test)
 }
-<bytecode: 0x55bd347cdde0>
-<environment: 0x55bd347cd210>
+<bytecode: 0x555b7e9d2aa0>
+<environment: 0x555b7e9da280>
 
 $svselectfun
 function (model, trafo, data, subset, weights, whichvar, ctrl) 
@@ -137,8 +137,8 @@ function (model, trafo, data, subset, weights, whichvar, ctrl)
     .select(model, trafo, data, subset, weights, whichvar, ctrl, 
         FUN = .ctree_test)
 }
-<bytecode: 0x55bd347c9548>
-<environment: 0x55bd347cd130>
+<bytecode: 0x555b7e9ce318>
+<environment: 0x555b7e9da1a0>
 
 $svsplitfun
 function (model, trafo, data, subset, weights, whichvar, ctrl) 
@@ -148,8 +148,8 @@ function (model, trafo, data, subset, weights, whichvar, ctrl)
     .split(model, trafo, data, subset, weights, whichvar, ctrl, 
         FUN = .ctree_test)
 }
-<bytecode: 0x55bd347cdde0>
-<environment: 0x55bd347ccfe0>
+<bytecode: 0x555b7e9d2aa0>
+<environment: 0x555b7e9da050>
 
 $teststat
 [1] "maximum"
@@ -247,7 +247,7 @@ function (X, FUN, ...)
         X <- as.list(X)
     .Internal(lapply(X, FUN))
 }
-<bytecode: 0x55bd2836d3b0>
+<bytecode: 0x555b725063b0>
 <environment: namespace:base>
 
 $saveinfo
@@ -267,8 +267,8 @@ function (model, trafo, data, subset, weights, whichvar, ctrl)
     .select(model, trafo, data, subset, weights, whichvar, ctrl, 
         FUN = .ctree_test)
 }
-<bytecode: 0x55bd347c9548>
-<environment: 0x55bd347fa1b0>
+<bytecode: 0x555b7e9ce318>
+<environment: 0x555b7ea04fd0>
 
 $splitfun
 function (model, trafo, data, subset, weights, whichvar, ctrl) 
@@ -278,8 +278,8 @@ function (model, trafo, data, subset, weights, whichvar, ctrl)
     .split(model, trafo, data, subset, weights, whichvar, ctrl, 
         FUN = .ctree_test)
 }
-<bytecode: 0x55bd347cdde0>
-<environment: 0x55bd347fa0d0>
+<bytecode: 0x555b7e9d2aa0>
+<environment: 0x555b7ea04ef0>
 
 $svselectfun
 function (model, trafo, data, subset, weights, whichvar, ctrl) 
@@ -289,8 +289,8 @@ function (model, trafo, data, subset, weights, whichvar, ctrl)
     .select(model, trafo, data, subset, weights, whichvar, ctrl, 
         FUN = .ctree_test)
 }
-<bytecode: 0x55bd347c9548>
-<environment: 0x55bd347f9ff0>
+<bytecode: 0x555b7e9ce318>
+<environment: 0x555b7ea04e10>
 
 $svsplitfun
 function (model, trafo, data, subset, weights, whichvar, ctrl) 
@@ -300,8 +300,8 @@ function (model, trafo, data, subset, weights, whichvar, ctrl)
     .split(model, trafo, data, subset, weights, whichvar, ctrl, 
         FUN = .ctree_test)
 }
-<bytecode: 0x55bd347cdde0>
-<environment: 0x55bd347f9ea0>
+<bytecode: 0x555b7e9d2aa0>
+<environment: 0x555b7ea04cc0>
 
 $teststat
 [1] "quadratic"
@@ -399,7 +399,7 @@ function (X, FUN, ...)
         X <- as.list(X)
     .Internal(lapply(X, FUN))
 }
-<bytecode: 0x55bd2836d3b0>
+<bytecode: 0x555b725063b0>
 <environment: namespace:base>
 
 $saveinfo
@@ -419,8 +419,8 @@ function (model, trafo, data, subset, weights, whichvar, ctrl)
     .select(model, trafo, data, subset, weights, whichvar, ctrl, 
         FUN = .ctree_test)
 }
-<bytecode: 0x55bd347c9548>
-<environment: 0x55bd3480d900>
+<bytecode: 0x555b7e9ce318>
+<environment: 0x555b7ea1a630>
 
 $splitfun
 function (model, trafo, data, subset, weights, whichvar, ctrl) 
@@ -430,8 +430,8 @@ function (model, trafo, data, subset, weights, whichvar, ctrl)
     .split(model, trafo, data, subset, weights, whichvar, ctrl, 
         FUN = .ctree_test)
 }
-<bytecode: 0x55bd347cdde0>
-<environment: 0x55bd3480d820>
+<bytecode: 0x555b7e9d2aa0>
+<environment: 0x555b7ea1a550>
 
 $svselectfun
 function (model, trafo, data, subset, weights, whichvar, ctrl) 
@@ -441,8 +441,8 @@ function (model, trafo, data, subset, weights, whichvar, ctrl)
     .select(model, trafo, data, subset, weights, whichvar, ctrl, 
         FUN = .ctree_test)
 }
-<bytecode: 0x55bd347c9548>
-<environment: 0x55bd3480d740>
+<bytecode: 0x555b7e9ce318>
+<environment: 0x555b7ea1a470>
 
 $svsplitfun
 function (model, trafo, data, subset, weights, whichvar, ctrl) 
@@ -452,8 +452,8 @@ function (model, trafo, data, subset, weights, whichvar, ctrl)
     .split(model, trafo, data, subset, weights, whichvar, ctrl, 
         FUN = .ctree_test)
 }
-<bytecode: 0x55bd347cdde0>
-<environment: 0x55bd3480d5f0>
+<bytecode: 0x555b7e9d2aa0>
+<environment: 0x555b7ea1a320>
 
 $teststat
 [1] "quadratic"
@@ -551,7 +551,7 @@ function (X, FUN, ...)
         X <- as.list(X)
     .Internal(lapply(X, FUN))
 }
-<bytecode: 0x55bd2836d3b0>
+<bytecode: 0x555b725063b0>
 <environment: namespace:base>
 
 $saveinfo
@@ -571,8 +571,8 @@ function (model, trafo, data, subset, weights, whichvar, ctrl)
     .select(model, trafo, data, subset, weights, whichvar, ctrl, 
         FUN = .ctree_test)
 }
-<bytecode: 0x55bd347c9548>
-<environment: 0x55bd3481efe0>
+<bytecode: 0x555b7e9ce318>
+<environment: 0x555b7ea2dc30>
 
 $splitfun
 function (model, trafo, data, subset, weights, whichvar, ctrl) 
@@ -582,8 +582,8 @@ function (model, trafo, data, subset, weights, whichvar, ctrl)
     .split(model, trafo, data, subset, weights, whichvar, ctrl, 
         FUN = .ctree_test)
 }
-<bytecode: 0x55bd347cdde0>
-<environment: 0x55bd3481ef00>
+<bytecode: 0x555b7e9d2aa0>
+<environment: 0x555b7ea2db50>
 
 $svselectfun
 function (model, trafo, data, subset, weights, whichvar, ctrl) 
@@ -593,8 +593,8 @@ function (model, trafo, data, subset, weights, whichvar, ctrl)
     .select(model, trafo, data, subset, weights, whichvar, ctrl, 
         FUN = .ctree_test)
 }
-<bytecode: 0x55bd347c9548>
-<environment: 0x55bd34822c50>
+<bytecode: 0x555b7e9ce318>
+<environment: 0x555b7ea2da70>
 
 $svsplitfun
 function (model, trafo, data, subset, weights, whichvar, ctrl) 
@@ -604,8 +604,8 @@ function (model, trafo, data, subset, weights, whichvar, ctrl)
     .split(model, trafo, data, subset, weights, whichvar, ctrl, 
         FUN = .ctree_test)
 }
-<bytecode: 0x55bd347cdde0>
-<environment: 0x55bd34822b00>
+<bytecode: 0x555b7e9d2aa0>
+<environment: 0x555b7ea2d920>
 
 $teststat
 [1] "quadratic"
@@ -703,7 +703,7 @@ function (X, FUN, ...)
         X <- as.list(X)
     .Internal(lapply(X, FUN))
 }
-<bytecode: 0x55bd2836d3b0>
+<bytecode: 0x555b725063b0>
 <environment: namespace:base>
 
 $saveinfo
@@ -723,8 +723,8 @@ function (model, trafo, data, subset, weights, whichvar, ctrl)
     .select(model, trafo, data, subset, weights, whichvar, ctrl, 
         FUN = .ctree_test)
 }
-<bytecode: 0x55bd347c9548>
-<environment: 0x55bd34836410>
+<bytecode: 0x555b7e9ce318>
+<environment: 0x555b7ea41230>
 
 $splitfun
 function (model, trafo, data, subset, weights, whichvar, ctrl) 
@@ -734,8 +734,8 @@ function (model, trafo, data, subset, weights, whichvar, ctrl)
     .split(model, trafo, data, subset, weights, whichvar, ctrl, 
         FUN = .ctree_test)
 }
-<bytecode: 0x55bd347cdde0>
-<environment: 0x55bd34836330>
+<bytecode: 0x555b7e9d2aa0>
+<environment: 0x555b7ea41150>
 
 $svselectfun
 function (model, trafo, data, subset, weights, whichvar, ctrl) 
@@ -745,8 +745,8 @@ function (model, trafo, data, subset, weights, whichvar, ctrl)
     .select(model, trafo, data, subset, weights, whichvar, ctrl, 
         FUN = .ctree_test)
 }
-<bytecode: 0x55bd347c9548>
-<environment: 0x55bd34836250>
+<bytecode: 0x555b7e9ce318>
+<environment: 0x555b7ea41070>
 
 $svsplitfun
 function (model, trafo, data, subset, weights, whichvar, ctrl) 
@@ -756,8 +756,8 @@ function (model, trafo, data, subset, weights, whichvar, ctrl)
     .split(model, trafo, data, subset, weights, whichvar, ctrl, 
         FUN = .ctree_test)
 }
-<bytecode: 0x55bd347cdde0>
-<environment: 0x55bd34836100>
+<bytecode: 0x555b7e9d2aa0>
+<environment: 0x555b7ea40f20>
 
 $teststat
 [1] "quadratic"
@@ -1516,11 +1516,11 @@ p.value   0.2771841  0.003498545
 
 
 > mean((predict(airq_lmtree, newdata = airq) - airq$Ozone)^2)
-[1] 446.0366
+[1] 371.5366
 
 > detach(package:party)
 
  *** Run successfully completed ***
 > proc.time()
    user  system elapsed 
-  6.600   0.120   6.718 
+  4.316   0.121   4.434 

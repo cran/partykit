@@ -77,19 +77,19 @@
 
     Leo Breiman (2001). Random Forests. \emph{Machine Learning}, 45(1), 5--32.
 
-    Alexander Hapfelmeier, Torsten Hothorn, Kurt Ulm, and Carolin Strobl (2012).
+    Alexander Hapfelmeier, Torsten Hothorn, Kurt Ulm, and Carolin Strobl (2014).
     A New Variable Importance Measure for Random Forests with Missing Data.
-    \emph{Statistics and Computing}, \url{https://dx.doi.org/10.1007/s11222-012-9349-1}
+    \emph{Statistics and Computing}, \bold{24}(1), 21-34. 
+    \url{https://dx.doi.org/10.1007/s11222-012-9349-1}
 
     Torsten Hothorn, Kurt Hornik, and Achim Zeileis (2006b). Unbiased
     Recursive Partitioning: A Conditional Inference Framework.
-    \emph{Journal of Computational and Graphical Statistics}, \bold{15} (3),
-    651-674.  Preprint available from 
-    \url{http://statmath.wu-wien.ac.at/~zeileis/papers/Hothorn+Hornik+Zeileis-2006.pdf}
+    \emph{Journal of Computational and Graphical Statistics}, \bold{15}(3),
+    651-674. \url{https://dx.doi.org/10.1198/106186006X133933}
 
     Carolin Strobl, Anne-Laure Boulesteix, Thomas Kneib, Thomas Augustin, and Achim Zeileis (2008).
     Conditional Variable Importance for Random Forests. \emph{BMC Bioinformatics}, \bold{9}, 307. 
-    \url{http://www.biomedcentral.com/1471-2105/9/307}
+    \url{https://doi.org/10.1186/1471-2105-8-25}
 }
 \examples{
     

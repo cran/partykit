@@ -1104,8 +1104,8 @@ tr_lm <- lm(eval ~ beauty + gender + minority + native + tenure + division,
 Then, the model-based tree can be estimated with \code{lmtree()} using only
 \code{beauty} as a regressor and all remaining variables for partitioning.
 For WLS estimation, we set \code{weights = students} and \code{caseweights = FALSE}
-(because the weights are only proportionality factors and do not signal exactly
-replicated observations).
+because the weights are only proportionality factors and do not signal exactly
+replicated observations \citep[see][for a discussion of the different types of weights]{Lumley:2020}.
 %
 <<TeachingRatings-tree>>=
 (tr_tree <- lmtree(eval ~ beauty | minority + age + gender + division +

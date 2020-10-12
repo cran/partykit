@@ -186,7 +186,9 @@ gettree.cforest <- function(object, tree = 1L, ...) {
             })
         psplits <- psplits[!sapply(psplits, is.null)]
         if (length(psplits) > 0)
-            return(do.call("interaction", lapply(psplits, kidids_split, data = d))[, drop = TRUE])
+            return(do.call("interaction", 
+                lapply(lapply(psplits, kidids_split, data = d), 
+                       factor, exclude = NULL))[, drop = TRUE])
         return(NULL)
     })
     ret <- ret[!sapply(ret, is.null)]

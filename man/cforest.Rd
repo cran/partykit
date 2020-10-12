@@ -198,7 +198,7 @@ Hothorn T, Lausen B, Benner A, Radespiel-Troeger M (2004).
   Bagging Survival Trees.
   \emph{Statistics in Medicine}, \bold{23}(1), 77--91.
 
-Hothorn T, B?hlmann P, Dudoit S, Molinaro A, Van der Laan MJ (2006a).
+Hothorn T, Buehlmann P, Dudoit S, Molinaro A, Van der Laan MJ (2006a).
   Survival Ensembles.
   \emph{Biostatistics}, \bold{7}(3), 355--373.
 
@@ -217,7 +217,7 @@ Meinshausen N (2006).
 Strobl C, Boulesteix AL, Zeileis A, Hothorn T (2007).
   Bias in Random Forest Variable Importance Measures: Illustrations, Sources and a Solution.
   \emph{BMC Bioinformatics}, \bold{8}, 25.
-  \url{http://www.biomedcentral.com/1471-2105/8/25}
+  \url{https://doi.org/10.1186/1471-2105-8-25}
 
 Strobl C, Malley J, Tutz G (2009).
   An Introduction to Recursive Partitioning: Rationale, Application, and Characteristics of
