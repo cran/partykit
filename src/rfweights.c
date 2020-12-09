@@ -73,7 +73,10 @@ SEXP R_rfweights (SEXP fdata, SEXP fnewdata, SEXP weights, SEXP scale) {
         for (int j = 0; j < Nnewdata; j++) {
             if (OOB & (iweights[j] > 0)) continue;
             for (int i = 0; i < Ndata; i++) {
-                if (id[i] == ind[j]) 
+                /* checking tnsize[id[i] - 1] > 0 is a precaution
+                   because partykit::cforest prunes-off empty terminal nodes 
+                   in honest trees */
+                if (id[i] == ind[j] && tnsize[id[i] - 1] > 0)
                     dans[j * Ndata + i] += (double) iweights[i] / tnsize[id[i] - 1];
             }
         }

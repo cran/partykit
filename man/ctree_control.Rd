@@ -14,7 +14,8 @@ ctree_control(teststat = c("quadratic", "maximum"),
     pargs = GenzBretz(),
     nmax = c(yx = Inf, z = Inf), alpha = 0.05, mincriterion = 1 - alpha,
     logmincriterion = log(mincriterion), minsplit = 20L, minbucket = 7L,
-    minprob = 0.01, stump = FALSE, lookahead = FALSE, MIA = FALSE, nresample = 9999L,
+    minprob = 0.01, stump = FALSE, maxvar = Inf, lookahead = FALSE, 
+    MIA = FALSE, nresample = 9999L,
     tol = sqrt(.Machine$double.eps),maxsurrogate = 0L, numsurrogate = FALSE,
     mtry = Inf, maxdepth = Inf,
     multiway = FALSE, splittry = 2L, intersplit = FALSE, majority = FALSE,
@@ -58,6 +59,7 @@ ctree_control(teststat = c("quadratic", "maximum"),
   \item{minprob}{ proportion of observations needed to establish a terminal node.}
   \item{stump}{ a logical determining whether a stump (a tree with a maximum of three
                 nodes only) is to be computed. }
+  \item{maxvar}{ maximum number of variables the tree is allowed to split in.}
   \item{lookahead}{ a logical determining whether a split is implemented only
                     after checking if tests in both daughter nodes can be performed.}
   \item{MIA}{ a logical determining the treatment of \code{NA} as a category in split,

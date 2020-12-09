@@ -75,8 +75,14 @@ cforest(formula, data, weights, subset, offset, cluster, strata,
   \item{perturb}{
     a list with arguments \code{replace} and \code{fraction} determining which type of
     resampling with \code{replace = TRUE} referring to the n-out-of-n bootstrap and
-    \code{replace = FALSE} to sample splitting. \code{fraction} is the number of observations to draw without
-    replacement. }
+    \code{replace = FALSE} to sample splitting. 
+    \code{fraction} is the portion of observations to draw without
+    replacement. Honesty (experimental): If \code{fraction} has two elements, the
+    first fraction defines the portion of observations to be used for tree
+    induction, the second fraction defines the portion of observations used
+    for parameter estimation. The sum of both fractions can be smaller than
+    one but most not exceed one. Details can be found in Section 2.4 of 
+     Wager and Athey (2018).}
   \item{mtry}{
     number of input variables randomly sampled as candidates
     at each node for random forest like algorithms. Bagging, as special case
@@ -112,7 +118,8 @@ cforest(formula, data, weights, subset, offset, cluster, strata,
           For \code{type = "where"}, a list of terminal node ids for each of the
           trees in the forest ist returned.}
   \item{OOB}{
-    a logical defining out-of-bag predictions (only if \code{newdata = NULL}).}
+    a logical defining out-of-bag predictions (only if \code{newdata = NULL}).
+    If the forest was fitted with honesty, this option is ignored.}
   \item{FUN}{
     a function to compute summary statistics. Predictions for each node have to be
     computed based on arguments \code{(y, w)} where \code{y} is the response and
@@ -223,6 +230,12 @@ Strobl C, Malley J, Tutz G (2009).
   An Introduction to Recursive Partitioning: Rationale, Application, and Characteristics of
   Classification and Regression Trees, Bagging, and Random Forests.
   \emph{Psychological Methods}, \bold{14}(4), 323--348.
+
+Stefan Wager & Susan Athey (2018).
+  Estimation and Inference of Heterogeneous Treatment Effects using Random
+  Forests. \emph{Journal of the American Statistical Association},
+  \bold{113}(523), 1228--1242. \url{https://doi.org/10.1080/01621459.2017.1319839}
+
 }
 
 \examples{

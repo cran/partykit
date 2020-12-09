@@ -134,22 +134,59 @@ cforest <- function
     }
 
     idx <- .start_subset(d)
+
+    frctn <- pmin(1, sum(perturb$fraction))
+
     if (is.null(rw)) {
+        ### for honesty testing purposes only 
+        if (frctn == 1) {
+            rw <- lapply(1:ntree, function(b) idx)
+        } else {
         if (is.null(strata)) {
             size <- N
-            if (!perturb$replace) size <- floor(size * perturb$fraction)
+            if (!perturb$replace) size <- floor(size * frctn)
             rw <- replicate(ntree, 
                             sample(idx, size = size, 
-                                   replace = perturb$replace, prob = probw),
+                                   replace = perturb$replace, prob = probw[idx]),
                             simplify = FALSE)
         } else {
-            frac <- if (!perturb$replace) perturb$fraction else 1
+            frac <- if (!perturb$replace) frctn else 1
             rw <- replicate(ntree, function() 
-                  do.call("c", tapply(idx, strata, 
+                  do.call("c", tapply(idx, strata[idx], 
                           function(i) 
                               sample(i, size = length(i) * frac, 
                                      replace = perturb$replace, prob = probw[i]))))
         }
+        }
+    }
+
+    ### honesty: fraction = c(p1, p2) with p1 + p2 <= 1
+    ### p1 is the fraction of samples used for tree induction
+    ### p2 is the fraction used for honest predictions (nearest neighbor
+    ### weights)
+    ### works for subsampling only
+    if (!perturb$replace && length(perturb$fraction) == 2L) {
+        frctn <- perturb$fraction[2L]
+        if (is.null(strata)) {
+            size <- N
+            if (!perturb$replace) size <- floor(size * frctn)
+            hn <- lapply(1:ntree, function(b)
+                            sample(rw[[b]], size = size, 
+                                   replace = perturb$replace, prob = probw[rw[[b]]]))
+        } else {
+            frac <- if (!perturb$replace) frctn else 1
+            hn <- lapply(1:ntree, function(b)
+                  do.call("c", tapply(rw[[b]], strata[rw[[b]]], 
+                          function(i) 
+                              sample(i, size = length(i) * frac, 
+                                     replace = perturb$replace, prob = probw[i]))))
+        }
+        rw <- lapply(1:ntree, function(b) rw[[b]][!(rw[[b]] %in% hn[[b]])])
+        tmp <- hn
+        hn <- rw
+        rw <- tmp
+    } else {
+        hn <- NULL
     }
 
     ## apply infrastructure for determining split points
@@ -168,6 +205,14 @@ cforest <- function
     forest <- applyfun(1:ntree, function(b) {
         if (trace) setTxtProgressBar(pb, b/ntree)
         ret <- updatefun(sort(rw[[b]]), integer(0), control)
+        ### honesty: prune-off empty nodes
+        if (!is.null(hn)) {
+            nid <- nodeids(ret$nodes, terminal = TRUE)
+            nd <- unique(fitted_node(ret$nodes, data = d$data, obs = hn[[b]]))
+            prn <- nid[!nid %in% nd]
+            if (length(prn) > 0)
+                ret <- list(nodes = nodeprune(ret$nodes, ids = prn), trafo = ret$trafo)
+        }
         # trafo <<- ret$trafo
         ret$nodes
     })
@@ -188,6 +233,10 @@ cforest <- function
     ret <- constparties(nodes = forest, data = mf, weights = rw,
                         fitted = fitted, terms = d$terms$all,
                         info = list(call = match.call(), control = control))
+    if (!is.null(hn))
+        ret$honest_weights <- lapply(hn, function(x) 
+            as.integer(tabulate(x, nbins = length(idx))))
+
     ret$trafo <- trafo
     ret$predictf <- d$terms$z
     class(ret) <- c("cforest", class(ret))
@@ -222,9 +271,13 @@ predict.cforest <- function(object, newdata = NULL, type = c("response", "prob",
     if (type == "node")
         return(lapply(forest, fitted_node, data = nd, vmatch = vmatch, ...))
 
-    ### extract weights
-    rw <- object$weights
-
+    ### extract weights: use honest weights when available
+    if (is.null(object$honest_weights)) {
+        rw <- object$weights 
+    } else {
+        rw <- object$honest_weights
+        OOB <- FALSE
+    }
     w <- 0L
 
     applyfun <- lapply

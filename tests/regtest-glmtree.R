@@ -137,7 +137,7 @@ fmla_p <- as.formula("y ~ x + z_noise + z_noise_1 | z + z_noise_2")
 m_bt <- glmtree(formula = fmla, data = d1, breakties = TRUE)
 m_df <- glmtree(formula = fmla, data = d1, breakties = FALSE)
 
-all.equal(m_bt, m_df)
+all.equal(m_bt, m_df, check.environment = FALSE)
 
 unclass(m_bt)$node$info$criterion
 unclass(m_df)$node$info$criterion

@@ -1,6 +1,6 @@
 
-R version 3.6.2 (2019-12-12) -- "Dark and Stormy Night"
-Copyright (C) 2019 The R Foundation for Statistical Computing
+R Under development (unstable) (2020-12-09 r79597) -- "Unsuffered Consequences"
+Copyright (C) 2020 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -492,7 +492,7 @@ Objective function (negative log-likelihood): 2552.12
 > m_bt <- glmtree(formula = fmla, data = d1, breakties = TRUE)
 > m_df <- glmtree(formula = fmla, data = d1, breakties = FALSE)
 > 
-> all.equal(m_bt, m_df)
+> all.equal(m_bt, m_df, check.environment = FALSE)
 [1] "Component \"node\": Component \"kids\": Component 1: Component 5: Component 6: Mean relative difference: 0.1237503"
 [2] "Component \"node\": Component \"kids\": Component 2: Component 5: Component 5: Mean relative difference: 0.1746109"
 [3] "Component \"node\": Component \"kids\": Component 2: Component 5: Component 6: Mean relative difference: 0.0443985"
@@ -564,4 +564,4 @@ NULL
 > 
 > proc.time()
    user  system elapsed 
- 19.373   0.084  19.439 
+ 22.086   0.132  22.203 
