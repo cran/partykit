@@ -120,7 +120,7 @@ print.constparty <- function(x,
       wsym <- "w"
     }
   }
-  yclass <- class(y)[1]
+  yclass <- .response_class(y)
   if(yclass == "ordered") yclass <- "factor"
   if(!(yclass %in% c("Surv", "factor"))) yclass <- "numeric"
   

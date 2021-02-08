@@ -30,7 +30,7 @@ logLik.constparty <- function(object, newdata, weights, perm = NULL, ...) {
         pr <- predict(object, newdata = newdata, 
                       type = ifelse(inherits(y, "factor"), "prob", "response"), ...)
     }
-    ll <- switch(class(y)[1], 
+    ll <- switch(.response_class(y), 
            "integer" = {
                -(y - pr)^2
            },

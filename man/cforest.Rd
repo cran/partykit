@@ -224,7 +224,7 @@ Meinshausen N (2006).
 Strobl C, Boulesteix AL, Zeileis A, Hothorn T (2007).
   Bias in Random Forest Variable Importance Measures: Illustrations, Sources and a Solution.
   \emph{BMC Bioinformatics}, \bold{8}, 25.
-  \url{https://doi.org/10.1186/1471-2105-8-25}
+  \doi{10.1186/1471-2105-8-25}
 
 Strobl C, Malley J, Tutz G (2009).
   An Introduction to Recursive Partitioning: Rationale, Application, and Characteristics of
@@ -234,7 +234,7 @@ Strobl C, Malley J, Tutz G (2009).
 Stefan Wager & Susan Athey (2018).
   Estimation and Inference of Heterogeneous Treatment Effects using Random
   Forests. \emph{Journal of the American Statistical Association},
-  \bold{113}(523), 1228--1242. \url{https://doi.org/10.1080/01621459.2017.1319839}
+  \bold{113}(523), 1228--1242. \doi{10.1080/01621459.2017.1319839}
 
 }
 

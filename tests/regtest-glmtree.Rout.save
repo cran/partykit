@@ -1,5 +1,5 @@
 
-R Under development (unstable) (2020-12-09 r79597) -- "Unsuffered Consequences"
+R version 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
 Copyright (C) 2020 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -253,25 +253,25 @@ List of 3
   ..$ NA: NULL
   ..$ NA: NULL
  $ 2:List of 2
-  ..$ object:List of 23
+  ..$ object:List of 24
   .. ..- attr(*, "class")= chr [1:2] "glm" "lm"
   ..$ NA    : NULL
  $ 3:List of 2
-  ..$ object:List of 23
+  ..$ object:List of 24
   .. ..- attr(*, "class")= chr [1:2] "glm" "lm"
   ..$ NA    : NULL
 [1] "object"
 List of 3
  $ 1:List of 2
-  ..$ object:List of 23
+  ..$ object:List of 24
   .. ..- attr(*, "class")= chr [1:2] "glm" "lm"
   ..$ NA    : NULL
  $ 2:List of 2
-  ..$ object:List of 23
+  ..$ object:List of 24
   .. ..- attr(*, "class")= chr [1:2] "glm" "lm"
   ..$ NA    : NULL
  $ 3:List of 2
-  ..$ object:List of 23
+  ..$ object:List of 24
   .. ..- attr(*, "class")= chr [1:2] "glm" "lm"
   ..$ NA    : NULL
 [1] "estfun"
@@ -281,26 +281,26 @@ List of 3
   ..$ estfun: num [1:1000, 1:2] -0.1375 -0.0583 -0.0553 0.1043 -0.0744 ...
   .. ..- attr(*, "dimnames")=List of 2
  $ 2:List of 2
-  ..$ object:List of 23
+  ..$ object:List of 24
   .. ..- attr(*, "class")= chr [1:2] "glm" "lm"
   ..$ NA    : NULL
  $ 3:List of 2
-  ..$ object:List of 23
+  ..$ object:List of 24
   .. ..- attr(*, "class")= chr [1:2] "glm" "lm"
   ..$ NA    : NULL
 [1] "object" "estfun"
 List of 3
  $ 1:List of 2
-  ..$ object:List of 23
+  ..$ object:List of 24
   .. ..- attr(*, "class")= chr [1:2] "glm" "lm"
   ..$ estfun: num [1:1000, 1:2] -0.1375 -0.0583 -0.0553 0.1043 -0.0744 ...
   .. ..- attr(*, "dimnames")=List of 2
  $ 2:List of 2
-  ..$ object:List of 23
+  ..$ object:List of 24
   .. ..- attr(*, "class")= chr [1:2] "glm" "lm"
   ..$ NA    : NULL
  $ 3:List of 2
-  ..$ object:List of 23
+  ..$ object:List of 24
   .. ..- attr(*, "class")= chr [1:2] "glm" "lm"
   ..$ NA    : NULL
 > 
@@ -323,15 +323,15 @@ List of 3
 [1] "object"
 List of 3
  $ 1:List of 2
-  ..$ object:List of 23
+  ..$ object:List of 24
   .. ..- attr(*, "class")= chr [1:2] "glm" "lm"
   ..$ NA    : NULL
  $ 2:List of 2
-  ..$ object:List of 23
+  ..$ object:List of 24
   .. ..- attr(*, "class")= chr [1:2] "glm" "lm"
   ..$ NA    : NULL
  $ 3:List of 2
-  ..$ object:List of 23
+  ..$ object:List of 24
   .. ..- attr(*, "class")= chr [1:2] "glm" "lm"
   ..$ NA    : NULL
 [1] "estfun"
@@ -351,17 +351,17 @@ List of 3
 [1] "object" "estfun"
 List of 3
  $ 1:List of 2
-  ..$ object:List of 23
+  ..$ object:List of 24
   .. ..- attr(*, "class")= chr [1:2] "glm" "lm"
   ..$ estfun: num [1:1000, 1:2] -0.1375 -0.0583 -0.0553 0.1043 -0.0744 ...
   .. ..- attr(*, "dimnames")=List of 2
  $ 2:List of 2
-  ..$ object:List of 23
+  ..$ object:List of 24
   .. ..- attr(*, "class")= chr [1:2] "glm" "lm"
   ..$ estfun: num [1:704, 1:2] -0.1291 0.5104 -0.0603 -0.1868 -0.0981 ...
   .. ..- attr(*, "dimnames")=List of 2
  $ 3:List of 2
-  ..$ object:List of 23
+  ..$ object:List of 24
   .. ..- attr(*, "class")= chr [1:2] "glm" "lm"
   ..$ estfun: num [1:296, 1:2] -0.1053 -0.0877 0.0544 -0.1581 0.43 ...
   .. ..- attr(*, "dimnames")=List of 2
@@ -564,4 +564,4 @@ NULL
 > 
 > proc.time()
    user  system elapsed 
- 22.086   0.132  22.203 
+ 20.340   0.056  20.394 

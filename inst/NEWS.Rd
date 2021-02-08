@@ -2,6 +2,27 @@
 \name{NEWS}
 \title{NEWS file for the \pkg{partykit} package}
 
+\section{Changes in Version 1.2-12 (2021-02-08)}{
+  \subsection{New Features}{
+  \itemize{
+    \item{Add \code{method} argument to \code{glmtree}. The default is to use
+          \code{"glm.fit"} (as was hard-coded previously) but this can also be
+	  changed, e.g., to \code{"brglmFit"} from \pkg{brglm2} for bias-reduced
+	  estimation of generalized linear models.}
+  }
+}
+  \subsection{Bugfixes}{
+  \itemize{
+    \item{Fix LaTeX problem.}
+    \item{Better checks for response classes, fixing a bug reported by John Ogawa.}
+    \item{In \code{lmtree} and \code{glmtree} the \code{"xlevels"} attribute for the
+      regressors is preserved in the models fitted within the trees. Thus, predicting
+      for data whose \code{"xlevels"} do not match, an error is generated now
+      (as opposed to warning and partially incorrect predictions).}
+  }
+}
+}
+
 \section{Changes in Version 1.2-11 (2020-12-09)}{
   \subsection{New Features}{
   \itemize{
@@ -18,6 +39,7 @@
   }
 }
 }
+
 
 \section{Changes in Version 1.2-10 (2020-10-12)}{
   \subsection{Bugfixes}{

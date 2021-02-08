@@ -24,7 +24,8 @@ cf_ss2 <- cforest(y ~ x, strata = s, ntree = 5, mtry = 1,
 
 stopifnot(sum(tapply(cf_ss2$weights[[1]], s, sum)) == n / 2)
 
-stopifnot(all.equal(cf_ss$nodes, cf_ss2$nodes))
+if (.Platform$OS.type != "windows")
+    stopifnot(all.equal(cf_ss$nodes, cf_ss2$nodes))
 stopifnot(all.equal(cf_ss$weights, cf_ss2$weights))
 stopifnot(all.equal(predict(cf_ss, type = "node"), 
                     predict(cf_ss2, type = "node")))

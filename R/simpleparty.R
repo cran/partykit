@@ -6,7 +6,7 @@
 
   ## type of predictions
   y <- node_party(x)$info$prediction
-  yclass <- class(y)[1]
+  yclass <- .response_class(y)
   if(yclass == "ordered") yclass <- "factor"
   if(!(yclass %in% c("survfit", "factor"))) yclass <- "numeric"
 
@@ -125,7 +125,7 @@ as.simpleparty.constparty <- function(obj, ...) {
   obj$fitted <- NULL
 
   ## response info
-  rtype <- class(fit[["(response)"]])[1]
+  rtype <- .response_class(fit[["(response)"]])
   if (rtype == "ordered") rtype <- "factor"    
   if (rtype == "integer") rtype <- "numeric"
 

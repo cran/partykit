@@ -22,7 +22,7 @@ node_bivplot <- function(mobobj, which = NULL, id = TRUE, pop = TRUE,
   
   ## if no explanatory variables: behave like plot.constparty
   if(inherits(X, "try-error")) {
-    rval <- switch(class(y)[1L],
+    rval <- switch(.response_class(y),
       "Surv" = node_surv(mobobj, id = id, mainlab = mainlab, ...),
       "factor" = node_barplot(mobobj, id = id, mainlab = mainlab, ...),
       "ordered" = node_barplot(mobobj, id = id, mainlab = mainlab, ...),

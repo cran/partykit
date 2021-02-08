@@ -1,6 +1,6 @@
 ## simple wrapper function to specify fitter and return class
 glmtree <- function(formula, data, subset, na.action, weights, offset, cluster,
-  family = gaussian, epsilon = 1e-8, maxit = 25, ...)
+  family = gaussian, epsilon = 1e-8, maxit = 25, method = "glm.fit", ...)
 {
   ## use dots for setting up mob_control
   control <- mob_control(...)
@@ -41,6 +41,7 @@ glmtree <- function(formula, data, subset, na.action, weights, offset, cluster,
   m$control <- control
   m$epsilon <- epsilon
   m$maxit <- maxit
+  m$method <- method
   if("..." %in% names(m)) m[["..."]] <- NULL
   if(!fam) m$family <- family
   m[[1L]] <- as.call(quote(partykit::mob))
@@ -73,9 +74,11 @@ glmfit <- function(y, x, start = NULL, weights = NULL, offset = NULL, cluster = 
   if(is.null(x)) x <- matrix(1, nrow = NROW(y), ncol = 1L,
     dimnames = list(NULL, "(Intercept)"))
   
-  ## call glm fitting function
+  ## call glm fitting function (defaulting to glm.fit)
+  glm.method <- if("method" %in% names(args)) args[["method"]] else "glm.fit"
+  args[["method"]] <- NULL
   args <- c(list(x = x, y = y, start = start, weights = weights, offset = offset), args)
-  z <- do.call("glm.fit", args)
+  z <- do.call(glm.method, args)
 
   ## degrees of freedom
   df <- z$rank

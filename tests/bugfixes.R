@@ -884,3 +884,9 @@ tNodes <- node_party(tr)
 nodeInfo <- info_node(tNodes)
 stopifnot(names(nodeInfo$p.value) == "d")
 stopifnot(split_node(tNodes)$varid == 3)
+
+### reported by John Ogawa, 2020-12-11
+class(dfb$a) <- c("Hansi", "factor")
+tr2 <- ctree(a ~ ., data = dfb, control = ctree_control(minsplit = 10,minbucket = 5,
+                                                       maxsurrogate = 2, alpha = 0.05))
+stopifnot(isTRUE(all.equal(tr, tr2, check.attributes = FALSE)))

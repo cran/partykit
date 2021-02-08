@@ -22,7 +22,7 @@
 \newcommand{\Var}{\mathbb{V}}
 \newcommand{\R}{\mathbb{R} }
 \newcommand{\N}{\mathbb{N} }
-\newcommand{\C}{\mathbb{C} }
+%%\newcommand{\C}{\mathbb{C} }
 \newcommand{\argmin}{\operatorname{argmin}\displaylimits}
 \newcommand{\argmax}{\operatorname{argmax}\displaylimits}
 \newcommand{\LS}{\mathcal{L}_n}

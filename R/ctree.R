@@ -504,9 +504,7 @@ ctree <- function(formula, data, subset, weights, na.action = na.pass, offset, c
             yfun <- ytrafo[[response]]
             rtype <- "user-defined"
         } else {
-            rtype <- class(data[[response]])[1]
-            if (rtype == "integer") rtype <- "numeric"
-            if (rtype == "AsIs") rtype <- "numeric"
+            rtype <- .response_class(data[[response]])
         }
         response <- data[[response]]
 
@@ -524,7 +522,8 @@ ctree <- function(formula, data, subset, weights, na.action = na.pass, offset, c
                 return(matrix(sc[as.integer(response)], ncol = 1))
             },
             "numeric" = response,
-            "Surv" = .logrank_trafo(response)
+            "Surv" = .logrank_trafo(response),
+            stop("unknown response class")
         )
     } else {
         ### multivariate response

@@ -1,5 +1,5 @@
 
-R version 4.0.2 (2020-06-22) -- "Taking Off Again"
+R version 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
 Copyright (C) 2020 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -1125,6 +1125,12 @@ Levels: Never < Within a Year < Over a Year
 > stopifnot(names(nodeInfo$p.value) == "d")
 > stopifnot(split_node(tNodes)$varid == 3)
 > 
+> ### reported by John Ogawa, 2020-12-11
+> class(dfb$a) <- c("Hansi", "factor")
+> tr2 <- ctree(a ~ ., data = dfb, control = ctree_control(minsplit = 10,minbucket = 5,
++                                                        maxsurrogate = 2, alpha = 0.05))
+> stopifnot(isTRUE(all.equal(tr, tr2, check.attributes = FALSE)))
+> 
 > proc.time()
    user  system elapsed 
-  2.294   0.089   2.374 
+  2.901   0.102   3.000 

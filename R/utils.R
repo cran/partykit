@@ -114,3 +114,17 @@ get_paths <- function(obj, i) {
 
 .rfweights <- function(fdata, fnewdata, rw, scale)
     w <- .Call(R_rfweights, fdata, fnewdata, rw, scale)
+
+### determine class of response
+.response_class <- function(x) {
+    if (is.factor(x)) {
+        if (is.ordered(x)) return("ordered")
+        return("factor")
+    }
+    if (inherits(x, "Surv")) return("Surv")
+    if (inherits(x, "survfit")) return("survfit")
+    if (inherits(x, "AsIs")) return("numeric")
+    if (is.integer(x)) return("numeric")
+    if (is.numeric(x)) return("numeric")
+    return("unknown")
+}

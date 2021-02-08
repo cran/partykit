@@ -13,7 +13,7 @@
 
 \usage{
 glmtree(formula, data, subset, na.action, weights, offset, cluster,
-  family = gaussian, epsilon = 1e-8, maxit = 25, \dots)
+  family = gaussian, epsilon = 1e-8, maxit = 25, method = "glm.fit", \dots)
 }
 
 \arguments{
@@ -31,7 +31,8 @@ glmtree(formula, data, subset, na.action, weights, offset, cluster,
   \item{cluster}{optional vector (typically numeric or factor) with a
     cluster ID to be employed for clustered covariances in the parameter
     stability tests.}
-  \item{family}{specification of a family for \code{\link[stats]{glm}}.}
+  \item{family, method}{specification of a family and fitting method for
+    \code{\link[stats]{glm}}.}
   \item{epsilon, maxit}{control parameters passed to
     \code{\link[stats]{glm.control}}.}
   \item{\dots}{optional control parameters passed to
