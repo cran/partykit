@@ -84,10 +84,12 @@ ctree_control(teststat = c("quadratic", "maximum"),
                      are simply \code{x <= a} (the default) or interpolated
                      \code{x <= (a + b) / 2}. The latter feature is experimental, see
                      Galili and Meilijson (2016).}
-  \item{majority}{ if \code{FALSE}, observations which can't be classified to a
+  \item{majority}{ if \code{FALSE} (the default), observations which can't be classified to a
                    daughter node because of missing information are randomly
                    assigned (following the node distribution). If \code{TRUE},
-                   they go with the majority (the default in \code{\link[party]{ctree}}).}
+                   they go with the majority (the default in the first
+                   implementation \code{\link[party]{ctree}}) in package
+                   party.}
   \item{caseweights}{ a logical interpreting \code{weights} as case weights.}
   \item{applyfun}{an optional \code{\link[base]{lapply}}-style function with arguments
                   \code{function(X, FUN, \dots)}. It is used for computing the variable selection criterion.

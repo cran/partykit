@@ -72,12 +72,12 @@ cforest <- function
 ) {
    
     ### get the call and the calling environment for .urp_tree
-    call <- match.call(expand.dots = FALSE)
+    call <- match.call(expand.dots = TRUE)
     oweights <- NULL
     if (!missing(weights))
         oweights <- weights
     m <- match(c("formula", "data", "subset", "na.action", "offset", "cluster", 
-                 "scores", "ytrafo", "control"), names(call), 0L)
+                 "scores", "ytrafo", "control", "converged"), names(call), 0L)
     ctreecall <- call[c(1L, m)]
     ctreecall$doFit <- FALSE
     if (!is.null(oweights))
