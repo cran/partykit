@@ -2,6 +2,14 @@
 \name{NEWS}
 \title{NEWS file for the \pkg{partykit} package}
 
+\section{Changes in Version 1.2-16 (2022-06-20)}{
+  \subsection{Buxfixes}{
+  \itemize{
+    \item{Address random CRAN errors (honesty checks).}
+}
+}
+}
+
 \section{Changes in Version 1.2-15 (2021-08-23)}{
   \subsection{Small Improvements}{
   \itemize{
@@ -9,6 +17,7 @@
 }
 }
 }
+
 
 \section{Changes in Version 1.2-14 (2021-04-22)}{
   \subsection{Bugfixes}{
