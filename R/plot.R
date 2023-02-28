@@ -284,7 +284,7 @@ class(edge_simple) <- "grapcon_generator"
     upViewport()
 
     ### position of labels
-    y1max <- max(y1)
+    y1max <- max(y1, na.rm = TRUE)
     ypos <- y0 - (y0 - y1max) * 0.5
     xpos <- x0 - (x0 - x1) * 0.5 * (y0 - y1max)/(y0 - y1)
 
@@ -465,7 +465,7 @@ node_barplot <- function(obj,
         if(is.data.frame(y1)) {
 	  y1 <- t(as.matrix(y1))
 	} else {
-          y1 <- factor(y1, levels = min(y):max(y))
+          y1 <- factor(y1, levels = min(y, na.rm = TRUE):max(y, na.rm = TRUE))
 	}
       }
       w <- x$fitted[["(weights)"]]
@@ -784,7 +784,7 @@ node_surv <- function(obj, col = "black", bg = "white", yscale = c(0, 1), ylines
 
         ## set up plot
         yscale <- yscale
-        xscale <- c(0, max(y[,1]))
+        xscale <- c(0, max(y[,1], na.rm = TRUE))
 
         top_vp <- viewport(layout = grid.layout(nrow = 2, ncol = 3,
                            widths = unit(c(ylines, 1, 1), 
@@ -886,7 +886,7 @@ node_ecdf <- function(obj, col = "black", bg = "white", ylines = 2,
 
         ## set up plot
         yscale <- c(0, 1)
-        xscale <- range(y)
+        xscale <- range(y, na.rm = TRUE)
         a$x <- c(xscale[1], a$x[1], a$x, xscale[2])
         a$x <- a$x - min(a$x)
         a$x <- a$x / max(a$x)
