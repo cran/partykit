@@ -2,6 +2,14 @@
 \name{NEWS}
 \title{NEWS file for the \pkg{partykit} package}
 
+\section{Changes in Version 1.2-18 (2023-03-09)}{
+  \subsection{Buxfixes}{
+  \itemize{
+    \item{Register default methods.}
+}
+}
+}
+
 \section{Changes in Version 1.2-17 (2023-02-28)}{
   \subsection{Misc}{
   \itemize{
