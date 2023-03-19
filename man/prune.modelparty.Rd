@@ -5,7 +5,7 @@
 \title{Post-Prune \code{modelparty} Objects}
 
 \usage{
-prune.modelparty(tree, type = "AIC", ...)
+\method{prune}{modelparty}(tree, type = "AIC", ...)
 }
 
 \description{
