@@ -265,20 +265,6 @@ legend("topleft", c("mean", "median", "10\% - 90\% quantile"),
   lwd = c(1.5, 1.5, 10), lty = c(1, 2, 1),
   col = c("black", "black", "lightgray"), bty = "n")
 
-### we may also use predicted conditional (on speed) densities
-mydensity <- function (y, w) approxfun(density(y, weights = w/sum(w))[1:2], rule = 2)
-pd <- predict(cf, newdata = nd, type = "response", FUN = mydensity)
-
-## visualization in heatmap (instead of scatterplot)
-## with fitted curves as above
-dist <- -10:150
-dens <- t(sapply(seq_along(pd), function(i) pd[[i]](dist)))
-image(nd$speed, dist, dens, xlab = "speed", col = rev(gray.colors(9)))
-lines(mean ~ speed, data = nd, lwd = 1.5)
-lines(median ~ speed, data = nd, lty = 2, lwd = 1.5)
-lines(lower ~ speed, data = nd, lty = 2)
-lines(upper ~ speed, data = nd, lty = 2)
-
 \dontrun{
 
 ### honest (i.e., out-of-bag) cross-classification of

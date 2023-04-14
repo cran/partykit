@@ -437,7 +437,11 @@ predict_party.constparty <- function(party, id, newdata = NULL,
 }
 
 .pred_density <- function(y, w) {
-    d <- density(y, weights = w / sum(w))
+    ### we only have integer-valued weights and density complains
+    ### about weights since R 4.3.0 (because bandwidth selection doesn't
+    ### work with weights)
+    yw <- rep(y, w)
+    d <- density(yw)
     approxfun(d[1:2], rule = 2)
 }
 

@@ -1,7 +1,7 @@
 Package: partykit
 Title: A Toolkit for Recursive Partytioning
-Date: 2023-03-19
-Version: 1.2-19
+Date: 2023-04-11
+Version: 1.2-20
 Authors@R: c(person(given = "Torsten", family = "Hothorn", role = c("aut", "cre"), email = "Torsten.Hothorn@R-project.org",
                     comment = c(ORCID = "0000-0001-8301-0471")),
              person(given = "Heidi", family = "Seibold", role = "ctb", email = "heidi@seibold.co",
@@ -29,10 +29,10 @@ License: GPL-2 | GPL-3
 URL: http://partykit.r-forge.r-project.org/partykit/
 RoxygenNote: 6.1.1
 NeedsCompilation: yes
-Packaged: 2023-03-19 16:30:32 UTC; hothorn
+Packaged: 2023-04-11 09:36:39 UTC; hothorn
 Author: Torsten Hothorn [aut, cre] (<https://orcid.org/0000-0001-8301-0471>),
   Heidi Seibold [ctb] (<https://orcid.org/0000-0002-8960-9642>),
   Achim Zeileis [aut] (<https://orcid.org/0000-0003-0918-3766>)
 Maintainer: Torsten Hothorn <Torsten.Hothorn@R-project.org>
 Repository: CRAN
-Date/Publication: 2023-03-19 21:40:02 UTC
+Date/Publication: 2023-04-14 09:20:02 UTC
