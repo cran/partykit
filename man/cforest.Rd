@@ -249,6 +249,9 @@ plot(dist ~ speed, data = cars)
 lines(mean ~ speed, data = nd)
 
 ## predict quantiles (aka quantile regression forest)
+## Note that this works for integer-valued weight w
+## Other weights require weighted quantiles, see for example
+## Hmisc::wtd.quantile(
 myquantile <- function(y, w) quantile(rep(y, w), probs = c(0.1, 0.5, 0.9))
 p <- predict(cf, newdata = nd, type = "response", FUN = myquantile)
 colnames(p) <- c("lower", "median", "upper")

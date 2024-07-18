@@ -1,7 +1,7 @@
 
-R version 4.1.1 (2021-08-10) -- "Kick Things"
-Copyright (C) 2021 The R Foundation for Statistical Computing
-Platform: x86_64-pc-linux-gnu (64-bit)
+R version 4.4.1 (2024-06-14) -- "Race for Your Life"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -1566,6 +1566,7 @@ Fitted party:
 Number of inner nodes:    0
 Number of terminal nodes: 1
 > 
+> options(digits = 3)
 > ### check different predict flavours for numeric responses
 > x <- runif(100)
 > dd <- data.frame(y = rnorm(length(x), mean = 2 * (x < .5)), x = x)
@@ -1575,199 +1576,187 @@ Number of terminal nodes: 1
 1 2 3 4 5 6 7 8 9 
 2 2 2 2 2 4 4 4 5 
 > predict(ct, newdata = nd, type = "response")
-         1          2          3          4          5          6          7 
- 2.1123074  2.1123074  2.1123074  2.1123074  2.1123074  0.3779526  0.3779526 
-         8          9 
- 0.3779526 -0.5112136 
+     1      2      3      4      5      6      7      8      9 
+ 2.112  2.112  2.112  2.112  2.112  0.378  0.378  0.378 -0.511 
 > predict(ct, newdata = nd, type = "prob")
 $`1`
 Empirical CDF 
 Call: ecdf(y)
- x[1:58] = -0.30626, -0.14847, 0.11198,  ..., 3.5936, 3.8115
+ x[1:58] = -0.3, -0.1, 0.1,  ...,  4,  4
 
 $`2`
 Empirical CDF 
 Call: ecdf(y)
- x[1:58] = -0.30626, -0.14847, 0.11198,  ..., 3.5936, 3.8115
+ x[1:58] = -0.3, -0.1, 0.1,  ...,  4,  4
 
 $`3`
 Empirical CDF 
 Call: ecdf(y)
- x[1:58] = -0.30626, -0.14847, 0.11198,  ..., 3.5936, 3.8115
+ x[1:58] = -0.3, -0.1, 0.1,  ...,  4,  4
 
 $`4`
 Empirical CDF 
 Call: ecdf(y)
- x[1:58] = -0.30626, -0.14847, 0.11198,  ..., 3.5936, 3.8115
+ x[1:58] = -0.3, -0.1, 0.1,  ...,  4,  4
 
 $`5`
 Empirical CDF 
 Call: ecdf(y)
- x[1:58] = -0.30626, -0.14847, 0.11198,  ..., 3.5936, 3.8115
+ x[1:58] = -0.3, -0.1, 0.1,  ...,  4,  4
 
 $`6`
 Empirical CDF 
 Call: ecdf(y)
- x[1:26] = -1.416, -0.69778, -0.65081,  ..., 1.6409, 1.7415
+ x[1:26] = -1, -0.7, -0.7,  ...,  2,  2
 
 $`7`
 Empirical CDF 
 Call: ecdf(y)
- x[1:26] = -1.416, -0.69778, -0.65081,  ..., 1.6409, 1.7415
+ x[1:26] = -1, -0.7, -0.7,  ...,  2,  2
 
 $`8`
 Empirical CDF 
 Call: ecdf(y)
- x[1:26] = -1.416, -0.69778, -0.65081,  ..., 1.6409, 1.7415
+ x[1:26] = -1, -0.7, -0.7,  ...,  2,  2
 
 $`9`
 Empirical CDF 
 Call: ecdf(y)
- x[1:16] = -2.0379, -1.6793, -1.6389,  ..., 0.69065,  1.245
+ x[1:16] = -2, -2, -2,  ..., 0.7,  1
 
 > predict(ct, newdata = nd, type = "quantile")
-         10%        50%      90%
-1  1.0641709  2.1259409 3.253851
-2  1.0641709  2.1259409 3.253851
-3  1.0641709  2.1259409 3.253851
-4  1.0641709  2.1259409 3.253851
-5  1.0641709  2.1259409 3.253851
-6 -0.5344305  0.3963687 1.361417
-7 -0.5344305  0.3963687 1.361417
-8 -0.5344305  0.3963687 1.361417
-9 -1.6591116 -0.3834531 0.485164
+     10%    50%   90%
+1  1.064  2.126 3.254
+2  1.064  2.126 3.254
+3  1.064  2.126 3.254
+4  1.064  2.126 3.254
+5  1.064  2.126 3.254
+6 -0.534  0.396 1.361
+7 -0.534  0.396 1.361
+8 -0.534  0.396 1.361
+9 -1.659 -0.383 0.485
 > predict(ct, newdata = nd, type = "quantile", at = NULL)
 $`1`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<bytecode: 0x5588950c3fd0>
-<environment: 0x558895353b58>
+<bytecode: 0x55c4ed568460>
+<environment: 0x55c4ed688ef0>
 
 $`2`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<bytecode: 0x5588950c3fd0>
-<environment: 0x558895353b58>
+<bytecode: 0x55c4ed568460>
+<environment: 0x55c4ed688ef0>
 
 $`3`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<bytecode: 0x5588950c3fd0>
-<environment: 0x558895353b58>
+<bytecode: 0x55c4ed568460>
+<environment: 0x55c4ed688ef0>
 
 $`4`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<bytecode: 0x5588950c3fd0>
-<environment: 0x558895353b58>
+<bytecode: 0x55c4ed568460>
+<environment: 0x55c4ed688ef0>
 
 $`5`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<bytecode: 0x5588950c3fd0>
-<environment: 0x558895353b58>
+<bytecode: 0x55c4ed568460>
+<environment: 0x55c4ed688ef0>
 
 $`6`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<bytecode: 0x5588950c3fd0>
-<environment: 0x5588953535a8>
+<bytecode: 0x55c4ed568460>
+<environment: 0x55c4ed688940>
 
 $`7`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<bytecode: 0x5588950c3fd0>
-<environment: 0x5588953535a8>
+<bytecode: 0x55c4ed568460>
+<environment: 0x55c4ed688940>
 
 $`8`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<bytecode: 0x5588950c3fd0>
-<environment: 0x5588953535a8>
+<bytecode: 0x55c4ed568460>
+<environment: 0x55c4ed688940>
 
 $`9`
 function (p, ...) 
 quantile(y, probs = p, ...)
-<bytecode: 0x5588950c3fd0>
-<environment: 0x558895352ff8>
+<bytecode: 0x55c4ed568460>
+<environment: 0x55c4ed688390>
 
 > predict(ct, newdata = nd, type = "density")
 $`1`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f, na.rm)
-<bytecode: 0x558894f803b0>
-<environment: 0x55889542a3d8>
+<bytecode: 0x55c4ed38b928>
+<environment: 0x55c4ed7a8c20>
 
 $`2`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f, na.rm)
-<bytecode: 0x558894f803b0>
-<environment: 0x55889542a3d8>
+<bytecode: 0x55c4ed38b928>
+<environment: 0x55c4ed7a8c20>
 
 $`3`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f, na.rm)
-<bytecode: 0x558894f803b0>
-<environment: 0x55889542a3d8>
+<bytecode: 0x55c4ed38b928>
+<environment: 0x55c4ed7a8c20>
 
 $`4`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f, na.rm)
-<bytecode: 0x558894f803b0>
-<environment: 0x55889542a3d8>
+<bytecode: 0x55c4ed38b928>
+<environment: 0x55c4ed7a8c20>
 
 $`5`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f, na.rm)
-<bytecode: 0x558894f803b0>
-<environment: 0x55889542a3d8>
+<bytecode: 0x55c4ed38b928>
+<environment: 0x55c4ed7a8c20>
 
 $`6`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f, na.rm)
-<bytecode: 0x558894f803b0>
-<environment: 0x5588954527a0>
+<bytecode: 0x55c4ed38b928>
+<environment: 0x55c4ed7d7670>
 
 $`7`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f, na.rm)
-<bytecode: 0x558894f803b0>
-<environment: 0x5588954527a0>
+<bytecode: 0x55c4ed38b928>
+<environment: 0x55c4ed7d7670>
 
 $`8`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f, na.rm)
-<bytecode: 0x558894f803b0>
-<environment: 0x5588954527a0>
+<bytecode: 0x55c4ed38b928>
+<environment: 0x55c4ed7d7670>
 
 $`9`
 function (v) 
 .approxfun(x, y, v, method, yleft, yright, f, na.rm)
-<bytecode: 0x558894f803b0>
-<environment: 0x55889547bda8>
+<bytecode: 0x55c4ed38b928>
+<environment: 0x55c4ed7f63d0>
 
 > predict(ct, newdata = nd, type = "density", at = (1:9) / 10)
-        [,1]       [,2]       [,3]       [,4]       [,5]       [,6]      [,7]
-1 0.05020125 0.04935438 0.05087955 0.05661364 0.06796655 0.08560162 0.1092080
-2 0.05020125 0.04935438 0.05087955 0.05661364 0.06796655 0.08560162 0.1092080
-3 0.05020125 0.04935438 0.05087955 0.05661364 0.06796655 0.08560162 0.1092080
-4 0.05020125 0.04935438 0.05087955 0.05661364 0.06796655 0.08560162 0.1092080
-5 0.05020125 0.04935438 0.05087955 0.05661364 0.06796655 0.08560162 0.1092080
-6 0.53975912 0.57687027 0.59689413 0.59443918 0.56427527 0.50605792 0.4289844
-7 0.53975912 0.57687027 0.59689413 0.59443918 0.56427527 0.50605792 0.4289844
-8 0.53975912 0.57687027 0.59689413 0.59443918 0.56427527 0.50605792 0.4289844
-9 0.37075877 0.34250760 0.31088903 0.27813780 0.24612980 0.21627046 0.1894201
-       [,8]      [,9]
-1 0.1376954 0.1693900
-2 0.1376954 0.1693900
-3 0.1376954 0.1693900
-4 0.1376954 0.1693900
-5 0.1376954 0.1693900
-6 0.3508934 0.2908752
-7 0.3508934 0.2908752
-8 0.3508934 0.2908752
-9 0.1658930 0.1455540
+    [,1]   [,2]   [,3]   [,4]   [,5]   [,6]  [,7]  [,8]  [,9]
+1 0.0501 0.0493 0.0508 0.0565 0.0678 0.0854 0.109 0.138 0.169
+2 0.0501 0.0493 0.0508 0.0565 0.0678 0.0854 0.109 0.138 0.169
+3 0.0501 0.0493 0.0508 0.0565 0.0678 0.0854 0.109 0.138 0.169
+4 0.0501 0.0493 0.0508 0.0565 0.0678 0.0854 0.109 0.138 0.169
+5 0.0501 0.0493 0.0508 0.0565 0.0678 0.0854 0.109 0.138 0.169
+6 0.5393 0.5764 0.5965 0.5940 0.5639 0.5057 0.429 0.350 0.290
+7 0.5393 0.5764 0.5965 0.5940 0.5639 0.5057 0.429 0.350 0.290
+8 0.5393 0.5764 0.5965 0.5940 0.5639 0.5057 0.429 0.350 0.290
+9 0.3705 0.3422 0.3106 0.2778 0.2458 0.2160 0.189 0.166 0.145
 > 
 > proc.time()
    user  system elapsed 
-  2.949   0.143   2.179 
+  1.514   0.104   1.051 

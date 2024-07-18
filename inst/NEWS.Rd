@@ -2,6 +2,14 @@
 \name{NEWS}
 \title{NEWS file for the \pkg{partykit} package}
 
+\section{Changes in Version 1.2-21 (2024-07-18)}{
+  \subsection{Buxfixes}{
+  \itemize{
+    \item{Rd link problem.}
+}
+}
+}
+
 \section{Changes in Version 1.2-20 (2023-04-11)}{
   \subsection{Buxfixes}{
   \itemize{
@@ -10,6 +18,7 @@
 }
 }
 }
+
 
 \section{Changes in Version 1.2-19 (2023-03-19)}{
   \subsection{Buxfixes}{

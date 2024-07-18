@@ -117,6 +117,7 @@ nodeprune(ct, "B")
 nodeprune(ct, "C")
 nodeprune(ct, "A")
 
+options(digits = 3)
 ### check different predict flavours for numeric responses
 x <- runif(100)
 dd <- data.frame(y = rnorm(length(x), mean = 2 * (x < .5)), x = x)

@@ -10,11 +10,11 @@
 model_frame_rpart(formula, \dots)
 }
 \arguments{
-  \item{formula}{ an object of class \code{\link{rpart}}.}
+  \item{formula}{ an object of class \code{\link[rpart]{rpart}}.}
   \item{\dots}{ additional arguments.}
 }
 \details{
-  A \code{\link{model.frame}} method for \code{\link{rpart}} objects.
+  A \code{\link{model.frame}} method for \code{\link[rpart]{rpart}} objects.
   Because it is no longer possible to overwrite existing methods,
   the function name is a little different here.
 }
