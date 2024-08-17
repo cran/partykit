@@ -40,7 +40,7 @@ SEXP R_rfweights (SEXP fdata, SEXP fnewdata, SEXP weights, SEXP scale) {
     /* sum of weights for each terminal node id
        because trees can be very large (terminal node size = 1)
        we only once allocate Ndata integers */
-    tnsize = Calloc(Ndata, int);
+    tnsize = R_Calloc(Ndata, int);
     for (int i = 0; i < Ndata; i++)
         tnsize[i] = 1;
         
@@ -82,7 +82,7 @@ SEXP R_rfweights (SEXP fdata, SEXP fnewdata, SEXP weights, SEXP scale) {
         }
     }
     
-    Free(tnsize);
+    R_Free(tnsize);
     
     UNPROTECT(1);
     return(ans);

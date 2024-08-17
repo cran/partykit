@@ -1,4 +1,4 @@
-1cf9248210cbcff95984223d89357fe1 *DESCRIPTION
+ccbeb2604415704906cefcc5c90335be *DESCRIPTION
 dbb653bb1b54f81b13e2715252581cbf *NAMESPACE
 dca7b2a658a4a7e788b807e8126c0062 *R/as.party.R
 c83d333faa723d2dc3aeb6b54eef7aac *R/cforest.R
@@ -28,7 +28,7 @@ b410bf42e75f4c300b7a574bfd4dcd55 *data/HuntingSpiders.rda
 0bf664829f0398ca3b38000eb93e5e10 *demo/00Index
 a10fbafb2e117a2df08603dc03569f82 *demo/memory-speed.R
 b094cb0509a048dc80d9fb84f036d358 *inst/CITATION
-4ea7873d87e59f3dd0734f3c751ad3fe *inst/NEWS.Rd
+b1fd6e7d0a490855b5c2d8373287b755 *inst/NEWS.Rd
 b847249ab71ee834cfa87e649308f59d *inst/ULGcourse-2020/Data/Axams_pred.rda
 d623d2cc7274d7341c86b2fa0af3af8a *inst/ULGcourse-2020/Data/Axams_testdata.rda
 f67b3afd0d6efa130e59e49bf76cee22 *inst/ULGcourse-2020/Data/GENS_00_innsbruck-flughafen.txt
@@ -64,16 +64,16 @@ ebe8194e8e61ff7d26a281a1a7d16c70 *inst/ULGcourse-2020/exercises/exercise_german_
 42e4fcdf80c1540ed882f2c4a839b447 *inst/ULGcourse-2020/slides_tree.Rnw
 f2ca7db8c507840478c7004ebdd53f69 *inst/doc/constparty.R
 4b9b60c4a153db5aff4de375332282fc *inst/doc/constparty.Rnw
-0e9ec6f46b3f5218d847eb629f623e37 *inst/doc/constparty.pdf
+0fa291b12e5c3bf9875199f9ecac939d *inst/doc/constparty.pdf
 cce3ded51d9ee9b75ff3b8dbcac6e45c *inst/doc/ctree.R
 8b8a6cb7a963d2d1b6b338d6bdbe3662 *inst/doc/ctree.Rnw
-05625482cdbd59630bb1cf5311d728a0 *inst/doc/ctree.pdf
+e048be2884d5ec461b2e31350daf35a6 *inst/doc/ctree.pdf
 6e73710f40ce9f193f1251e8c8127a0e *inst/doc/mob.R
 2aa00ddac6a0c0669215861489afb47c *inst/doc/mob.Rnw
-04d46ca72d07767b186147a617603d97 *inst/doc/mob.pdf
+7ec27cb044dd55586f86eda4e8c583d5 *inst/doc/mob.pdf
 28f92802e645a7f199668aaba137ff80 *inst/doc/partykit.R
 a3b1aeaa489b1646ef97a745f3d7f121 *inst/doc/partykit.Rnw
-42a6bf9d8016cdd861040ea56d076f74 *inst/doc/partykit.pdf
+1bea4e198af6a43930e1ccf1fa0ba9d7 *inst/doc/partykit.pdf
 1b961019a4c8e43e4d046ae20d4a2cf5 *inst/pmml/airq.pmml
 8a72f1494239b092e6821e6534ed6627 *inst/pmml/bbbc.pmml
 ecc0e4f670cfbfda89e14f9df7a76df3 *inst/pmml/iris.pmml
@@ -106,7 +106,7 @@ e4d4025e957e10d1c8a45e8fd444a7a3 *man/partynode-methods.Rd
 eec28a4fa9e134a2801eb6f369fb232f *man/varimp.Rd
 972ddff277f32ad003c721d2062c7d5b *src/partykit-init.c
 fd714ab2ff6772bca8ef031c055525f8 *src/partykit-win.def
-c6bfb525d83363577b5c96ce8ed114f7 *src/rfweights.c
+9fdf9c2ff42bc28d4106850cb1f66918 *src/rfweights.c
 b78cdbea9965051c934da58e257f1ce2 *src/rfweights.h
 2f6423e2d27d37c3520b09718ad007dd *tests/Rplots.pdf
 5590526a517d233e5001c81ad4db5002 *tests/bugfixes.R

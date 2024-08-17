@@ -2,6 +2,14 @@
 \name{NEWS}
 \title{NEWS file for the \pkg{partykit} package}
 
+\section{Changes in Version 1.2-22 (2024-08-17)}{
+  \subsection{Buxfixes}{
+  \itemize{
+    \item{Use \code{R\_Calloc}.}
+}
+}
+}
+
 \section{Changes in Version 1.2-21 (2024-07-18)}{
   \subsection{Buxfixes}{
   \itemize{
@@ -9,6 +17,7 @@
 }
 }
 }
+
 
 \section{Changes in Version 1.2-20 (2023-04-11)}{
   \subsection{Buxfixes}{
