@@ -142,7 +142,7 @@
     }
     if (ctrl$mtry < Inf) {
         mtry <- min(length(svars), ctrl$mtry)
-        svars <- .resample(svars, mtry, prob = partyvars[svars])
+        svars <- .resample(svars, size = mtry, prob = partyvars[svars])
     } 
 
     thismodel <- trafo(subset = subset, weights = weights, info = info, 

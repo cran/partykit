@@ -2,6 +2,14 @@
 \name{NEWS}
 \title{NEWS file for the \pkg{partykit} package}
 
+\section{Changes in Version 1.2-23 (2024-12-02)}{
+  \subsection{Buxfixes}{
+  \itemize{
+    \item{Make sure weights are propagated properly in \code{data\_party}.}
+}
+}
+}
+
 \section{Changes in Version 1.2-22 (2024-08-17)}{
   \subsection{Buxfixes}{
   \itemize{

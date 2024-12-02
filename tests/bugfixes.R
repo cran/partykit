@@ -858,6 +858,16 @@ titan <- as.data.frame(Titanic)
 ### prune off nodes 5-12 and check if the other nodes are not affected
 nodeprune(tree, 4)
 
+### subsetting removed weights from fitted, by Jon Peck
+t1 <- ctree(Survived ~Age+Sex+Class, data=Titanic, weights=Freq, maxdepth = 1)
+tita <- as.data.frame(Titanic)
+t2 <- ctree(Survived ~Age+Sex+Class, data=tita[rep(1:nrow(tita), tita$Freq),], maxdepth = 1)
+# all the same
+t1
+t1[1]
+t2
+t2[1]
+
 ### this gave a warning "ME is not a factor"
 if (require("TH.data")) {
     data("mammoexp", package = "TH.data")

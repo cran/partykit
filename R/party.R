@@ -543,7 +543,10 @@ data_party.default <- function(party, id = 1L) {
         ret <- if (nrow(party$data) == 0)
             subset(party$fitted, wi)
         else
-            subset(cbind(party$data, party$fitted), wi)
+            subset(cbind(party$data[, !(names(party$data) %in% 
+                                        names(party$fitted)), 
+                                    drop = FALSE], 
+                         party$fitted), wi)
         ret
     }
     if (length(id) > 1)

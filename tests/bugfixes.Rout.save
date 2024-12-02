@@ -1,7 +1,7 @@
 
-R Under development (unstable) (2023-04-10 r84212) -- "Unsuffered Consequences"
-Copyright (C) 2023 The R Foundation for Statistical Computing
-Platform: x86_64-pc-linux-gnu (64-bit)
+R version 4.4.2 (2024-10-31) -- "Pile of Leaves"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -1086,6 +1086,60 @@ Fitted party:
 Number of inner nodes:    4
 Number of terminal nodes: 5
 > 
+> ### subsetting removed weights from fitted, by Jon Peck
+> t1 <- ctree(Survived ~Age+Sex+Class, data=Titanic, weights=Freq, maxdepth = 1)
+> tita <- as.data.frame(Titanic)
+> t2 <- ctree(Survived ~Age+Sex+Class, data=tita[rep(1:nrow(tita), tita$Freq),], maxdepth = 1)
+> # all the same
+> t1
+
+Model formula:
+Survived ~ Age + Sex + Class
+
+Fitted party:
+[1] root
+|   [2] Sex in Male: No (n = 1731, err = 21.2%)
+|   [3] Sex in Female: Yes (n = 470, err = 26.8%)
+
+Number of inner nodes:    1
+Number of terminal nodes: 2
+> t1[1]
+
+Model formula:
+Survived ~ Age + Sex + Class
+
+Fitted party:
+[1] root
+|   [2] Sex in Male: No (n = 1731, err = 21.2%)
+|   [3] Sex in Female: Yes (n = 470, err = 26.8%)
+
+Number of inner nodes:    1
+Number of terminal nodes: 2
+> t2
+
+Model formula:
+Survived ~ Age + Sex + Class
+
+Fitted party:
+[1] root
+|   [2] Sex in Male: No (n = 1731, err = 21.2%)
+|   [3] Sex in Female: Yes (n = 470, err = 26.8%)
+
+Number of inner nodes:    1
+Number of terminal nodes: 2
+> t2[1]
+
+Model formula:
+Survived ~ Age + Sex + Class
+
+Fitted party:
+[1] root
+|   [2] Sex in Male: No (n = 1731, err = 21.2%)
+|   [3] Sex in Female: Yes (n = 470, err = 26.8%)
+
+Number of inner nodes:    1
+Number of terminal nodes: 2
+> 
 > ### this gave a warning "ME is not a factor"
 > if (require("TH.data")) {
 +     data("mammoexp", package = "TH.data")
@@ -1140,4 +1194,4 @@ criterion -0.0001771838 -0.0001771838
 > 
 > proc.time()
    user  system elapsed 
-  3.935   7.247   2.705 
+  1.438   0.071   1.511 
