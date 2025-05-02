@@ -7,6 +7,7 @@
 ###################################################
 options(width = 70)
 library("partykit")
+library("XML") ### for pmmlTreeModel
 set.seed(290875)
 
 

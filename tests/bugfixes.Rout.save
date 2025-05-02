@@ -1,6 +1,6 @@
 
-R version 4.4.2 (2024-10-31) -- "Pile of Leaves"
-Copyright (C) 2024 The R Foundation for Statistical Computing
+R version 4.5.0 (2025-04-11) -- "How About a Twenty-Six"
+Copyright (C) 2025 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -1192,6 +1192,88 @@ criterion -0.0001771838 -0.0001771838
 +                                                        maxsurrogate = 2, alpha = 0.05))
 > stopifnot(isTRUE(all.equal(tr, tr2, check.attributes = FALSE)))
 > 
+> 
+> ## MIA was applied also in splits w/o missing values
+> ## reported by Ben Schneider #[50053] 2025-01-29
+> d <- data.frame(
++   y = factor(rep(0:1, c(14, 16))),
++   x = factor(c(1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 1, 1, 1, 1, 1, 2, 2, 2,
++ 3, 3, 3, 4, 4, 4, 4, NA)), 
++   z = c(1, 2, 3, 4, 1, 2, 4, 1, 2, 4, 1, 2, 3, 4, 1, 2, 3, 4, NA, 1, 2, 4, 1, 2,
++ 3, 1, 2, 3, 4, 1)
++ )
+> d <- d[rep.int(1:30, c(22, 9, 4, 15, 12, 2, 7, 6, 1, 4, 25, 6, 2, 7, 42, 16,
++ 3, 31, 1, 7, 3, 7, 1, 1, 3, 22, 3, 4, 18, 1)), ]
+> 
+> ctree(y ~ x + z, data = d, alpha = 0.1, minbucket = 60, MIA = TRUE)
+
+Model formula:
+y ~ x + z
+
+Fitted party:
+[1] root
+|   [2] x in 1: 1 (n = 144, err = 34.7%)
+|   [3] x in 2, 3, 4
+|   |   [4] z <= 1: 0 (n = 73, err = 41.1%)
+|   |   [5] z > 1: 1 (n = 68, err = 42.6%)
+
+Number of inner nodes:    2
+Number of terminal nodes: 3
+> 
+> ### ctree failed for unordered factor responses with NAs
+> ### spotted by Jonathan Rinne
+> library("partykit")
+> d <- cars
+> d$dist[1:10] <- NA
+> d$speed[11:20] <- NA
+> dim(d)
+[1] 50  2
+> ctree(dist ~ speed, data = d)
+
+Model formula:
+dist ~ speed
+
+Fitted party:
+[1] root
+|   [2] speed <= 20: 44.200 (n = 40, err = NA)
+|   [3] speed > 20: 66.400 (n = 10, err = 9228.4)
+
+Number of inner nodes:    1
+Number of terminal nodes: 2
+> ctree(dist ~ speed, data = d, subset = !is.na(d$dist))
+
+Model formula:
+dist ~ speed
+
+Fitted party:
+[1] root
+|   [2] speed <= 20: 42.727 (n = 33, err = 10342.5)
+|   [3] speed > 20: 82.857 (n = 7, err = 2852.9)
+
+Number of inner nodes:    1
+Number of terminal nodes: 2
+> d$dist <- cut(d$dist, breaks = c(-Inf, 26, 36, 56, Inf), ordered_result = FALSE)
+> ctree(dist ~ speed, data = d)
+
+Model formula:
+dist ~ speed
+
+Fitted party:
+[1] root: (36,56] (n = 50, err = 70.0%) 
+
+Number of inner nodes:    0
+Number of terminal nodes: 1
+> ctree(dist ~ speed, data = d, subset = !is.na(d$dist))
+
+Model formula:
+dist ~ speed
+
+Fitted party:
+[1] root: (36,56] (n = 40, err = 70.0%) 
+
+Number of inner nodes:    0
+Number of terminal nodes: 1
+> 
 > proc.time()
    user  system elapsed 
-  1.438   0.071   1.511 
+  1.502   0.056   1.573 

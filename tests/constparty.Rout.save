@@ -1,7 +1,7 @@
 
-R version 4.0.4 (2021-02-15) -- "Lost Library Book"
-Copyright (C) 2021 The R Foundation for Statistical Computing
-Platform: x86_64-pc-linux-gnu (64-bit)
+R version 4.5.0 (2025-04-11) -- "How About a Twenty-Six"
+Copyright (C) 2025 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -27,6 +27,7 @@ Type 'q()' to quit R.
 Loading required package: grid
 Loading required package: libcoin
 Loading required package: mvtnorm
+> library("XML") ### for pmmlTreeModel
 > set.seed(290875)
 > 
 > 
@@ -162,7 +163,6 @@ Number of terminal nodes: 5
 > ttnc_pmml <- file.path(system.file("pmml", package = "partykit"),
 +   "ttnc.pmml")
 > (ttnc_quest <- pmmlTreeModel(ttnc_pmml))
-Loading required namespace: XML
 
 Model formula:
 Survived ~ Gender + Class + Age
@@ -228,7 +228,6 @@ Number of terminal nodes: 8
 > ### code chunk number 19: PMML-write
 > ###################################################
 > library("pmml")
-Loading required package: XML
 > tfile <- tempfile()
 > write(toString(pmml(rp)), file = tfile)
 > 
@@ -562,4 +561,4 @@ Levels: No Yes
 > 
 > proc.time()
    user  system elapsed 
-  3.175   0.098   3.258 
+  1.542   0.075   1.618 

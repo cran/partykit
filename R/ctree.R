@@ -58,6 +58,7 @@
     MIA <- FALSE
     if (ctrl$MIA) {
         NAs <- data$missings[[j]] ### data[[j, type = "missings"]]
+        NAs <- NAs[NAs %in% subset]
         MIA <- (length(NAs) > 0)
     }
 
@@ -511,7 +512,16 @@ ctree <- function(formula, data, subset, weights, na.action = na.pass, offset, c
         infl <- switch(rtype,
             "user-defined" = yfun(response),
             "factor" = {
+                rna <- is.na(response)
                 X <- model.matrix(~ response - 1)
+                ### model.matrix automatically removes rows corresponding to
+                ### missings
+                if (any(rna)) {
+                    ret <- matrix(NA, nrow = NROW(response), ncol = ncol(X))
+                    colnames(ret) <- colnames(X)
+                    ret[!rna,] <- X
+                    X <- ret
+                }
                 if (nlevels(response) > 2) return(X)
                 return(X[,-1, drop = FALSE])
             },

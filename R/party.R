@@ -666,7 +666,7 @@ nodeprune.default <- function(x, ids, ...)
         ivar <- varid_split(split)
         svar <- names(dat)[ivar]
         index <- index_split(split)
-        if (is.factor(dat[, svar])) {
+        if (is.factor(dat[, svar]) && !(is.ordered(dat[, svar]) && !is.null(breaks_split(split)))) {
             if (is.null(index)) 
                 index <- ((1:nlevels(dat[, svar])) > breaks_split(split)) + 1
             slevels <- levels(dat[, svar])[index == whichkid]
