@@ -4,6 +4,9 @@ suppressWarnings(RNGversion("3.5.2"))
 library("partykit")
 set.seed(1)
 
+if (!require("TH.data"))
+    quit()
+
 ## rpart: kyphosis data
 library("rpart")
 data("kyphosis", package = "rpart")

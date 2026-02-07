@@ -142,6 +142,7 @@ all.equal(m_bt, m_df, check.environment = FALSE)
 unclass(m_bt)$node$info$criterion
 unclass(m_df)$node$info$criterion
 
+if (requireNamespace("mlbench")) {
 
 ### example from mob vignette
 data("PimaIndiansDiabetes", package = "mlbench")
@@ -154,8 +155,7 @@ pid_formula <- diabetes ~ glucose | pregnant + pressure + triceps +
   insulin + mass + pedigree + age
 
 pid_tree <- mob(pid_formula, data = PimaIndiansDiabetes, fit = logit)
-pid_tree
-nodeapply(pid_tree, ids = nodeids(pid_tree), function(n) n$info$criterion)
+print(pid_tree)
+print(nodeapply(pid_tree, ids = nodeids(pid_tree), function(n) n$info$criterion))
 
-
-
+}

@@ -1,71 +1,40 @@
-### R code from vignette source 'constparty.Rnw'
-
-###################################################
-### code chunk number 1: setup
-###################################################
+## ----setup, echo = FALSE, results = "hide", message = FALSE, warning = FALSE----
 suppressWarnings(RNGversion("3.5.2"))
 options(width = 70)
 library("partykit")
 set.seed(290875)
 
-
-###################################################
-### code chunk number 2: Titanic
-###################################################
+## ----Titanic--------------------------------------------------------
 data("Titanic", package = "datasets")
 ttnc <- as.data.frame(Titanic)
 ttnc <- ttnc[rep(1:nrow(ttnc), ttnc$Freq), 1:4]
 names(ttnc)[2] <- "Gender"
 
-
-###################################################
-### code chunk number 3: rpart
-###################################################
+## ----rpart----------------------------------------------------------
 library("rpart")
 (rp <- rpart(Survived ~ ., data = ttnc, model = TRUE))
 
-
-###################################################
-### code chunk number 4: rpart-party
-###################################################
+## ----rpart-party----------------------------------------------------
 (party_rp <- as.party(rp))
 
-
-###################################################
-### code chunk number 5: rpart-plot-orig
-###################################################
+## ----rpart-plot-orig, fig.width = 10, fig.height = 6----------------
 plot(rp)
 text(rp)
 
-
-###################################################
-### code chunk number 6: rpart-plot
-###################################################
+## ----rpart-plot, fig.width = 10, fig.height = 6---------------------
 plot(party_rp)
 
-
-###################################################
-### code chunk number 7: rpart-pred
-###################################################
+## ----rpart-pred-----------------------------------------------------
 all.equal(predict(rp), predict(party_rp, type = "prob"), 
   check.attributes = FALSE)
 
-
-###################################################
-### code chunk number 8: rpart-fitted
-###################################################
+## ----rpart-fitted---------------------------------------------------
 str(fitted(party_rp))
 
-
-###################################################
-### code chunk number 9: rpart-prob
-###################################################
+## ----rpart-prob-----------------------------------------------------
 prop.table(do.call("table", fitted(party_rp)), 1)
 
-
-###################################################
-### code chunk number 10: J48
-###################################################
+## ----J48------------------------------------------------------------
 if (require("RWeka")) {
   j48 <- J48(Survived ~ ., data = ttnc)
 } else {
@@ -73,90 +42,17 @@ if (require("RWeka")) {
 }
 print(j48)
 
-
-###################################################
-### code chunk number 11: J48-party
-###################################################
+## ----J48-party------------------------------------------------------
 (party_j48 <- as.party(j48))
 
-
-###################################################
-### code chunk number 12: J48-plot
-###################################################
+## ----J48-plot, fig.width = 15, fig.height = 9-----------------------
 plot(party_j48)
 
-
-###################################################
-### code chunk number 13: J48-pred
-###################################################
+## ----J48-pred-------------------------------------------------------
 all.equal(predict(j48, type = "prob"), predict(party_j48, type = "prob"),
   check.attributes = FALSE)
 
-
-###################################################
-### code chunk number 14: PMML-Titantic
-###################################################
-ttnc_pmml <- file.path(system.file("pmml", package = "partykit"),
-  "ttnc.pmml")
-(ttnc_quest <- pmmlTreeModel(ttnc_pmml))
-
-
-###################################################
-### code chunk number 15: PMML-Titanic-plot1
-###################################################
-plot(ttnc_quest)
-
-
-###################################################
-### code chunk number 16: ttnc2-reorder
-###################################################
-ttnc2 <- ttnc[, names(ttnc_quest$data)]
-for(n in names(ttnc2)) {
-  if(is.factor(ttnc2[[n]])) ttnc2[[n]] <- factor(
-    ttnc2[[n]], levels = levels(ttnc_quest$data[[n]]))
-}
-
-
-###################################################
-### code chunk number 17: PMML-Titanic-augmentation
-###################################################
-ttnc_quest2 <- party(ttnc_quest$node,
-  data = ttnc2,
-  fitted = data.frame(
-    "(fitted)" = predict(ttnc_quest, ttnc2, type = "node"),
-    "(response)" = ttnc2$Survived,
-    check.names = FALSE),
-  terms = terms(Survived ~ ., data = ttnc2)
-)
-ttnc_quest2 <- as.constparty(ttnc_quest2)
-
-
-###################################################
-### code chunk number 18: PMML-Titanic-plot2
-###################################################
-plot(ttnc_quest2)
-
-
-###################################################
-### code chunk number 19: PMML-write
-###################################################
-library("pmml")
-tfile <- tempfile()
-write(toString(pmml(rp)), file = tfile)
-
-
-###################################################
-### code chunk number 20: PMML-read
-###################################################
-(party_pmml <- pmmlTreeModel(tfile))
-all.equal(predict(party_rp, newdata = ttnc, type = "prob"), 
-  predict(party_pmml, newdata = ttnc, type = "prob"),
-  check.attributes = FALSE)
-
-
-###################################################
-### code chunk number 21: mytree-1
-###################################################
+## ----mytree-1, echo = TRUE------------------------------------------
 findsplit <- function(response, data, weights, alpha = 0.01) {
 
   ## extract response values from data
@@ -205,10 +101,7 @@ findsplit <- function(response, data, weights, alpha = 0.01) {
     info = list(p.value = 1 - (1 - exp(logp))^sum(!is.na(logp)))))
 }
 
-
-###################################################
-### code chunk number 22: mytree-2
-###################################################
+## ----mytree-2, echo = TRUE------------------------------------------
 growtree <- function(id = 1L, response, data, weights, minbucket = 30) {
 
   ## for less than 30 observations stop here
@@ -243,10 +136,7 @@ growtree <- function(id = 1L, response, data, weights, minbucket = 30) {
     info = list(p.value = min(info_split(sp)$p.value, na.rm = TRUE))))
 }
 
-
-###################################################
-### code chunk number 23: mytree-3
-###################################################
+## ----mytree-3, echo = TRUE------------------------------------------
 mytree <- function(formula, data, weights = NULL) {
 
   ## name of the response variable
@@ -276,91 +166,54 @@ mytree <- function(formula, data, weights = NULL) {
   as.constparty(ret)
 }
 
-
-###################################################
-### code chunk number 24: mytree-4
-###################################################
+## ----mytree-4, echo = TRUE------------------------------------------
 (myttnc <- mytree(Survived ~ Class + Age + Gender, data = ttnc))
 
-
-###################################################
-### code chunk number 25: mytree-5
-###################################################
+## ----mytree-5, echo = FALSE, fig.height=8.5, fig.width=14-----------
 plot(myttnc)
 
-
-###################################################
-### code chunk number 26: mytree-pval
-###################################################
+## ----mytree-pval, echo = TRUE---------------------------------------
 nid <- nodeids(myttnc)
 iid <- nid[!(nid %in% nodeids(myttnc, terminal = TRUE))]
 (pval <- unlist(nodeapply(myttnc, ids = iid,
   FUN = function(n) info_node(n)$p.value)))
 
-
-###################################################
-### code chunk number 27: mytree-nodeprune
-###################################################
+## ----mytree-nodeprune-----------------------------------------------
 myttnc2 <- nodeprune(myttnc, ids = iid[pval > 1e-5])
 
-
-###################################################
-### code chunk number 28: mytree-nodeprune-plot
-###################################################
+## ----mytree-nodeprune-plot, echo = FALSE, fig.height=6, fig.width=10----
 plot(myttnc2)
 
-
-###################################################
-### code chunk number 29: mytree-glm
-###################################################
+## ----mytree-glm, echo = TRUE----------------------------------------
 logLik(glm(Survived ~ Class + Age + Gender, data = ttnc, 
            family = binomial()))
 
-
-###################################################
-### code chunk number 30: mytree-bs
-###################################################
+## ----mytree-bs, echo = TRUE-----------------------------------------
 bs <- rmultinom(25, nrow(ttnc), rep(1, nrow(ttnc)) / nrow(ttnc))
 
-
-###################################################
-### code chunk number 31: mytree-ll
-###################################################
+## ----mytree-ll, echo = TRUE-----------------------------------------
 bloglik <- function(prob, weights)
     sum(weights * dbinom(ttnc$Survived == "Yes", size = 1, 
                          prob[,"Yes"], log = TRUE))
 
-
-###################################################
-### code chunk number 32: mytree-bsll
-###################################################
+## ----mytree-bsll, echo = TRUE---------------------------------------
 f <- function(w) {
     tr <- mytree(Survived ~ Class + Age + Gender, data = ttnc, weights = w)
     bloglik(predict(tr, newdata = ttnc, type = "prob"), as.numeric(w == 0))
 }
 apply(bs, 2, f)
 
-
-###################################################
-### code chunk number 33: mytree-node
-###################################################
+## ----mytree-node, echo = TRUE---------------------------------------
 nttnc <- expand.grid(Class = levels(ttnc$Class),
   Gender = levels(ttnc$Gender), Age = levels(ttnc$Age))
 nttnc
 
-
-###################################################
-### code chunk number 34: mytree-prob
-###################################################
+## ----mytree-prob, echo = TRUE---------------------------------------
 predict(myttnc, newdata = nttnc, type = "node")
 predict(myttnc, newdata = nttnc, type = "response")
 predict(myttnc, newdata = nttnc, type = "prob")
 
-
-###################################################
-### code chunk number 35: mytree-FUN
-###################################################
+## ----mytree-FUN, echo = TRUE----------------------------------------
 predict(myttnc, newdata = nttnc, FUN = function(y, w)
   rank(table(rep(y, w))))
-
 

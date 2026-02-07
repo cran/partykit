@@ -1,7 +1,8 @@
 \documentclass[nojss]{jss}
 
+%\VignetteEngine{knitr::knitr}
 %\VignetteIndexEntry{ctree: Conditional Inference Trees}
-%\VignetteDepends{coin, TH.data, survival, strucchange, Formula, sandwich, datasets}
+%\VignetteDepends{coin, party, TH.data, survival, strucchange, Formula, sandwich, datasets, knitr}
 %\VignetteKeywords{conditional inference, non-parametric models, recursive partitioning}
 %\VignettePackage{partykit}
 
@@ -11,7 +12,6 @@
 \usepackage{amsmath}
 \usepackage{thumbpdf}
 \usepackage{rotating}
-%% need no \usepackage{Sweave}
 \usepackage[utf8]{inputenc}
 
 %% commands
@@ -94,7 +94,7 @@
   Hirschengraben 84\\
   CH-8001 Z\"urich, Switzerland \\
   E-mail: \email{Torsten.Hothorn@R-project.org}\\
-  URL: \url{http://user.math.uzh.ch/hothorn/}\\
+  URL: \url{https://user.math.uzh.ch/hothorn/}\\
 
   Kurt Hornik \\
   Institute for Statistics and Mathematics\\
@@ -102,7 +102,7 @@
   Welthandelsplatz 1 \\
   1020 Wien, Austria\\
   E-mail: \email{Kurt.Hornik@R-project.org} \\
-  URL: \url{http://statmath.wu.ac.at/~hornik/}\\
+  URL: \url{https://statmath.wu.ac.at/~hornik/}\\
 
   Achim Zeileis \\
   Department of Statistics \\
@@ -111,24 +111,29 @@
   Universit\"atsstr.~15 \\
   6020 Innsbruck, Austria \\
   E-mail: \email{Achim.Zeileis@R-project.org} \\
-  URL: \url{http://eeecon.uibk.ac.at/~zeileis/}
+  URL: \url{https://www.zeileis.org/}
 }
 
 
 \begin{document}
 
-<<setup, echo = FALSE, results = hide>>=
+<<setup, echo = FALSE, results = "hide", message = FALSE, warnings = FALSE>>=
 suppressWarnings(RNGversion("3.5.2"))
-options(width = 70, SweaveHooks = list(leftpar = 
-    function() par(mai = par("mai") * c(1, 1.1, 1, 1))))
-require("partykit")
-require("coin")
-require("strucchange")
-require("coin")
-require("Formula")
-require("survival")
-require("sandwich")
+pkgs <- c("partykit", "coin", "strucchange", "Formula", "survival",
+          "sandwich", "party", "TH.data", "knitr")
+pkgs <- sapply(pkgs, require, character.only = TRUE)
+if (pkgs["party"]) detach(package:party)
 set.seed(290875)
+@
+
+<<fail, results = "asis", echo = FALSE>>=
+if (any(!pkgs))
+{
+    cat(paste("Package(s)", paste(names(pkgs)[!pkgs], collapse = ", "), 
+        "not available, stop processing.",
+        "\\end{document}\n"))
+    knitr::knit_exit()
+}
 @
 
 \setkeys{Gin}{width=\textwidth}
@@ -291,7 +296,7 @@ the covariate $X_j$. The transformation may be specified using the
 in \code{partykit::ctree} but is available from \code{party::ctree}).
 %%If, for example, a ranking \textit{both}
 %%\code{x1} and \code{x2} is required,
-%%<<party-xtrafo, echo = TRUE, results = hide>>=
+%%<<party-xtrafo, echo = TRUE, results = "hide">>=
 %%party:::ctree(y ~ x1 + x2, data = ls, xtrafo = function(data) trafo(data,
 %%numeric_trafo = rank))
 %%@
@@ -364,11 +369,11 @@ inverse $\Sigma^+$ of $\Sigma$ is involved.
 
 The type of test statistic to be used can be specified by means of the
 \code{ctree\_control} function, for example
-<<party-max, echo = TRUE, results = hide>>=
+<<party-max, echo = TRUE, results = "hide">>=
 ctree_control(teststat = "max")
 @
 uses $c_\text{max}$ and 
-<<party-max, echo = TRUE, results = hide>>=
+<<party-quad, echo = TRUE, results = "hide">>=
 ctree_control(teststat = "quad")
 @
 takes $c_\text{quad}$ (the default).
@@ -404,12 +409,12 @@ However, this approach is less attractive for learning samples with
 missing values. Universally applicable approaches are multiple test 
 procedures based on $P_1, \dots, P_m$. 
 Simple Bonferroni-adjusted $P$-values (the adjustment $1 - (1 - P_j)^m$ is used), available via 
-<<party-Bonf, echo = TRUE, results = hide>>=
+<<party-Bonf, echo = TRUE, results = "hide">>=
 ctree_control(testtype = "Bonferroni")
 @
 or a min-$P$-value resampling approach (Note: resampling is currently
 not implemented in \code{partykit::ctree})
-%<<party-MC, echo = TRUE, results = hide>>=
+%<<party-MC, echo = TRUE, results = "hide">>=
 %party:::ctree_control(testtype = "MonteCarlo")           
 %@
 are just examples and we refer
@@ -451,7 +456,7 @@ A^* = \argmax_A c(\bft_{j^*}^A, \mu_{j^*}^A, \Sigma_{j^*}^A).
 \end{eqnarray}
 The statistics $c(\bft_{j^*}^A, \mu_{j^*}^A, \Sigma_{j^*}^A)$ are available
 for each node with
-%<<party-ss, echo = TRUE, results = hide>>=
+%<<party-ss, echo = TRUE, results = "hide">>=
 %party:::ctree_control(savesplitstats = TRUE)
 %@
 and can be used to depict a scatter plot of the covariate
@@ -464,7 +469,7 @@ In order to anticipate pathological splits one can restrict the number of
 possible subsets that are evaluated, for example by introducing restrictions
 on the sample size or the sum of the case weights in each of the two groups
 of observations induced by a possible split. For example,
-<<party-minsplit, echo = TRUE, results = hide>>=
+<<party-minsplit, echo = TRUE, results = "hide">>=
 ctree_control(minsplit = 20)
 @
 requires the sum of the weights in both the left and right daughter 
@@ -482,7 +487,7 @@ observations as the original split. One simply replaces the original
 response variable by a binary variable $I(X_{ji} \in A^*)$ coding the
 split and proceeds as described in the previous part. The number of
 surrogate splits can be controlled using
-<<party-maxsurr, echo = TRUE, results = hide>>=
+<<party-maxsurr, echo = TRUE, results = "hide">>=
 ctree_control(maxsurrogate = 3)
 @
 
@@ -496,7 +501,7 @@ ls <- data.frame(y = gl(3, 50, labels = c("A", "B", "C")),
 @
 in the following illustrations. In \code{partykit::ctree}, the dependency structure and the variables may be
 specified in a traditional formula based way
-<<party-formula, echo = TRUE, results = hide>>=
+<<party-formula, echo = TRUE, results = "hide">>=
 library("partykit")
 ctree(y ~ x1 + x2, data = ls)
 @
@@ -513,7 +518,7 @@ or by looking at a graphical representation as in Figure~\ref{party-plot1}.
 
 \begin{figure}[t!]
 \centering
-<<party-plot, echo = TRUE, fig = TRUE, height = 5, width = 8>>=
+<<party-plot, echo = TRUE,  fig.height = 5, fig.width = 8>>=
 plot(ct)
 @
 \caption{A graphical representation of a classification tree.
@@ -552,8 +557,8 @@ because for the \code{mob} algorithm such a method (for \underline{s}tructural
 available, the \pkg{strucchange} package needs to be loaded (otherwise
 \code{sctest.constparty} would have to be called directly).
 <<party-sctest, echo = TRUE>>=
-library("strucchange")
-sctest(ct)
+if (require("strucchange"))
+    print(sctest(ct))
 @
 Here, we see that \code{x1} leads to a significant test result in the root
 node and is hence used for splitting. In the kid nodes, no more significant
@@ -716,13 +721,13 @@ tptree <- ctree(counts ~ ., data = treepipit)
 
 \begin{figure}[t!]
 \centering
-<<treepipit-plot, echo = TRUE, fig = TRUE, height = 5, width = 8>>=
+<<treepipit-plot, echo = TRUE,  fig.height = 5, fig.width = 8>>=
 plot(tptree, terminal_panel = node_barplot)
 @
 \caption{Conditional regression tree for the tree pipit data.}
 \end{figure}
 
-<<treepipit-x, echo = FALSE, results = hide>>=
+<<treepipit-x, echo = FALSE>>=
 p <- info_node(node_party(tptree))$p.value
 n <- table(predict(tptree, type = "node"))
 @
@@ -752,7 +757,7 @@ data("GlaucomaM", package = "TH.data")
 gtree <- ctree(Class ~ ., data = GlaucomaM)
 @
 
-<<glaucoma-x, echo = FALSE, results = hide>>=
+<<glaucoma-x, echo = FALSE, results = "hide">>=
 sp <- split_node(node_party(gtree))$varID
 @
 
@@ -764,8 +769,7 @@ visualization of the regression relationship is useful for comparing the
 structures inherent in the learning sample with subject matter knowledge. 
 For $98$ patients and $98$ controls, matched by age
 and gender, $62$ covariates describing the eye morphology are available. The
-data is part of the 
-\pkg{TH.data} package, \url{http://CRAN.R-project.org}).
+data is part of the \pkg{TH.data} package \citep{pkg:TH.data}.
 The first split in Figure~\ref{glaucoma} separates eyes with a volume 
 above reference less than
 $\Sexpr{sp} \text{ mm}^3$ in the inferior part of the
@@ -780,14 +784,14 @@ temporal part of the optic nerve head (\code{vart}).
 \setkeys{Gin}{width=.9\textwidth}
 \begin{figure}[p!]
 \centering
-<<glaucoma-plot, echo = FALSE, fig = TRUE, height = 6, width = 10>>=
+<<glaucoma-plot, echo = FALSE,  fig.height = 6, fig.width = 10>>=
 plot(gtree)
 @
 \caption{Conditional inference tree for the glaucoma data. For each inner node, the
 Bonferroni-adjusted $P$-values are given, the fraction of glaucomatous eyes
 is displayed for each terminal node. \label{glaucoma}}
 
-<<glaucoma-plot-inner, echo = FALSE, fig = TRUE, height = 7, width = 10>>=
+<<glaucoma-plot-inner, echo = FALSE,  fig.height = 7, fig.width = 10>>=
 plot(gtree, inner_panel = node_barplot, 
      edge_panel = function(...) invisible(), tnex = 1)
 @
@@ -807,7 +811,7 @@ the terminal nodes. This distribution can be shown for the inner nodes as
 well, namely by specifying the appropriate panel generating function
 (\code{node\_barplot} in our case), see Figure~\ref{glaucoma-inner}.
 
-<<glaucoma-plot-inner, echo = TRUE, eval = FALSE>>=
+<<glaucoma-plot-inner-bar, echo = TRUE, eval = FALSE>>=
 plot(gtree, inner_panel = node_barplot, 
      edge_panel = function(...) invisible(), tnex = 1)
 @
@@ -826,7 +830,7 @@ plot(gtree, inner_panel = node_barplot,
 %
 %\begin{figure}[t!]
 %\centering
-%<<glaucoma-split-plot, eval = FALSE, echo = TRUE, fig = TRUE, height = 4, width = 11, leftpar = TRUE>>=
+%<<glaucoma-split-plot, eval = FALSE, echo = TRUE,  fig.height = 4, fig.width = 11, leftpar = TRUE>>=
 %cex <- 1.6
 %inner <- nodes(gtree, c(1, 2, 5))
 %layout(matrix(1:length(inner), ncol = length(inner)))
@@ -859,7 +863,7 @@ shown in Figure~\ref{glaucoma-probplot}.
 \setkeys{Gin}{width=.5\textwidth}
 \begin{figure}[t!]
 \centering
-<<glaucoma-classprob, echo = TRUE, fig = TRUE, height = 4, width = 5>>=
+<<glaucoma-classprob, echo = TRUE,  fig.height = 4, fig.width = 5>>=
 prob <- predict(gtree, type = "prob")[,1] + 
                 runif(nrow(GlaucomaM), min = -0.01, max = 0.01)
 splitvar <- character_split(split_node(node_party(gtree)), 
@@ -906,7 +910,7 @@ library("survival")
 \setkeys{Gin}{width=\textwidth}
 \begin{figure}[t!]
 \centering
-<<GBSG2-plot, echo = TRUE, fig = TRUE, height = 6, width = 10>>=
+<<GBSG2-plot, echo = TRUE,  fig.height = 6, fig.width = 10>>=
 plot(stree)
 @
 \caption{Tree-structured survival model for the GBSG2 data and the distribution of 
@@ -936,7 +940,7 @@ mtree <- ctree(ME ~ ., data = mammoexp)
 \setkeys{Gin}{width=.9\textwidth, keepaspectratio=TRUE}
 \begin{figure}[t!]
 \centering
-<<mammo-plot, echo = TRUE, fig = TRUE, height = 6, width = 13>>=
+<<mammo-plot, echo = TRUE,  fig.height = 6, fig.width = 13>>=
 plot(mtree)
 @
 \caption{Ordinal regression for the mammography experience data with the
@@ -974,8 +978,6 @@ observations. Because of the small sample size we allow for a split if at
 least $5$ observations are element of a node The prognostic factor \code{water}
 found by \cite{Death:2002} is confirmed by the model 
 shown in Figures~\ref{spider1} and~\ref{spider2} which additionally identifies \code{reft}.
-The data are available in package 
-\pkg{mvpart} \citep{mvpart}.
 
 <<spider-ctree, echo = TRUE>>=
 data("HuntingSpiders", package = "partykit")
@@ -989,7 +991,7 @@ sptree <- ctree(arct.lute + pard.lugu + zora.spin + pard.nigr +
 \setkeys{Gin}{width=\textwidth, keepaspectratio=TRUE}
 \begin{figure}[t!]
 \centering
-<<spider-plot1, echo = TRUE, fig = TRUE, height = 6, width = 13>>=
+<<spider-plot1, echo = TRUE,  fig.height = 6, fig.width = 13>>=
 plot(sptree, terminal_panel = node_barplot)
 @
 \caption{Regression tree for hunting spider abundance with bars for the mean of each response. \label{spider1}}
@@ -998,7 +1000,7 @@ plot(sptree, terminal_panel = node_barplot)
 \setkeys{Gin}{height=.93\textheight, keepaspectratio=TRUE}
 \begin{figure}[p!]
 \centering
-<<spider-plot2, echo = TRUE, fig = TRUE, width = 10, height = 22>>=
+<<spider-plot2, echo = TRUE,  fig.width = 10, fig.height = 22>>=
 plot(sptree)
 @
 \caption{Regression tree for hunting spider abundance with boxplots for each response. \label{spider2}}
@@ -1025,7 +1027,7 @@ described.
 
 \subsection{Regression}
 
-<<party-setup, echo = FALSE, results = hide>>=
+<<party-setup, echo = FALSE, results = "hide", message = FALSE, warnings = FALSE>>=
 library("party")
 set.seed(290875)
 @
@@ -1257,10 +1259,10 @@ whereas \code{ctree} only works with the score functions.
 Argument \code{xtrafo} allowing the user to change the transformations $g_j$ of the
 covariates was removed from the user interface.
 
-<<closing, echo = FALSE, results = hide>>=
+<<closing, echo = FALSE, results = "hide">>=
 detach(package:party)
 @
 
-\bibliography{party}
+\bibliography{party,packages}
 
 \end{document}

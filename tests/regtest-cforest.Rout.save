@@ -1,7 +1,7 @@
 
-R version 3.5.2 (2018-12-20) -- "Eggshell Igloo"
-Copyright (C) 2018 The R Foundation for Statistical Computing
-Platform: x86_64-pc-linux-gnu (64-bit)
+R version 4.5.2 (2025-10-31) -- "[Not] Part in a Rumble"
+Copyright (C) 2025 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -21,7 +21,8 @@ Type 'q()' to quit R.
 Loading required package: grid
 Loading required package: libcoin
 Loading required package: mvtnorm
-> stopifnot(require("party"))
+> if (!require("party"))
++     quit()
 Loading required package: party
 Loading required package: modeltools
 Loading required package: stats4
@@ -44,6 +45,7 @@ The following objects are masked from 'package:partykit':
     node_barplot, node_bivplot, node_boxplot, node_inner, node_surv,
     node_terminal, varimp
 
+> 
 > set.seed(29)
 > 
 > ### regression
@@ -271,6 +273,7 @@ Sepal.Length  Sepal.Width Petal.Length  Petal.Width
 +                   predict(cf_partykit, type = "prob"))) < sqrt(.Machine$double.eps))
 > 
 > 
+> 
 > proc.time()
    user  system elapsed 
-  5.245   0.192   5.095 
+  2.884   0.187   2.875 

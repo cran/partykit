@@ -1,7 +1,7 @@
 
-R version 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
-Copyright (C) 2020 The R Foundation for Statistical Computing
-Platform: x86_64-pc-linux-gnu (64-bit)
+R version 4.5.2 (2025-10-31) -- "[Not] Part in a Rumble"
+Copyright (C) 2025 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -506,19 +506,24 @@ NULL
 > unclass(m_df)$node$info$criterion
 NULL
 > 
-> 
-> ### example from mob vignette
-> data("PimaIndiansDiabetes", package = "mlbench")
-> 
-> logit <- function(y, x, start = NULL, weights = NULL, offset = NULL, ...) {
+> if (requireNamespace("mlbench")) {
++ 
++ ### example from mob vignette
++ data("PimaIndiansDiabetes", package = "mlbench")
++ 
++ logit <- function(y, x, start = NULL, weights = NULL, offset = NULL, ...) {
 +   glm(y ~ 0 + x, family = binomial, start = start, ...)
 + }
-> 
-> pid_formula <- diabetes ~ glucose | pregnant + pressure + triceps +
++ 
++ pid_formula <- diabetes ~ glucose | pregnant + pressure + triceps +
 +   insulin + mass + pedigree + age
-> 
-> pid_tree <- mob(pid_formula, data = PimaIndiansDiabetes, fit = logit)
-> pid_tree
++ 
++ pid_tree <- mob(pid_formula, data = PimaIndiansDiabetes, fit = logit)
++ print(pid_tree)
++ print(nodeapply(pid_tree, ids = nodeids(pid_tree), function(n) n$info$criterion))
++ 
++ }
+Loading required namespace: mlbench
 Model-based recursive partitioning (logit)
 
 Model formula:
@@ -542,7 +547,6 @@ Number of inner nodes:    2
 Number of terminal nodes: 3
 Number of parameters per node: 2
 Objective function: 355.4578
-> nodeapply(pid_tree, ids = nodeids(pid_tree), function(n) n$info$criterion)
 $`1`
 NULL
 
@@ -559,9 +563,6 @@ $`5`
 NULL
 
 > 
-> 
-> 
-> 
 > proc.time()
    user  system elapsed 
- 20.340   0.056  20.394 
+  9.704   0.055   9.769 

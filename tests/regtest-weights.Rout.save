@@ -1,7 +1,7 @@
 
-R version 3.5.0 (2018-04-23) -- "Joy in Playing"
-Copyright (C) 2018 The R Foundation for Statistical Computing
-Platform: x86_64-pc-linux-gnu (64-bit)
+R version 4.5.2 (2025-10-31) -- "[Not] Part in a Rumble"
+Copyright (C) 2025 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -16,7 +16,7 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 Type 'q()' to quit R.
 
 > suppressWarnings(RNGversion("3.5.2"))
->
+> 
 > library("partykit")
 Loading required package: grid
 Loading required package: libcoin
@@ -124,4 +124,4 @@ Loading required package: mvtnorm
 > 
 > proc.time()
    user  system elapsed 
-  1.457   0.072   1.516 
+  0.581   0.063   0.639 

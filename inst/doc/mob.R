@@ -1,288 +1,176 @@
-### R code from vignette source 'mob.Rnw'
-
-###################################################
-### code chunk number 1: setup
-###################################################
+## ----setup, echo=FALSE, results='hide', message = FALSE, warnings = FALSE----
 suppressWarnings(RNGversion("3.5.2"))
 library("partykit")
 options(prompt = "R> ", continue = "+  ", digits = 4, useFancyQuotes = FALSE)
+pkgs <- c("AER", "Formula", "mlbench", "sandwich", "strucchange",
+          "survival", "TH.data", "vcd", "psychotools", "psychotree", "knitr")
+pkgs <- sapply(pkgs, require, character.only = TRUE)
 
+## ----fail, results = "asis", echo = FALSE---------------------------
+if (any(!pkgs))
+{
+    cat(paste("Package(s)", paste(names(pkgs)[!pkgs], collapse = ", "), 
+        "not available, stop processing.",
+        "\\end{document}\n"))
+    knitr::knit_exit()
+}
 
-###################################################
-### code chunk number 2: PimaIndiansDiabetes
-###################################################
+## ----PimaIndiansDiabetes--------------------------------------------
 data("PimaIndiansDiabetes", package = "mlbench")
 
-
-###################################################
-### code chunk number 3: PimIndiansDiabetes-formula
-###################################################
+## ----PimIndiansDiabetes-formula-------------------------------------
 pid_formula <- diabetes ~ glucose | pregnant + pressure + triceps +
   insulin + mass + pedigree + age
 
-
-###################################################
-### code chunk number 4: logit
-###################################################
+## ----logit----------------------------------------------------------
 logit <- function(y, x, start = NULL, weights = NULL, offset = NULL, ...) {
   glm(y ~ 0 + x, family = binomial, start = start, ...)
 }
 
-
-###################################################
-### code chunk number 5: PimaIndiansDiabetes-mob
-###################################################
+## ----PimaIndiansDiabetes-mob----------------------------------------
 pid_tree <- mob(pid_formula, data = PimaIndiansDiabetes, fit = logit)
 
-
-###################################################
-### code chunk number 6: PimaIndiansDiabetes-print
-###################################################
+## ----PimaIndiansDiabetes-print--------------------------------------
 pid_tree
 
-
-###################################################
-### code chunk number 7: PimaIndiansDiabetes-glmtree
-###################################################
+## ----PimaIndiansDiabetes-glmtree------------------------------------
 pid_tree2 <- glmtree(diabetes ~ glucose | pregnant +
   pressure + triceps + insulin + mass + pedigree + age,
   data = PimaIndiansDiabetes, family = binomial)
 
-
-###################################################
-### code chunk number 8: PimaIndiansDiabetes-plot
-###################################################
+## ----PimaIndiansDiabetes-plot, echo=FALSE, results='hide', fig.height=5, fig.width=7----
 plot(pid_tree)
 
-
-###################################################
-### code chunk number 9: PimaIndiansDiabetes-plot2
-###################################################
+## ----PimaIndiansDiabetes-plot2,echo=FALSE,results='hide',fig.height=6,fig.width=10----
 plot(pid_tree2, tp_args = list(ylines = 1, margins = c(1.5, 1.5, 1.5, 2.5)))
 
-
-###################################################
-### code chunk number 10: PimaIndiansDiabetes-sctest1
-###################################################
+## ----PimaIndiansDiabetes-sctest1------------------------------------
 library("strucchange")
 sctest(pid_tree, node = 1)
 
-
-###################################################
-### code chunk number 11: PimaIndiansDiabetes-sctest2
-###################################################
+## ----PimaIndiansDiabetes-sctest2------------------------------------
 sctest(pid_tree, node = 2)
 
-
-###################################################
-### code chunk number 12: PimaIndiansDiabetes-sctest3
-###################################################
+## ----PimaIndiansDiabetes-sctest3------------------------------------
 sctest(pid_tree, node = 3)
 
+## ----PimaIndiansDiabetes-prune, eval=FALSE--------------------------
+# pid_tree3 <- mob(pid_formula, data = PimaIndiansDiabetes,
+#   fit = logit, control = mob_control(verbose = TRUE,
+#     minsize = 50, maxdepth = 4, alpha = 0.9, prune = "BIC"))
 
-###################################################
-### code chunk number 13: PimaIndiansDiabetes-prune (eval = FALSE)
-###################################################
-## pid_tree3 <- mob(pid_formula, data = PimaIndiansDiabetes,
-##   fit = logit, control = mob_control(verbose = TRUE,
-##     minsize = 50, maxdepth = 4, alpha = 0.9, prune = "BIC"))
-
-
-###################################################
-### code chunk number 14: PimaIndiansDiabetes-info
-###################################################
+## ----PimaIndiansDiabetes-info---------------------------------------
 names(pid_tree$info)
 
-
-###################################################
-### code chunk number 15: PimaIndiansDiabetes-info
-###################################################
+## ----PimaIndiansDiabetes-info-tree----------------------------------
 names(pid_tree$node$info)
 
-
-###################################################
-### code chunk number 16: PimaIndiansDiabetes-print3
-###################################################
+## ----PimaIndiansDiabetes-print3-------------------------------------
 print(pid_tree, node = 3)
 
-
-###################################################
-### code chunk number 17: PimaIndiansDiabetes-coef
-###################################################
+## ----PimaIndiansDiabetes-coef---------------------------------------
 coef(pid_tree)
 coef(pid_tree, node = 1)
 ## IGNORE_RDIFF_BEGIN
 summary(pid_tree, node = 1)
 ## IGNORE_RDIFF_END
 
-
-###################################################
-### code chunk number 18: mob.Rnw:785-786
-###################################################
+## -------------------------------------------------------------------
 exp(coef(pid_tree)[,2])
 
-
-###################################################
-### code chunk number 19: mob.Rnw:789-790
-###################################################
+## ----echo=FALSE-----------------------------------------------------
 risk <- round(100 * (exp(coef(pid_tree)[,2])-1), digits = 1)
 
-
-###################################################
-### code chunk number 20: PimaIndiansDiabetes-logLik
-###################################################
+## ----PimaIndiansDiabetes-logLik-------------------------------------
 logLik(pid_tree)
 AIC(pid_tree)
 BIC(pid_tree)
 
-
-###################################################
-### code chunk number 21: PimaIndiansDiabetes-deviance
-###################################################
+## ----PimaIndiansDiabetes-deviance-----------------------------------
 mean(residuals(pid_tree)^2)
 deviance(pid_tree)/sum(weights(pid_tree))
 deviance(pid_tree)/nobs(pid_tree)
 
-
-###################################################
-### code chunk number 22: PimaIndiansDiabetes-predict
-###################################################
+## ----PimaIndiansDiabetes-predict------------------------------------
 pid <- head(PimaIndiansDiabetes)
 predict(pid_tree, newdata = pid, type = "node")
 
-
-###################################################
-### code chunk number 23: PimaIndiansDiabetes-width
-###################################################
+## ----PimaIndiansDiabetes-width--------------------------------------
 width(pid_tree)
 depth(pid_tree)
 
-
-###################################################
-### code chunk number 24: PimaIndiansDiabetes-subset
-###################################################
+## ----PimaIndiansDiabetes-subset-------------------------------------
 pid_tree[3]
 
-
-###################################################
-### code chunk number 25: mob.Rnw:877-880
-###################################################
+## -------------------------------------------------------------------
 predict(pid_tree2, newdata = pid, type = "node")
 predict(pid_tree2, newdata = pid, type = "response")
 predict(pid_tree2, newdata = pid, type = "link")
 
-
-###################################################
-### code chunk number 26: Journals-data
-###################################################
+## ----Journals-data--------------------------------------------------
 data("Journals", package = "AER")
 Journals <- transform(Journals,
   age = 2000 - foundingyear,
   chars = charpp * pages)
 
-
-###################################################
-### code chunk number 27: Journals-tree
-###################################################
+## ----Journals-tree--------------------------------------------------
 j_tree <- lmtree(log(subs) ~ log(price/citations) | price + citations +
   age + chars + society, data = Journals, minsize = 10, verbose = TRUE)
 
-
-###################################################
-### code chunk number 28: Journals-plot
-###################################################
+## ----Journals-plot, echo=FALSE, results='hide', fig.height=5.5, fig.width=7----
 plot(j_tree)
 
-
-###################################################
-### code chunk number 29: Journals-print
-###################################################
+## ----Journals-print-------------------------------------------------
 j_tree
 
-
-###################################################
-### code chunk number 30: Journals-methods
-###################################################
+## ----Journals-methods, results='hide'-------------------------------
 coef(j_tree, node = 1:3)
 summary(j_tree, node = 1:3)
 sctest(j_tree, node = 1:3)
 
-
-###################################################
-### code chunk number 31: BostonHousing-data
-###################################################
+## ----BostonHousing-data---------------------------------------------
 data("BostonHousing", package = "mlbench")
 BostonHousing <- transform(BostonHousing,
   chas = factor(chas, levels = 0:1, labels = c("no", "yes")),
   rad = factor(rad, ordered = TRUE))
 
-
-###################################################
-### code chunk number 32: BostonHousing-tree
-###################################################
+## ----BostonHousing-tree---------------------------------------------
 bh_tree <- lmtree(medv ~ log(lstat) + I(rm^2) | zn + indus + chas + nox +
   age + dis + rad + tax + crim + b + ptratio, data = BostonHousing)
 bh_tree
 
-
-###################################################
-### code chunk number 33: BostonHousing-plot
-###################################################
+## ----BostonHousing-plot,echo=FALSE,fig.height=8,fig.width=12,out.extra='width=18cm,keepaspectratio,angle=90'----
 plot(bh_tree)
 
-
-###################################################
-### code chunk number 34: BostonHousing-AIC
-###################################################
+## ----BostonHousing-AIC----------------------------------------------
 mean(residuals(bh_tree)^2)
 logLik(bh_tree)
 AIC(bh_tree)
 
-
-###################################################
-### code chunk number 35: TeachingRatings-data
-###################################################
+## ----TeachingRatings-data-------------------------------------------
 data("TeachingRatings", package = "AER")
 tr <- subset(TeachingRatings, credits == "more")
 
-
-###################################################
-### code chunk number 36: TeachingRatings-lm
-###################################################
+## ----TeachingRatings-lm---------------------------------------------
 tr_null <- lm(eval ~ 1, data = tr, weights = students)
 tr_lm <- lm(eval ~ beauty + gender + minority + native + tenure + division,
   data = tr, weights = students)
 
-
-###################################################
-### code chunk number 37: TeachingRatings-tree
-###################################################
+## ----TeachingRatings-tree-------------------------------------------
 (tr_tree <- lmtree(eval ~ beauty | minority + age + gender + division +
   native + tenure, data = tr, weights = students, caseweights = FALSE))
 
-
-###################################################
-### code chunk number 38: TeachingRatings-plot
-###################################################
+## ----TeachingRatings-plot,echo=FALSE,results='hide',fig.height=8,fig.width=12----
 plot(tr_tree)
 
-
-###################################################
-### code chunk number 39: TeachingRatings-coef
-###################################################
+## ----TeachingRatings-coef-------------------------------------------
 coef(tr_lm)[2]
 coef(tr_tree)[, 2]
 
-
-###################################################
-### code chunk number 40: TeachingRatings-rsquared
-###################################################
+## ----TeachingRatings-rsquared---------------------------------------
 1 - c(deviance(tr_lm), deviance(tr_tree))/deviance(tr_null)
 
-
-###################################################
-### code chunk number 41: Titanic-data
-###################################################
+## ----Titanic-data---------------------------------------------------
 data("Titanic", package = "datasets")
 ttnc <- as.data.frame(Titanic)
 ttnc <- ttnc[rep(1:nrow(ttnc), ttnc$Freq), 1:4]
@@ -291,61 +179,37 @@ ttnc <- transform(ttnc, Treatment = factor(
   Gender == "Female" | Age == "Child", levels = c(FALSE, TRUE),
   labels = c("Male&Adult", "Female|Child")))
 
-
-###################################################
-### code chunk number 42: Titanic-tree
-###################################################
+## ----Titanic-tree---------------------------------------------------
 ttnc_tree <- glmtree(Survived ~ Treatment | Class + Gender + Age,
   data = ttnc, family = binomial, alpha = 0.01)
 ttnc_tree
 
-
-###################################################
-### code chunk number 43: Titanic-plot
-###################################################
+## ----Titanic-plot,echo=FALSE,results='hide',fig.height=6,fig.width=10----
 plot(ttnc_tree, tp_args = list(ylines = 1, margins = c(1.5, 1.5, 1.5, 2.5)))
 
-
-###################################################
-### code chunk number 44: GBSG2
-###################################################
+## ----GBSG2----------------------------------------------------------
 data("GBSG2", package = "TH.data")
 GBSG2$time <- GBSG2$time/365
 
-
-###################################################
-### code chunk number 45: wbreg
-###################################################
+## ----wbreg, results='hide'------------------------------------------
 library("survival")
 wbreg <- function(y, x, start = NULL, weights = NULL, offset = NULL, ...) {
   survreg(y ~ 0 + x, weights = weights, dist = "weibull", ...)
 }
 
-
-###################################################
-### code chunk number 46: logLik.survreg
-###################################################
+## ----logLik.survreg-------------------------------------------------
 logLik.survreg <- function(object, ...)
   structure(object$loglik[2], df = sum(object$df), class = "logLik")
 
-
-###################################################
-### code chunk number 47: gbsg2_tree
-###################################################
+## ----gbsg2_tree-----------------------------------------------------
 gbsg2_tree <- mob(Surv(time, cens) ~ horTh + pnodes | age + tsize +
   tgrade + progrec + estrec + menostat, data = GBSG2,
   fit = wbreg, control = mob_control(minsize = 80))
 
-
-###################################################
-### code chunk number 48: GBSG2-plot
-###################################################
+## ----GBSG2-plot, echo=FALSE, results='hide', fig.height=4.5, fig.width=5----
 plot(gbsg2_tree)
 
-
-###################################################
-### code chunk number 49: GBSG2-scatter
-###################################################
+## ----GBSG2-scatter, echo=FALSE, results='hide', fig.height=6, fig.width=9----
 gbsg2node <- function(mobobj, 
   col = "black", linecol = "red", cex = 0.5, pch = NULL,
   jitter = FALSE, xscale = NULL, yscale = NULL, ylines = 1.5,
@@ -446,39 +310,24 @@ class(gbsg2node) <- "grapcon_generator"
 plot(gbsg2_tree, terminal_panel = gbsg2node, tnex = 2, 
   tp_args = list(xscale = c(0, 52), yscale = c(-0.5, 8.7)))
 
-
-###################################################
-### code chunk number 50: gbsg2_tree-methods
-###################################################
+## ----gbsg2_tree-methods---------------------------------------------
 gbsg2_tree
 coef(gbsg2_tree)
 logLik(gbsg2_tree)
 
-
-###################################################
-### code chunk number 51: bt-packages
-###################################################
+## ----bt-packages----------------------------------------------------
 data("Topmodel2007", package = "psychotree")
 library("psychotools")
 
-
-###################################################
-### code chunk number 52: btfit1
-###################################################
+## ----btfit1---------------------------------------------------------
 btfit1 <- function(y, x = NULL, start = NULL, weights = NULL,
   offset = NULL, ...) btmodel(y, ...)
 
-
-###################################################
-### code chunk number 53: bt1
-###################################################
+## ----bt1------------------------------------------------------------
 bt1 <- mob(preference ~ 1 | gender + age + q1 + q2 + q3,
   data = Topmodel2007, fit = btfit1)
 
-
-###################################################
-### code chunk number 54: btfit2
-###################################################
+## ----btfit2---------------------------------------------------------
 btfit2 <- function(y, x = NULL, start = NULL, weights = NULL,
   offset = NULL, ..., estfun = FALSE, object = FALSE) {
   rval <- btmodel(y, ..., estfun = estfun, vcov = object)
@@ -490,69 +339,42 @@ btfit2 <- function(y, x = NULL, start = NULL, weights = NULL,
   )
 }
 
-
-###################################################
-### code chunk number 55: bt2
-###################################################
+## ----bt2------------------------------------------------------------
 bt2 <- mob(preference ~ 1 | gender + age + q1 + q2 + q3,
   data = Topmodel2007, fit = btfit2)
 
-
-###################################################
-### code chunk number 56: bt2-print
-###################################################
+## ----bt2-print------------------------------------------------------
 bt2
 coef(bt2)
 
+## ----bt2-worthf, eval=FALSE-----------------------------------------
+# worthf <- function(info) paste(info$object$labels,
+#   format(round(worth(info$object), digits = 3)), sep = ": ")
+# plot(bt2, FUN = worthf)
 
-###################################################
-### code chunk number 57: bt2-worthf (eval = FALSE)
-###################################################
-## worthf <- function(info) paste(info$object$labels,
-##   format(round(worth(info$object), digits = 3)), sep = ": ")
-## plot(bt2, FUN = worthf)
-
-
-###################################################
-### code chunk number 58: bt2-plot
-###################################################
+## ----bt2-plot, fig.height=7.4, fig.width=12, echo=FALSE-------------
 plot(bt2)
 
-
-###################################################
-### code chunk number 59: bt2-plot2
-###################################################
+## ----bt2-plot2, fig.height=7.4, fig.width=12, echo=FALSE------------
 worthf <- function(info) paste(info$object$labels,
   format(round(worth(info$object), digits = 3)), sep = ": ")
 plot(bt2, FUN = worthf)
 
+## ----bt2-nodeapply, eval=FALSE--------------------------------------
+# par(mfrow = c(2, 2))
+# nodeapply(bt2, ids = c(3, 5, 6, 7), FUN = function(n)
+#   plot(n$info$object, main = n$id, ylim = c(0, 0.4)))
 
-###################################################
-### code chunk number 60: bt2-nodeapply (eval = FALSE)
-###################################################
-## par(mfrow = c(2, 2))
-## nodeapply(bt2, ids = c(3, 5, 6, 7), FUN = function(n)
-##   plot(n$info$object, main = n$id, ylim = c(0, 0.4)))
-
-
-###################################################
-### code chunk number 61: bt2-nodeapply-plot
-###################################################
+## ----bt2-nodeapply-plot, fig.height=7, fig.width=9, echo=FALSE, results='hide'----
 par(mfrow = c(2, 2))
 nodeapply(bt2, ids = c(3, 5, 6, 7), FUN = function(n)
   plot(n$info$object, main = n$id, ylim = c(0, 0.4)))
 
+## ----bt2-plot3, eval=FALSE------------------------------------------
+# plot(bt2, drop = TRUE, tnex = 2,
+#   terminal_panel = node_btplot(bt2, abbreviate = 1, yscale = c(0, 0.5)))
 
-###################################################
-### code chunk number 62: bt2-plot3 (eval = FALSE)
-###################################################
-## plot(bt2, drop = TRUE, tnex = 2,
-##   terminal_panel = node_btplot(bt2, abbreviate = 1, yscale = c(0, 0.5)))
-
-
-###################################################
-### code chunk number 63: node_btplot
-###################################################
+## ----node_btplot, echo=FALSE, results='hide', fig.height=6.2, fig.width=10----
 ## visualization function
 node_btplot <- function(mobobj, id = TRUE,
   worth = TRUE, names = TRUE, abbreviate = TRUE, index = TRUE, ref = TRUE,
@@ -665,21 +487,14 @@ class(node_btplot) <- "grapcon_generator"
 plot(bt2, drop = TRUE, tnex = 2,
   terminal_panel = node_btplot(bt2, abbreviate = 1, yscale = c(0, 0.5)))
 
-
-###################################################
-### code chunk number 64: tm
-###################################################
+## ----tm, echo=FALSE-------------------------------------------------
 tm <- data.frame(age = c(60, 25, 35), gender = c("male", "female", "female"),
   q1 = "no", q2 = c("no", "no", "yes"), q3 = "no")
 tm
 
-
-###################################################
-### code chunk number 65: tm-predict
-###################################################
+## ----tm-predict-----------------------------------------------------
 tm
 predict(bt2, tm, type = "node")
 predict(bt2, tm, type = function(object) t(worth(object)))
 predict(bt2, tm, type = function(object) t(rank(-worth(object))))
-
 

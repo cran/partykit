@@ -1,7 +1,9 @@
 suppressWarnings(RNGversion("3.5.2"))
 
 library("partykit")
-stopifnot(require("party"))
+if (!require("party"))
+    quit()
+
 set.seed(29)
 
 ### regression
@@ -123,4 +125,5 @@ cf_2 <- partykit::cforest(Species ~ ., data = iris,
     ntree = ntree, mtry = 4, weights = w)
 stopifnot(max(abs(predict(cf_2, type = "prob") - 
                   predict(cf_partykit, type = "prob"))) < sqrt(.Machine$double.eps))
+
 

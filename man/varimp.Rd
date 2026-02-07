@@ -94,15 +94,16 @@
 \examples{
     
    set.seed(290875)
-   data("readingSkills", package = "party")
-   readingSkills.cf <- cforest(score ~ ., data = readingSkills, 
-                               mtry = 2, ntree = 50)
+   if (requireNamespace("party")) {
+       data("readingSkills", package = "party")
+       readingSkills.cf <- cforest(score ~ ., data = readingSkills, 
+                                   mtry = 2, ntree = 50)
 
-   # standard importance
-   varimp(readingSkills.cf)
+       # standard importance
+       varimp(readingSkills.cf)
 
-   # conditional importance, may take a while...
-   varimp(readingSkills.cf, conditional = TRUE)
-
+       # conditional importance, may take a while...
+       varimp(readingSkills.cf, conditional = TRUE)
+   }
 }
 \keyword{tree}

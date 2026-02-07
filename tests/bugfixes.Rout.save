@@ -1,5 +1,5 @@
 
-R version 4.5.0 (2025-04-11) -- "How About a Twenty-Six"
+R version 4.5.2 (2025-10-31) -- "[Not] Part in a Rumble"
 Copyright (C) 2025 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu
 
@@ -881,19 +881,22 @@ Number of terminal nodes: 6
 > ct13 <- partykit::ctree(y ~ x, data = d, 
 +                         scores = list(y = c(1, 4, 5), x = c(1, 5, 6)))
 > 
-> ### party with scores
-> ct21 <- party::ctree(y ~ x, data = d) 
-> ct22 <- party::ctree(y ~ x, data = d, 
+> if (requireNamespace("party")) {
++ ### party with scores
++ ct21 <- party::ctree(y ~ x, data = d) 
++ ct22 <- party::ctree(y ~ x, data = d, 
 +                      scores = list(y = c(1, 4, 5)))
-> ct23 <- party::ctree(y ~ x, data = d, 
++ ct23 <- party::ctree(y ~ x, data = d, 
 +                      scores = list(y = c(1, 4, 5), x = c(1, 5, 6)))
-> 
-> stopifnot(all.equal(ct11$node$info$p.value, 
++ 
++ stopifnot(all.equal(ct11$node$info$p.value, 
 +           1 - ct21@tree$criterion$criterion, check.attr = FALSE))
-> stopifnot(all.equal(ct12$node$info$p.value, 
++ stopifnot(all.equal(ct12$node$info$p.value, 
 +           1 - ct22@tree$criterion$criterion, check.attr = FALSE))
-> stopifnot(all.equal(ct13$node$info$p.value, 
++ stopifnot(all.equal(ct13$node$info$p.value, 
 +           1 - ct23@tree$criterion$criterion, check.attr = FALSE))
++ }
+Loading required namespace: party
 > 
 > ### ytrafo
 > y <- runif(100, max = 3)
@@ -905,17 +908,18 @@ Number of terminal nodes: 6
 > ct12 <- partykit::ctree(y ~ x, data = d,
 +                         ytrafo = list(y = sqrt))
 > 
-> ### party with scores
-> ct21 <- party::ctree(y ~ x, data = d)
-> f <- function(data) coin::trafo(data, numeric_trafo = sqrt)
-> ct22 <- party::ctree(y ~ x, data = d,
+> if (requireNamespace("party")) {
++ ### party with scores
++ ct21 <- party::ctree(y ~ x, data = d)
++ f <- function(data) coin::trafo(data, numeric_trafo = sqrt)
++ ct22 <- party::ctree(y ~ x, data = d,
 +                      ytrafo = f)
-> 
-> stopifnot(all.equal(ct11$node$info$p.value,
++ 
++ stopifnot(all.equal(ct11$node$info$p.value,
 +           1 - ct21@tree$criterion$criterion, check.attr = FALSE))
-> stopifnot(all.equal(ct12$node$info$p.value,
++ stopifnot(all.equal(ct12$node$info$p.value,
 +           1 - ct22@tree$criterion$criterion, check.attr = FALSE))
-> 
++ }
 > 
 > ### spotted by Peter Philip Stephensen (DREAM) <PSP@dreammodel.dk>
 > ### splits x >= max(x) where possible in partykit::ctree
@@ -1276,4 +1280,4 @@ Number of terminal nodes: 1
 > 
 > proc.time()
    user  system elapsed 
-  1.502   0.056   1.573 
+  1.486   0.057   1.538 

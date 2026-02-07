@@ -66,7 +66,7 @@ Zeileis A, Hothorn T, Hornik K (2008).
 \seealso{\code{\link{mob}}, \code{\link{mob_control}}, \code{\link{lmtree}}}
 
 \examples{
-if(require("mlbench")) {
+if(require("mlbench") && require("vcd")) {
 
 ## Pima Indians diabetes data
 data("PimaIndiansDiabetes", package = "mlbench")

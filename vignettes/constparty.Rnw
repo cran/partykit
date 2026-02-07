@@ -1,7 +1,8 @@
 \documentclass[nojss]{jss}
 
+%\VignetteEngine{knitr::knitr}
 %\VignetteIndexEntry{Constant Partying: Growing and Handling Trees with Constant Fits}
-%\VignetteDepends{partykit, rpart, RWeka, pmml, datasets}
+%\VignetteDepends{partykit, rpart, RWeka, datasets}
 %\VignetteKeywords{recursive partitioning, regression trees, classification trees, decision trees}
 %\VignettePackage{partykit}
 
@@ -11,7 +12,6 @@
 \usepackage{amsmath}
 \usepackage{thumbpdf}
 \usepackage{rotating}
-%% need no \usepackage{Sweave}
 
 %% additional commands
 \newcommand{\squote}[1]{`{#1}'}
@@ -57,7 +57,7 @@ classes, (b)~parsing of XML descriptions of trees learned in other software syst
   Hirschengraben 84\\
   CH-8001 Z\"urich, Switzerland \\
   E-mail: \email{Torsten.Hothorn@R-project.org}\\
-  URL: \url{http://user.math.uzh.ch/hothorn/}\\
+  URL: \url{https://user.math.uzh.ch/hothorn/}\\
 
   Achim Zeileis\\
   Department of Statistics \\
@@ -66,7 +66,7 @@ classes, (b)~parsing of XML descriptions of trees learned in other software syst
   Universit\"atsstr.~15 \\
   6020 Innsbruck, Austria \\
   E-mail: \email{Achim.Zeileis@R-project.org}\\
-  URL: \url{http://eeecon.uibk.ac.at/~zeileis/}
+  URL: \url{https://www.zeileis.org/}
 }
 
 
@@ -74,9 +74,7 @@ classes, (b)~parsing of XML descriptions of trees learned in other software syst
 
 \setkeys{Gin}{width=\textwidth}
 
-\SweaveOpts{engine=R, eps=FALSE, keep.source=TRUE, eval=TRUE}
-
-<<setup, echo = FALSE, results = hide>>=
+<<setup, echo = FALSE, results = "hide", message = FALSE, warning = FALSE>>=
 suppressWarnings(RNGversion("3.5.2"))
 options(width = 70)
 library("partykit")
@@ -163,7 +161,7 @@ The response variable describes whether or not the passenger survived the sinkin
 \subsection{Coercing rpart objects}
 
 We first fit a classification tree by means of the the \fct{rpart} function 
-from package \pkg{rpart} \citep{rpart} to this data set (make sure to set
+from package \pkg{rpart} \citep{pkg:rpart} to this data set (make sure to set
 \code{model = TRUE}; otherwise \code{model.frame.rpart} will return the
 \code{rpart} object and not the data):
 <<rpart>>=
@@ -185,12 +183,12 @@ produces a graphical representation of this tree, see Figure~\ref{party_plot}.
 
 \begin{figure}[p!]
 \centering
-<<rpart-plot-orig, fig = TRUE, width = 10, height = 6>>=
+<<rpart-plot-orig, fig.width = 10, fig.height = 6>>=
 plot(rp)
 text(rp)
 @
 
-<<rpart-plot, fig = TRUE, width = 10, height = 6>>=
+<<rpart-plot, fig.width = 10, fig.height = 6>>=
 plot(party_rp)
 @
 \caption{\class{rpart} tree of Titanic data plotted using \pkg{rpart} (top)
@@ -220,7 +218,7 @@ Optionally, weights can be stored in the \code{fitted} slot as well.
 
 \subsection{Coercing J48 objects}
 
-The \pkg{RWeka} package \citep{RWeka} provides an interface to the
+The \pkg{RWeka} package \citep{pkg:RWeka} provides an interface to the
 \pkg{Weka} machine learning library and we can use the \fct{J48} function to
 fit a J4.8 tree to the Titanic data
 <<J48>>=
@@ -242,7 +240,7 @@ Figure~\ref{J48_plot}.
 
 \begin{sidewaysfigure}
 \centering
-<<J48-plot, fig = TRUE, width = 15, height = 9>>=
+<<J48-plot, fig.width = 15, fig.height = 9>>=
 plot(party_j48)
 @
 \caption{\class{J48} tree of Titanic data plotted using \pkg{partykit}
@@ -262,97 +260,101 @@ trees, respectively. These can also be coerced using \fct{as.party}. However,
 as these are not constant-fit trees this yields plain \class{party} trees
 with some character information stored in the \code{info} slot.
 
-\subsection{Importing trees from PMML files}
-
-The previous two examples showed how trees learned by other \proglang{R}
-packages can be handled in a unified way using \pkg{partykit}. Additionally,
-\pkg{partykit} can also be used to import trees from any other software
-package that supports the PMML (Predictive Model Markup Language) format.
-
-As an example, we used \proglang{SPSS} to fit a QUEST tree to the Titanic data
-and exported this from \proglang{SPSS} in PMML format. This file is shipped along
-with the \pkg{partykit} package and we can read it as follows:
-<<PMML-Titantic>>=
-ttnc_pmml <- file.path(system.file("pmml", package = "partykit"),
-  "ttnc.pmml")
-(ttnc_quest <- pmmlTreeModel(ttnc_pmml))
-@
+%%% <NOTE>pmml was archived Jan 2026</NOTE>
+%\subsection{Importing trees from PMML files}
 %
-\begin{figure}[t!]
-\centering
-<<PMML-Titanic-plot1, fig=TRUE, height=9, width=17>>=
-plot(ttnc_quest)
-@
-\caption{QUEST tree for Titanic data, fitted using \proglang{SPSS} and exported
-  via PMML. \label{PMML-Titanic-plot1}}
-\end{figure}
+%The previous two examples showed how trees learned by other \proglang{R}
+%packages can be handled in a unified way using \pkg{partykit}. Additionally,
+%\pkg{partykit} can also be used to import trees from any other software
+%package that supports the PMML (Predictive Model Markup Language) format.
 %
-The object \code{ttnc_quest} is of class \class{simpleparty} and the corresponding
-graphical display is shown in Figure~\ref{PMML-Titanic-plot1}.
-As explained in Section~\ref{sec:classes}, the full learning data are not part of
-the PMML description and hence one can only obtain and display the summarized
-information provided by PMML.
-
-In this particular case, however, we have the learning data available in \proglang{R}
-because we had exported the data from \proglang{R} to begin with. Hence, for this
-tree we can augment the \class{simpleparty} with the full learning sample to create
-a \class{constparty}. As \proglang{SPSS} had reordered some factor levels we need
-to carry out this reordering as well"
-<<ttnc2-reorder>>=
-ttnc2 <- ttnc[, names(ttnc_quest$data)]
-for(n in names(ttnc2)) {
-  if(is.factor(ttnc2[[n]])) ttnc2[[n]] <- factor(
-    ttnc2[[n]], levels = levels(ttnc_quest$data[[n]]))
-}
-@
+%As an example, we used \proglang{SPSS} to fit a QUEST tree to the Titanic data
+%and exported this from \proglang{SPSS} in PMML format. This file is shipped along
+%with the \pkg{partykit} package and we can read it as follows:
+%<<PMML-Titantic>>=
+%ttnc_pmml <- file.path(system.file("pmml", package = "partykit"),
+%  "ttnc.pmml")
+%(ttnc_quest <- pmmlTreeModel(ttnc_pmml))
+%@
+%%
+%\begin{figure}[t!]
+%\centering
+%<<PMML-Titanic-plot1, fig.height = 9, fig.width = 17>>=
+%plot(ttnc_quest)
+%@
+%\caption{QUEST tree for Titanic data, fitted using \proglang{SPSS} and exported
+%  via PMML. \label{PMML-Titanic-plot1}}
+%\end{figure}
+%%
+%The object \code{ttnc_quest} is of class \class{simpleparty} and the corresponding
+%graphical display is shown in Figure~\ref{PMML-Titanic-plot1}.
+%As explained in Section~\ref{sec:classes}, the full learning data are not part of
+%the PMML description and hence one can only obtain and display the summarized
+%information provided by PMML.
 %
-Using this data all information for a \class{constparty} can be easily computed:
+%In this particular case, however, we have the learning data available in \proglang{R}
+%because we had exported the data from \proglang{R} to begin with. Hence, for this
+%tree we can augment the \class{simpleparty} with the full learning sample to create
+%a \class{constparty}. As \proglang{SPSS} had reordered some factor levels we need
+%to carry out this reordering as well"
+%<<ttnc2-reorder>>=
+%ttnc2 <- ttnc[, names(ttnc_quest$data)]
+%for(n in names(ttnc2)) {
+%  if(is.factor(ttnc2[[n]])) ttnc2[[n]] <- factor(
+%    ttnc2[[n]], levels = levels(ttnc_quest$data[[n]]))
+%}
+%@
+%%
+%Using this data all information for a \class{constparty} can be easily computed:
+%%
+%<<PMML-Titanic-augmentation>>=
+%ttnc_quest2 <- party(ttnc_quest$node,
+%  data = ttnc2,
+%  fitted = data.frame(
+%    "(fitted)" = predict(ttnc_quest, ttnc2, type = "node"),
+%    "(response)" = ttnc2$Survived,
+%    check.names = FALSE),
+%  terms = terms(Survived ~ ., data = ttnc2)
+%)
+%ttnc_quest2 <- as.constparty(ttnc_quest2)
+%@
+%This object is plotted in Figure~\ref{PMML-Titanic-plot2}.
 %
-<<PMML-Titanic-augmentation>>=
-ttnc_quest2 <- party(ttnc_quest$node,
-  data = ttnc2,
-  fitted = data.frame(
-    "(fitted)" = predict(ttnc_quest, ttnc2, type = "node"),
-    "(response)" = ttnc2$Survived,
-    check.names = FALSE),
-  terms = terms(Survived ~ ., data = ttnc2)
-)
-ttnc_quest2 <- as.constparty(ttnc_quest2)
-@
-This object is plotted in Figure~\ref{PMML-Titanic-plot2}.
-
-\begin{figure}[t!]
-\centering
-<<PMML-Titanic-plot2, fig=TRUE, height=8.5, width=14>>=
-plot(ttnc_quest2)
-@
-\caption{QUEST tree for Titanic data, fitted using \proglang{SPSS}, exported
-  via PMML, and transformed into a \class{constparty} object.
-  \label{PMML-Titanic-plot2}}
-\end{figure}
-
-Furthermore, we briefly point out that there is also the \proglang{R}
-package \pkg{pmml} \citep{pmml}, part of the \pkg{rattle} project
-\citep{rattle}, that allows to
-export PMML files for \pkg{rpart} trees from \proglang{R}. For example,
-for the \class{rpart} tree for the Titanic data:
-<<PMML-write>>=
-library("pmml")
-tfile <- tempfile()
-write(toString(pmml(rp)), file = tfile)
-@
-Then, we can simply read this file and inspect the resulting tree
-<<PMML-read>>=
-(party_pmml <- pmmlTreeModel(tfile))
-all.equal(predict(party_rp, newdata = ttnc, type = "prob"), 
-  predict(party_pmml, newdata = ttnc, type = "prob"),
-  check.attributes = FALSE)
-@
-Further example PMML files created with \pkg{rattle} are the Data Mining
-Group web page, e.g.,
-\url{http://www.dmg.org/pmml_examples/rattle_pmml_examples/AuditTree.xml} or
-\url{http://www.dmg.org/pmml_examples/rattle_pmml_examples/IrisTree.xml}.
-
+%\begin{figure}[t!]
+%\centering
+%<<PMML-Titanic-plot2, fig.height = 8.5, fig.width = 14>>=
+%plot(ttnc_quest2)
+%@
+%\caption{QUEST tree for Titanic data, fitted using \proglang{SPSS}, exported
+%  via PMML, and transformed into a \class{constparty} object.
+%  \label{PMML-Titanic-plot2}}
+%\end{figure}
+%
+%Furthermore, we briefly point out that there is also the \proglang{R}
+%package \pkg{pmml} \citep{pkg:pmml}, part of the \pkg{rattle} project
+%\citep{rattle}, that allows to
+%export PMML files for \pkg{rpart} trees from \proglang{R}. For example,
+%with \pkg{pmml} available, for the \class{rpart} tree for the Titanic data:
+%<<PMML-write, message = FALSE>>=
+%if (pmmlOK <- require("pmml")) {
+%    tfile <- tempfile()
+%    write(toString(pmml(rp)), file = tfile)
+%}
+%@
+%Then, we can simply read this file and inspect the resulting tree
+%<<PMML-read>>=
+%if (pmmlOK) {
+%    (party_pmml <- pmmlTreeModel(tfile))
+%    print(all.equal(predict(party_rp, newdata = ttnc, type = "prob"), 
+%                    predict(party_pmml, newdata = ttnc, type = "prob"),
+%                    check.attributes = FALSE))
+%}
+%@
+%Further example PMML files created with \pkg{rattle} are the Data Mining
+%Group web page, e.g.,
+%\url{https://dmg.org/pmml_examples/rattle_pmml_examples/AuditTree.xml} or
+%\url{https://dmg.org/pmml_examples/rattle_pmml_examples/IrisTree.xml}.
+%
 
 \section{Growing a simple classification tree} \label{sec:mytree}
 
@@ -525,7 +527,7 @@ resulting model
 %
 \begin{figure}[t!]
 \centering
-<<mytree-5, echo = FALSE, fig = TRUE, height=8.5, width=14>>=
+<<mytree-5, echo = FALSE, fig.height=8.5, fig.width=14>>=
 plot(myttnc)
 @
 \caption{Classification tree fitted by the \fct{mytree} function to the
@@ -566,7 +568,7 @@ The corresponding visualization is shown in Figure~\ref{prunetree}.
 \setkeys{Gin}{width=0.85\textwidth}
 \begin{figure}[t!]
 \centering
-<<mytree-nodeprune-plot, echo = FALSE, fig = TRUE, height=6, width=10>>=
+<<mytree-nodeprune-plot, echo = FALSE, fig.height=6, fig.width=10>>=
 plot(myttnc2)
 @
 \caption{Pruned classification tree fitted by the \fct{mytree} function to the
@@ -686,6 +688,6 @@ is rather straightforward to implement a new (or old) tree algorithm and therefo
 a prototype implementation of fancy ideas for improving trees is only a couple lines of
 \proglang{R} code away.
 
-\bibliography{party}
+\bibliography{party,packages}
     
 \end{document}

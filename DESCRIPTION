@@ -1,7 +1,7 @@
 Package: partykit
 Title: A Toolkit for Recursive Partytioning
-Date: 2025-05-02
-Version: 1.2-24
+Date: 2026-02-03
+Version: 1.2-25
 Authors@R: c(person(given = "Torsten", family = "Hothorn", role = c("aut", "cre"), email = "Torsten.Hothorn@R-project.org",
                     comment = c(ORCID = "0000-0001-8301-0471")),
              person(given = "Heidi", family = "Seibold", role = "ctb", email = "heidi@seibold.co",
@@ -20,20 +20,21 @@ Description: A toolkit with infrastructure for representing, summarizing, and
 Depends: R (>= 3.5.0), graphics, grid, libcoin (>= 1.0-0), mvtnorm
 Imports: grDevices, stats, utils, survival, Formula (>= 1.2-1), inum
         (>= 1.0-0), rpart (>= 4.1-11)
-Suggests: XML, pmml, rJava, sandwich, strucchange, vcd, AER, mlbench,
-        TH.data (>= 1.0-3), coin (>= 1.1-0), RWeka (>= 0.4-19),
-        datasets, parallel, psychotools (>= 0.3-0), psychotree, party
-        (>= 1.3-0), randomForest
+Suggests: XML, rJava, sandwich, strucchange, vcd, TH.data (>= 1.0-3),
+        mlbench, AER, coin (>= 1.1-0), party (>= 1.3-0), RWeka (>=
+        0.4-19), datasets, parallel, psychotools (>= 0.3-0),
+        psychotree, randomForest, knitr
 LazyData: yes
 License: GPL-2 | GPL-3
 URL: http://partykit.r-forge.r-project.org/partykit/
-RoxygenNote: 6.1.1
+VignetteBuilder: knitr
+Encoding: UTF-8
 NeedsCompilation: yes
-Packaged: 2025-05-02 09:22:46 UTC; hothorn
+Packaged: 2026-02-03 15:40:32 UTC; hothorn
 Author: Torsten Hothorn [aut, cre] (ORCID:
     <https://orcid.org/0000-0001-8301-0471>),
   Heidi Seibold [ctb] (ORCID: <https://orcid.org/0000-0002-8960-9642>),
   Achim Zeileis [aut] (ORCID: <https://orcid.org/0000-0003-0918-3766>)
 Maintainer: Torsten Hothorn <Torsten.Hothorn@R-project.org>
 Repository: CRAN
-Date/Publication: 2025-05-02 14:30:02 UTC
+Date/Publication: 2026-02-07 06:10:12 UTC

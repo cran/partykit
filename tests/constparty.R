@@ -1,13 +1,12 @@
 ### R code from vignette source 'constparty.Rnw'
 
-### test here after removal of RWeka dependent code
+### test here after removal of RWeka and pmml dependent code
 
 ###################################################
 ### code chunk number 1: setup
 ###################################################
 options(width = 70)
 library("partykit")
-library("XML") ### for pmmlTreeModel
 set.seed(290875)
 
 
@@ -98,9 +97,10 @@ prop.table(do.call("table", fitted(party_rp)), 1)
 ###################################################
 ### code chunk number 14: PMML-Titantic
 ###################################################
+if (require("XML")) {
 ttnc_pmml <- file.path(system.file("pmml", package = "partykit"),
   "ttnc.pmml")
-(ttnc_quest <- pmmlTreeModel(ttnc_pmml))
+print(ttnc_quest <- pmmlTreeModel(ttnc_pmml))
 
 
 ###################################################
@@ -138,22 +138,23 @@ ttnc_quest2 <- as.constparty(ttnc_quest2)
 ###################################################
 plot(ttnc_quest2)
 
+}
 
 ###################################################
 ### code chunk number 19: PMML-write
 ###################################################
-library("pmml")
-tfile <- tempfile()
-write(toString(pmml(rp)), file = tfile)
-
-
+#library("pmml")
+#tfile <- tempfile()
+#write(toString(pmml(rp)), file = tfile)
+#
+#
 ###################################################
 ### code chunk number 20: PMML-read
-###################################################
-(party_pmml <- pmmlTreeModel(tfile))
-all.equal(predict(party_rp, newdata = ttnc, type = "prob"), 
-  predict(party_pmml, newdata = ttnc, type = "prob"),
-  check.attributes = FALSE)
+##################################################
+#(party_pmml <- pmmlTreeModel(tfile))
+#all.equal(predict(party_rp, newdata = ttnc, type = "prob"), 
+#  predict(party_pmml, newdata = ttnc, type = "prob"),
+#  check.attributes = FALSE)
 
 
 ###################################################

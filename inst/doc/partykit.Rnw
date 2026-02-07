@@ -1,5 +1,6 @@
 \documentclass[nojss]{jss}
 
+%\VignetteEngine{knitr::knitr}
 %\VignetteIndexEntry{partykit: A Toolkit for Recursive Partytioning}
 %\VignetteDepends{partykit}
 %\VignetteKeywords{recursive partitioning, regression trees, classification trees, decision trees}
@@ -11,7 +12,6 @@
 \usepackage{amsmath}
 \usepackage{thumbpdf}
 \usepackage{rotating}
-%% need no \usepackage{Sweave}
 
 %% additional commands
 \newcommand{\squote}[1]{`{#1}'}
@@ -58,7 +58,7 @@
   Universit\"atsstr.~15 \\
   6020 Innsbruck, Austria \\
   E-mail: \email{Achim.Zeileis@R-project.org} \\
-  URL: \url{http://eeecon.uibk.ac.at/~zeileis/} \\
+  URL: \url{https://www.zeileis.org/} \\
 
   Torsten Hothorn\\
   Institut f\"ur Epidemiologie, Biostatistik und Pr\"avention \\
@@ -66,16 +66,13 @@
   Hirschengraben 84\\
   CH-8001 Z\"urich, Switzerland \\
   E-mail: \email{Torsten.Hothorn@R-project.org}\\
-  URL: \url{http://user.math.uzh.ch/hothorn/}
+  URL: \url{https://user.math.uzh.ch/hothorn/}
 }
 
 
 \begin{document}
 
-
-\SweaveOpts{eps=FALSE, keep.source=TRUE, eval = TRUE}
-
-<<setup, echo = FALSE, results = hide>>=
+<<setup, echo = FALSE, results = "hide", message = FALSE, warnings = FALSE>>=
 suppressWarnings(RNGversion("3.5.2"))
 options(width = 70)
 library("partykit")
@@ -99,10 +96,11 @@ algorithm also provide accompanying software but many software systems,
 e.g., including \pkg{Weka} \citep{Witten+Frank:2005} or \proglang{R} \citep{R},
 also provide collections of various types of trees.
 Within \proglang{R} the list of prominent packages includes
-\pkg{rpart} \citep[implementing the CART algorithm]{rpart},
-\pkg{mvpart} \citep[for multivariate CART]{mvpart},
-\pkg{RWeka} \citep[containing interfaces to J4.8, M5', LMT from \pkg{Weka}]{RWeka}, and
-\pkg{party} \citep[implementing CTree and MOB]{party} among
+\pkg{rpart} \citep[implementing the CART algorithm]{pkg:rpart},
+%%% \pkg{mvpart} \citep[for multivariate CART]{mvpart},
+\pkg{RWeka} \citep[containing interfaces to J4.8, M5', LMT from
+\pkg{Weka}]{pkg:RWeka}, and
+\pkg{party} \citep[implementing CTree and MOB]{pkg:party} among
 many others. See the CRAN task view ``Machine Learning''
 \citep{ctv} for an overview.
 
@@ -175,7 +173,7 @@ was inferred and it is simply assumed to be given.
 \setkeys{Gin}{width=0.8\textwidth}
 \begin{figure}[t!]
 \centering
-<<weather-plot0, echo=FALSE, fig=TRUE, height=5, width=7.5>>=
+<<weather-plot0, echo=FALSE, fig.height=5, fig.width=7.5>>=
 py <- party(
   partynode(1L,
     split = partysplit(1L, index = 1:3),
@@ -408,10 +406,10 @@ also complicated) these panel functions are.
 \setkeys{Gin}{width=0.48\textwidth}
 \begin{figure}[t!]
 \centering
-<<weather-methods-plot1, echo=FALSE, fig=TRUE, height=5, width=7.5>>=
+<<weather-methods-plot1, echo=FALSE, fig.height=5, fig.width=7.5>>=
 plot(py[6])
 @
-<<weather-methods-plot2, echo=FALSE, fig=TRUE, height=5, width=7.5>>=
+<<weather-methods-plot2, echo=FALSE, fig.height=5, fig.width=7.5>>=
 <<weather-methods-plot>>
 @
 \caption{\label{fig:plot-customization} Visualization of subtree (left) and tree with custom
@@ -501,7 +499,7 @@ This representation of splits is completely abstract and, most importantly,
 independent of any data. Now, data comes into play when we actually
 want to perform splits:
 %
-<<partysplit-4, echo = TRUE>>= 
+<<partysplit-4, echo = TRUE>>=
 kidids_split(sp_h, data = WeatherPlay)
 @
 %
@@ -574,7 +572,7 @@ table(kidids_split(sp_o2, data = WeatherPlay), WeatherPlay$outlook)
 The internal structure of this object contains the \code{index} slot
 that maps levels to kid nodes. 
 %
-<<partysplit-6, echo = TRUE>>=
+<<partysplit-6a, echo = TRUE>>=
 unclass(sp_o2)
 @
 %
@@ -768,7 +766,7 @@ t2
 \setkeys{Gin}{width=0.6\textwidth}
 \begin{figure}[t!]
 \centering
-<<constparty-plot, echo=FALSE, fig=TRUE, height=5, width=6>>=
+<<constparty-plot, echo=FALSE, fig.height=5, fig.width=6>>=
 plot(t2, tnex = 1.5)
 @
 \caption{\label{fig:constparty-plot} Constant-fit tree for \code{play} decision based on
@@ -806,6 +804,6 @@ and associated infrastructure are discussed: splits, nodes, and trees with funct
 for printing, plotting, and predicting. Further vignettes in the package
 discuss in more detail the tools built on top of it.
 
-\bibliography{party}
+\bibliography{party,packages}
 
 \end{document}
