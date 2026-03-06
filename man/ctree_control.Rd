@@ -63,7 +63,7 @@ ctree_control(teststat = c("quadratic", "maximum"),
   \item{lookahead}{ a logical determining whether a split is implemented only
                     after checking if tests in both daughter nodes can be performed.}
   \item{MIA}{ a logical determining the treatment of \code{NA} as a category in split,
-              see Twala et al. (2008).}
+              see \bibcitet{partykit::Twala+Jones+Hand:2008}.}
   \item{nresample}{ number of permutations for \code{testtype = "MonteCarlo"}.}
   \item{tol}{tolerance for zero variances.}
   \item{maxsurrogate}{ number of surrogate splits to evaluate.}
@@ -83,7 +83,7 @@ ctree_control(teststat = c("quadratic", "maximum"),
   \item{intersplit}{ a logical indicating if splits in numeric variables
                      are simply \code{x <= a} (the default) or interpolated
                      \code{x <= (a + b) / 2}. The latter feature is experimental, see
-                     Galili and Meilijson (2016).}
+                     \bibcitet{partykit::Galili+Meilijson:2016}.}
   \item{majority}{ if \code{FALSE} (the default), observations which can't be classified to a
                    daughter node because of missing information are randomly
                    assigned (following the node distribution). If \code{TRUE},
@@ -144,16 +144,5 @@ ctree_control(teststat = c("quadratic", "maximum"),
 \value{
   A list.
 }
-\references{
-
-  B. E. T. H. Twala, M. C. Jones, and D. J. Hand (2008),
-  Good Methods for Coping with Missing Data in Decision Trees,
-  \emph{Pattern Recognition Letters}, \bold{29}(7), 950--956.
-
-  Tal Galili, Isaac Meilijson (2016), Splitting Matters: How
-  Monotone Transformation of Predictor Variables May Improve the
-  Predictions of Decision Tree Models, \url{https://arxiv.org/abs/1611.04561}.
-
-
-}
+\references{\bibshow{*}}
 \keyword{misc}

@@ -81,7 +81,7 @@ To fit a tree model the following algorithm is used.
   }
   
 More details on the conceptual design of the algorithm can be found in 
-Zeileis, Hothorn, Hornik (2008) and some illustrations are provided in
+\bibcitet{partykit::Zeileis+Hothorn+Hornik:2008} and some illustrations are provided in
 \code{vignette("MOB")}.
 For specifying the \code{fit} function two approaches are possible:
 
@@ -120,7 +120,7 @@ Some examples are given below.
 
 More details can be found in \code{vignette("mob", package = "partykit")}.
 An overview of the connections to other functions in the package is provided
-by Hothorn and Zeileis (2015).
+by \bibcitet{partykit::Hothorn_Zeileis_2015}.
 }
 
 \value{
@@ -129,15 +129,7 @@ by Hothorn and Zeileis (2015).
   \code{node}s contain various informations about the models.
 }
 
-\references{ 
-Hothorn T, Zeileis A (2015).
-  partykit: A Modular Toolkit for Recursive Partytioning in R.
-  \emph{Journal of Machine Learning Research}, \bold{16}, 3905--3909.
-
-Zeileis A, Hothorn T, Hornik K (2008).
-  Model-Based Recursive Partitioning.
-  \emph{Journal of Computational and Graphical Statistics}, \bold{17}(2), 492--514.
-}
+\references{\bibshow{*}}
 
 \seealso{\code{\link{mob_control}}, \code{\link{lmtree}}, \code{\link{glmtree}}}
 

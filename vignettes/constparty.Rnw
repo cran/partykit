@@ -688,6 +688,6 @@ is rather straightforward to implement a new (or old) tree algorithm and therefo
 a prototype implementation of fancy ideas for improving trees is only a couple lines of
 \proglang{R} code away.
 
-\bibliography{party,packages}
+\bibliography{\Sexpr{gsub("\\.bib", "", system.file("REFERENCES.bib", package = "partykit"))},packages}
     
 \end{document}

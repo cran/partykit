@@ -52,13 +52,11 @@ elaborate plotting function.
   An object of class \code{lmtree} inheriting from \code{\link{modelparty}}.
   The \code{info} element of the overall \code{party} and the individual
   \code{node}s contain various informations about the models.
+
+  The methodology is described in \bibcitet{partykit::Zeileis+Hothorn+Hornik:2008}.
 }
 
-\references{ 
-Zeileis A, Hothorn T, Hornik K (2008).
-  Model-Based Recursive Partitioning.
-  \emph{Journal of Computational and Graphical Statistics}, \bold{17}(2), 492--514.
-}
+\references{\bibshow{*}}
 
 \seealso{\code{\link{mob}}, \code{\link{mob_control}}, \code{\link{glmtree}}}
 

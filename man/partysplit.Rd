@@ -97,6 +97,8 @@ info_split(split)
 
   \code{info} takes arbitrary user-specified information.
 
+  An introduction is available from \bibcitet{partykit::Hothorn_Zeileis_2015}.
+
 }
 \value{
   The constructor \code{partysplit()} returns an object of class \code{partysplit}:
@@ -120,11 +122,9 @@ info_split(split)
   of \code{partysplit} objects.
 }
 \seealso{\code{\link{cut}}}
-\references{ 
-Hothorn T, Zeileis A (2015).
-  partykit: A Modular Toolkit for Recursive Partytioning in R.
-  \emph{Journal of Machine Learning Research}, \bold{16}, 3905--3909.
-}
+
+\references{\bibshow{*}}
+
 \examples{
 data("iris", package = "datasets")
 

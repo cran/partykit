@@ -59,7 +59,7 @@
   greater than \code{threshold}) to the variable of interest.
   The resulting variable importance score is conditional in the sense of beta coefficients in   
   regression models, but represents the effect of a variable in both main effects and interactions.
-  See Strobl et al. (2008) for details.
+  See \bibcitet{partykit::Strobl+Boulesteix+Kneib:2008} for details.
 
   Note, however, that all random forest results are subject to random variation. Thus, before
   interpreting the importance ranking, check whether the same ranking is achieved with a
@@ -67,30 +67,15 @@
   \code{\link{ctree_control}}.
 
   Note that in the presence of missings in the predictor variables the procedure
-  described in Hapfelmeier et al. (2012) is performed.
+  described in \bibcitet{partykit::Hapfelmeier_Hothorn_Ulm_Strobl_2014} is performed.
 
 }
 \value{
   A vector of `mean decrease in accuracy' importance scores.
 }
-\references{ 
 
-    Leo Breiman (2001). Random Forests. \emph{Machine Learning}, 45(1), 5--32.
+\references{\bibshow{*}}
 
-    Alexander Hapfelmeier, Torsten Hothorn, Kurt Ulm, and Carolin Strobl (2014).
-    A New Variable Importance Measure for Random Forests with Missing Data.
-    \emph{Statistics and Computing}, \bold{24}(1), 21-34. 
-    \doi{10.1007/s11222-012-9349-1}
-
-    Torsten Hothorn, Kurt Hornik, and Achim Zeileis (2006b). Unbiased
-    Recursive Partitioning: A Conditional Inference Framework.
-    \emph{Journal of Computational and Graphical Statistics}, \bold{15}(3),
-    651-674. \doi{10.1198/106186006X133933}
-
-    Carolin Strobl, Anne-Laure Boulesteix, Thomas Kneib, Thomas Augustin, and Achim Zeileis (2008).
-    Conditional Variable Importance for Random Forests. \emph{BMC Bioinformatics}, \bold{9}, 307. 
-    \doi{10.1186/1471-2105-8-25}
-}
 \examples{
     
    set.seed(290875)

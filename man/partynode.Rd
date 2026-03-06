@@ -94,6 +94,8 @@ formatinfo_node(node, FUN = NULL, default = "", prefix = NULL, \dots)
   All other functions are accessor functions for
   extracting information from objects of class \code{partynode}.
 
+  An introduction is available from \bibcitet{partykit::Hothorn_Zeileis_2015}.
+
 }
 \value{
   The constructor \code{partynode()} returns an object of class \code{partynode}:
@@ -111,11 +113,9 @@ formatinfo_node(node, FUN = NULL, default = "", prefix = NULL, \dots)
   of the terminal nodes each observation belongs to.
 
 }
-\references{ 
-Hothorn T, Zeileis A (2015).
-  partykit: A Modular Toolkit for Recursive Partytioning in R.
-  \emph{Journal of Machine Learning Research}, \bold{16}, 3905--3909.
-}
+
+\references{\bibshow{*}}
+
 \examples{
 data("iris", package = "datasets")
 

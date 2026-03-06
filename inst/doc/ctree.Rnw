@@ -1263,6 +1263,6 @@ covariates was removed from the user interface.
 detach(package:party)
 @
 
-\bibliography{party,packages}
+\bibliography{\Sexpr{gsub("\\.bib", "", system.file("REFERENCES.bib", package = "partykit"))},packages}
 
 \end{document}

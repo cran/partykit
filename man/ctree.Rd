@@ -65,7 +65,7 @@ ctree(formula, data, subset, weights, na.action = na.pass, offset, cluster,
   3) Recursively repeate steps 1) and 2). 
 
   The implementation utilizes a unified framework for conditional inference,
-  or permutation tests, developed by Strasser and Weber (1999). The stop
+  or permutation tests, developed by \bibcitet{partykit::Strasser+Weber:1999}. The stop
   criterion in step 1) is either based on multiplicity adjusted p-values 
   (\code{testtype = "Bonferroni"} in \code{\link{ctree_control}})
   or on the univariate p-values (\code{testtype = "Univariate"}). In both cases, the
@@ -78,7 +78,8 @@ ctree(formula, data, subset, weights, na.action = na.pass, offset, cluster,
   The level of \code{mincriterion} can either be specified to be appropriate
   for the size of the data set (and \code{0.95} is typically appropriate for
   small to moderately-sized data sets) or could potentially be treated like a
-  hyperparameter (see Section~3.4 in Hothorn, Hornik and Zeileis, 2006).
+  hyperparameter, see Section~3.4 in
+  \bibcitet{partykit::Hothorn+Hornik+Zeileis:2006}.
   The selection of the input variable to split in
   is based on the univariate p-values avoiding a variable selection bias
   towards input variables with many possible cutpoints. The test statistics
@@ -100,32 +101,16 @@ ctree(formula, data, subset, weights, na.action = na.pass, offset, cluster,
   \code{1:length(x)}, this may be changed for variables in the formula 
   using \code{scores = list(x = c(1, 5, 6))}, for example.
 
-  For a general description of the methodology see Hothorn, Hornik and
-  Zeileis (2006) and Hothorn, Hornik, van de Wiel and Zeileis (2006).
+  For a general description of the methodology see
+  \bibcitet{partykit::Hothorn+Hornik+Zeileis:2006} and
+  \bibcitet{partykit::Hothorn+Hornik+Wiel+Zeileis:2006}. The implementation is
+  described in \bibcitet{partykit::Hothorn_Zeileis_2015}.
 }
 
 \value{
   An object of class \code{\link{party}}.
 }
-
-\references{ 
-Hothorn T, Hornik K, Van de Wiel MA, Zeileis A (2006).
-  A Lego System for Conditional Inference.
-  \emph{The American Statistician}, \bold{60}(3), 257--263.
-
-Hothorn T, Hornik K, Zeileis A (2006).
-  Unbiased Recursive Partitioning: A Conditional Inference Framework.
-  \emph{Journal of Computational and Graphical Statistics}, \bold{15}(3), 651--674. 
-
-Hothorn T, Zeileis A (2015).
-  partykit: A Modular Toolkit for Recursive Partytioning in R.
-  \emph{Journal of Machine Learning Research}, \bold{16}, 3905--3909.
-
-Strasser H, Weber C (1999).
-  On the Asymptotic Theory of Permutation Statistics.
-  \emph{Mathematical Methods of Statistics}, \bold{8}, 220--250.
-}
-
+\references{\bibshow{*}}
 \examples{
 ### regression
 airq <- subset(airquality, !is.na(Ozone))

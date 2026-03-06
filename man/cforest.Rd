@@ -82,7 +82,7 @@ cforest(formula, data, weights, subset, offset, cluster, strata,
     induction, the second fraction defines the portion of observations used
     for parameter estimation. The sum of both fractions can be smaller than
     one but most not exceed one. Details can be found in Section 2.4 of 
-     Wager and Athey (2018).}
+    \bibcitet{partykit::Wager_Athey_2018}.}
   \item{mtry}{
     number of input variables randomly sampled as candidates
     at each node for random forest like algorithms. Bagging, as special case
@@ -160,7 +160,8 @@ cforest(formula, data, weights, subset, offset, cluster, strata,
   The aggregation scheme works by averaging observation weights extracted
   from each of the \code{ntree} trees and NOT by averaging predictions directly
   as in \code{\link[randomForest]{randomForest}}.
-  See Hothorn et al. (2004) and Meinshausen (2006) for a description.
+  See \bibcitet{partykit::Hothorn+Lausen+Benner:2004} and
+  \bibcitet{partykit::Meinshausen_2006} for a description.
 
   Predictions can be computed using \code{\link{predict}}. For observations
   with zero weights, predictions are computed from the fitted tree
@@ -170,7 +171,9 @@ cforest(formula, data, weights, subset, offset, cluster, strata,
   tested, so this routine is meant for the expert user only and its current
   state is rather experimental. However, there are some things available
   in \code{\link{cforest}} that can't be done with \code{\link[randomForest]{randomForest}},
-  for example fitting forests to censored response variables (see Hothorn et al., 2004, 2006a) or to
+  for example fitting forests to censored response variables, see
+  \bibcitet{partykit::Hothorn+Lausen+Benner:2004} and 
+  \bibcitet{partykit::Hothorn+Buehlmann+Dudoit:2006}, or to
   multivariate and ordered responses. Using the rich \code{partykit} infrastructure allows
   additional functionality in \code{cforest}, such as parallel tree growing and probabilistic
   forecasting (for example via quantile regression forests). Also plotting of single trees from
@@ -188,56 +191,15 @@ cforest(formula, data, weights, subset, offset, cluster, strata,
   of categories, variable selection and computation of variable importance is biased
   in favor of variables with many potential cutpoints in \code{\link[randomForest]{randomForest}},
   while in \code{\link{cforest}} unbiased trees and an adequate resampling scheme
-  are used by default. See Hothorn et al. (2006b) and Strobl et al. (2007)
-  as well as Strobl et al. (2009).
+  are used by default. See \bibcitet{partykit::Hothorn+Hornik+Zeileis:2006} and
+  \bibcitet{partykit::Strobl+Boulesteix+Zeileis:2006}
+  as well as \bibcitet{partykit::Strobl+Malley+Tutz:2009}.
 }
 
 \value{
   An object of class \code{cforest}.
 }
-
-\references{
-Breiman L (2001).
-  Random Forests.
-  \emph{Machine Learning}, \bold{45}(1), 5--32.
-
-Hothorn T, Lausen B, Benner A, Radespiel-Troeger M (2004).
-  Bagging Survival Trees.
-  \emph{Statistics in Medicine}, \bold{23}(1), 77--91.
-
-Hothorn T, Buehlmann P, Dudoit S, Molinaro A, Van der Laan MJ (2006a).
-  Survival Ensembles.
-  \emph{Biostatistics}, \bold{7}(3), 355--373.
-
-Hothorn T, Hornik K, Zeileis A (2006b).
-  Unbiased Recursive Partitioning: A Conditional Inference Framework.
-  \emph{Journal of Computational and Graphical Statistics}, \bold{15}(3), 651--674.
-
-Hothorn T, Zeileis A (2015).
-  partykit: A Modular Toolkit for Recursive Partytioning in R.
-  \emph{Journal of Machine Learning Research}, \bold{16}, 3905--3909.
-
-Meinshausen N (2006).
-  Quantile Regression Forests.
-  \emph{Journal of Machine Learning Research}, \bold{7}, 983--999.
-
-Strobl C, Boulesteix AL, Zeileis A, Hothorn T (2007).
-  Bias in Random Forest Variable Importance Measures: Illustrations, Sources and a Solution.
-  \emph{BMC Bioinformatics}, \bold{8}, 25.
-  \doi{10.1186/1471-2105-8-25}
-
-Strobl C, Malley J, Tutz G (2009).
-  An Introduction to Recursive Partitioning: Rationale, Application, and Characteristics of
-  Classification and Regression Trees, Bagging, and Random Forests.
-  \emph{Psychological Methods}, \bold{14}(4), 323--348.
-
-Stefan Wager & Susan Athey (2018).
-  Estimation and Inference of Heterogeneous Treatment Effects using Random
-  Forests. \emph{Journal of the American Statistical Association},
-  \bold{113}(523), 1228--1242. \doi{10.1080/01621459.2017.1319839}
-
-}
-
+\references{\bibshow{*}}
 \examples{
 ## basic example: conditional inference forest for cars data
 cf <- cforest(dist ~ speed, data = cars)

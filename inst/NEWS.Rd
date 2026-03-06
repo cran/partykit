@@ -2,6 +2,14 @@
 \name{NEWS}
 \title{NEWS file for the \pkg{partykit} package}
 
+\section{Changes in Version 1.2-26 (2026-03-06)}{
+  \subsection{Features}{
+  \itemize{
+    \item{Use \file{REFERENCES.bib}.}
+}
+}
+}
+
 \section{Changes in Version 1.2-25 (2026-02-03)}{
   \subsection{Buxfixes}{
   \itemize{
@@ -9,6 +17,7 @@
 }
 }
 }
+
 \section{Changes in Version 1.2-24 (2025-05-02)}{
   \subsection{Buxfixes}{
   \itemize{

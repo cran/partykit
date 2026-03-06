@@ -804,6 +804,6 @@ and associated infrastructure are discussed: splits, nodes, and trees with funct
 for printing, plotting, and predicting. Further vignettes in the package
 discuss in more detail the tools built on top of it.
 
-\bibliography{party,packages}
+\bibliography{\Sexpr{gsub("\\.bib", "", system.file("REFERENCES.bib", package = "partykit"))},packages}
 
 \end{document}

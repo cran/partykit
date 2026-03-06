@@ -22,14 +22,10 @@ A data frame containing 14 observations on 5 variables.
 }
 
 \source{
-Table 1.3 in Witten and Frank (2011).
+Table 1.3 in \bibcitet{partykit::Witten+Frank:2011}.
 }
 
-\references{
-Witten IH, Frank E (2011).
-  \emph{Data Mining: Practical Machine Learning Tools and Techniques}.
-  3rd Edition, Morgan Kaufmann, San Francisco. 
-}
+\references{\bibshow{*}}
 
 \seealso{\code{\link{party}}, \code{\link{partynode}}, \code{\link{partysplit}}}
 

@@ -81,17 +81,11 @@
   \code{\link{node_inner}}.
 
   More details on the ideas and concepts of panel-generating functions and
-  \code{"grapcon_generator"} objects in general can be found in Meyer, Zeileis
-  and Hornik (2005).
+  \code{"grapcon_generator"} objects in general can be found in 
+  \bibcitet{partykit::Meyer+Zeileis+Hornik:2006}.
 }
 
-\references{
-Meyer D, Zeileis A, Hornik K (2006).
-  The Strucplot Framework: Visualizing Multi-Way Contingency Tables with vcd.
-  \emph{Journal of Statistical Software}, \bold{17}(3), 1--48.
-  \doi{10.18637/jss.v017.i03}
-}
-
+\references{\bibshow{*}}
 
 \seealso{\code{\link{node_inner}}, \code{\link{node_terminal}}, \code{\link{edge_simple}}, 
   \code{\link{node_barplot}}, \code{\link{node_boxplot}}.}

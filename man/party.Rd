@@ -77,6 +77,8 @@ is.simpleparty(party)
   in the \code{info} slot nodes. At the moment, no formal
   class is used to describe this information.
 
+  An introduction is available from \bibcitet{partykit::Hothorn_Zeileis_2015}.
+
 }
 \value{
   The constructor returns an object of class \code{party}:
@@ -96,11 +98,9 @@ is.simpleparty(party)
   \code{data_party} returns a data frame with observations contained in node
   \code{id}.
 }
-\references{ 
-Hothorn T, Zeileis A (2015).
-  partykit: A Modular Toolkit for Recursive Partytioning in R.
-  \emph{Journal of Machine Learning Research}, \bold{16}, 3905--3909.
-}
+
+\references{\bibshow{*}}
+
 \examples{
 ### data ###
 ## artificial WeatherPlay data

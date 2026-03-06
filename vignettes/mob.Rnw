@@ -1727,6 +1727,6 @@ To gain some efficiency in the computations and to allow for further customizati
 (generalized) linear models.
 
 
-\bibliography{party,packages}
+\bibliography{\Sexpr{gsub("\\.bib", "", system.file("REFERENCES.bib", package = "partykit"))},packages}
 
 \end{document}
