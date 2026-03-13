@@ -897,7 +897,7 @@ tNodes <- node_party(tr)
 ### this creates a tie on purpose and "d" should be selected
 ### this check fails on M1mac
 nodeInfo <- info_node(tNodes)
-nodeInfo$criterion
+round(nodeInfo$criterion, 3)
 #stopifnot(names(nodeInfo$p.value) == "d")
 #stopifnot(split_node(tNodes)$varid == 3)
 
