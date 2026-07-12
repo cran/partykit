@@ -217,3 +217,14 @@ predict(myttnc, newdata = nttnc, type = "prob")
 predict(myttnc, newdata = nttnc, FUN = function(y, w)
   rank(table(rep(y, w))))
 
+## ----bib, echo = FALSE----------------------------------------------
+thisdir <- getwd()
+bibfile <- system.file("REFERENCES.bib", package = "partykit")
+### bibfile may contain spaces LaTeX is unable to deal with on MacOS it seems
+if (file.copy(bibfile, to = thisdir, overwrite = TRUE)) {
+    bibfile <- "REFERENCES.bib"
+} else {
+    ### hope for the best
+    bibfile <- file.path("..", "inst", "REFERENCES.bib")
+}
+

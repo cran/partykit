@@ -1,5 +1,5 @@
 
-R Under development (unstable) (2026-03-11 r89601) -- "Unsuffered Consequences"
+R version 4.6.1 (2026-06-24) -- "Happy Hop"
 Copyright (C) 2026 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu
 
@@ -86,4 +86,4 @@ Number of terminal nodes: 5
 > 
 > proc.time()
    user  system elapsed 
-  0.533   0.072   0.600 
+  0.569   0.061   0.614 

@@ -497,7 +497,7 @@ mob_partynode <- function(Y, X, Z, weights = NULL, offset = NULL, cluster = NULL
           )
         } else {
 	  ## map back to set of full original levels
-	  ix <- structure(rep.int(NA_integer_, length(olevels)), .Names = olevels)
+	  ix <- structure(rep.int(NA_integer_, length(olevels)), names = olevels)
 	  ix[colnames(al)] <- !al[which.min(dev),]
 	  ix <- as.integer(ix) + 1L
           split <- list(
@@ -803,7 +803,7 @@ model.frame.modelparty <- function(formula, ...)
 weights.modelparty <- function(object, ...) {
   fit <- object$fitted
   ww <- if(!is.null(w <- fit[["(weights)"]])) w else rep.int(1L, NROW(fit))
-  structure(ww, .Names = rownames(fit))
+  structure(ww, names = rownames(fit))
 }
 
 ## methods concerning model/parameters/loglik/etc.

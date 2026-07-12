@@ -89,7 +89,7 @@ predict_party.simpleparty <- function(party, id, newdata = NULL,
   type <- match.arg(type)
 
   ## special case: fitted ids
-  if(type == "node") return(structure(id, .Names = nam))
+  if(type == "node") return(structure(id, names = nam))
 
   ## predictions
   if(type == "response") {
@@ -156,18 +156,18 @@ as.simpleparty.constparty <- function(obj, ...) {
     switch(rtype,
       "numeric" = {
         yhat <- .pred_numeric_response(y, w)
-        list(prediction = yhat, n = structure(sum(w), .Names = wnam),
+        list(prediction = yhat, n = structure(sum(w), names = wnam),
 	  error = sum(w * (y - yhat)^2), distribution = NULL, p.value = pval(node))
       },
       "factor" = {
         yhat <- .pred_factor_response(y, w)
         ytab <- round(.pred_factor(y, w) * sum(w))
-        list(prediction = yhat, n = structure(sum(w), .Names = wnam),
-	  error = structure(sum(100 * prop.table(ytab)[names(ytab) != yhat]), .Names = "%"),
+        list(prediction = yhat, n = structure(sum(w), names = wnam),
+	  error = structure(sum(100 * prop.table(ytab)[names(ytab) != yhat]), names = "%"),
 	  distribution = ytab, p.value = pval(node))
       },
       "Surv" = {
-        list(prediction = .pred_Surv(y, w), n = structure(sum(w), .Names = wnam),
+        list(prediction = .pred_Surv(y, w), n = structure(sum(w), names = wnam),
 	  error = NULL, distribution = NULL, p.value = pval(node)) ## FIXME: change distribution format?
       })
   }

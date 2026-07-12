@@ -360,7 +360,16 @@ Levels: yes no
 1 2 
 3 2 
 
+> thisdir <- getwd()
+
+> bibfile <- system.file("REFERENCES.bib", package = "partykit")
+
+> if (file.copy(bibfile, to = thisdir, overwrite = TRUE)) {
++     bibfile <- "REFERENCES.bib"
++ } else {
++     bibfile <- file.path("..", "inst", "REF ..." ... [TRUNCATED] 
+
  *** Run successfully completed ***
 > proc.time()
    user  system elapsed 
-  1.502   0.068   1.564 
+  0.850   0.069   0.919 

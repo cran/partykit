@@ -2,6 +2,14 @@
 \name{NEWS}
 \title{NEWS file for the \pkg{partykit} package}
 
+\section{Changes in Version 1.2-28 (2026-07-10)}{
+  \subsection{Other}{
+  \itemize{
+    \item{Update \code{structure} calls.}
+}
+}
+}
+
 \section{Changes in Version 1.2-27 (2026-03-13)}{
   \subsection{Bugfixes}{
   \itemize{

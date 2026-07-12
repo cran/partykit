@@ -288,9 +288,9 @@ predict.party <- function(object, newdata = NULL, perm = NULL, ...)
         ##     vnames[unique(unlist(primary_vars))]
 	unames <- vnames[unique(unlist(c(primary_vars, surrogate_vars)))]
 	
-        vclass <- structure(lapply(object$data, class), .Names = vnames)
+        vclass <- structure(lapply(object$data, class), names = vnames)
         ndnames <- names(newdata)
-        ndclass <- structure(lapply(newdata, class), .Names = ndnames)
+        ndclass <- structure(lapply(newdata, class), names = ndnames)
         checkclass <- all(sapply(unames, function(x) 
           isTRUE(all.equal(vclass[[x]], ndclass[[x]]))))
         factors <- sapply(unames, function(x) inherits(object$data[[x]], "factor"))
@@ -344,7 +344,7 @@ predict_party.default <- function(party, id, newdata = NULL, FUN = NULL, ...) {
             nodeids(party, terminal = TRUE), FUN, by_node = TRUE), id, nam))
 
     ## special case: fitted ids
-    return(structure(id, .Names = nam))
+    return(structure(id, names = nam))
 }
 
 predict_party.constparty <- function(party, id, newdata = NULL,
@@ -368,7 +368,7 @@ predict_party.constparty <- function(party, id, newdata = NULL,
 
     ## special case: fitted ids
     if(type == "node")
-      return(structure(id, .Names = nam))
+      return(structure(id, names = nam))
 
     ### multivariate response
     if (is.data.frame(response)) {

@@ -1,5 +1,5 @@
 
-R Under development (unstable) (2026-03-11 r89601) -- "Unsuffered Consequences"
+R version 4.6.1 (2026-06-24) -- "Happy Hop"
 Copyright (C) 2026 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu
 
@@ -182,4 +182,4 @@ $levels
 > 
 > proc.time()
    user  system elapsed 
-  0.535   0.059   0.592 
+  0.531   0.053   0.568 

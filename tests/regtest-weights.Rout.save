@@ -1,5 +1,5 @@
 
-R Under development (unstable) (2026-03-11 r89601) -- "Unsuffered Consequences"
+R version 4.6.1 (2026-06-24) -- "Happy Hop"
 Copyright (C) 2026 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu
 
@@ -124,4 +124,4 @@ Loading required package: mvtnorm
 > 
 > proc.time()
    user  system elapsed 
-  0.576   0.079   0.651 
+  0.637   0.068   0.688 

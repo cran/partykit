@@ -1,7 +1,6 @@
 Package: partykit
 Title: A Toolkit for Recursive Partytioning
-Date: 2026-03-13
-Version: 1.2-27
+Version: 1.2-28
 Authors@R: c(person(given = "Torsten", family = "Hothorn", role = c("aut", "cre"), email = "Torsten.Hothorn@R-project.org",
                     comment = c(ORCID = "0000-0001-8301-0471")),
              person(given = "Heidi", family = "Seibold", role = "ctb", email = "heidi@seibold.co",
@@ -26,15 +25,15 @@ Suggests: XML, rJava, sandwich, strucchange, vcd, TH.data (>= 1.0-3),
         psychotree, randomForest, knitr, bibtex
 LazyData: yes
 License: GPL-2 | GPL-3
-URL: http://partykit.r-forge.r-project.org/partykit/
+URL: https://codeberg.org/thothorn/partykit
 VignetteBuilder: knitr
 Encoding: UTF-8
 NeedsCompilation: yes
-Packaged: 2026-03-13 17:06:41 UTC; hothorn
+Packaged: 2026-07-10 11:34:48 UTC; hothorn
 Author: Torsten Hothorn [aut, cre] (ORCID:
     <https://orcid.org/0000-0001-8301-0471>),
   Heidi Seibold [ctb] (ORCID: <https://orcid.org/0000-0002-8960-9642>),
   Achim Zeileis [aut] (ORCID: <https://orcid.org/0000-0003-0918-3766>)
 Maintainer: Torsten Hothorn <Torsten.Hothorn@R-project.org>
 Repository: CRAN
-Date/Publication: 2026-03-13 18:00:15 UTC
+Date/Publication: 2026-07-12 07:40:08 UTC
