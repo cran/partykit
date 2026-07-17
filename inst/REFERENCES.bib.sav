@@ -1,3 +1,266 @@
+% Encoding: UTF-8
+
+
+@Article{         Currie_Durban_Eilers_2006,
+  author        = {Ian D. Currie and Maria Durban and Paul H. C. Eilers},
+  title         = {Generalized Linear Array Models with Applications to
+                  Multidimensional Smoothing},
+  year          = {2006},
+  journal       = {Journal of the Royal Statistical Society: Series B
+                  (Statistical Methodology)},
+  volume        = {68},
+  number        = {2},
+  doi           = {10.1111/j.1467-9868.2006.00543.x},
+  pages         = {259--280},
+}
+
+@ARTICLE{Eilers2005,
+  author = {Paul H. C. Eilers},
+  title = {Unimodal Smoothing},
+  journal = {Journal of Chemometrics},
+  year = {2005},
+  volume = {19},
+  pages = {317--328}
+}
+
+
+@ARTICLE{eilers1996,
+  author = {Eilers, Paul H. C. and Marx, Brian D.},
+  title = {Flexible Smoothing with {B}-splines and Penalties},
+  journal = {Statistical Science},
+  year = {1996},
+  volume = {11},
+  pages = {89--121},
+}
+
+
+@ARTICLE{Fahrmeir2004,
+  author = {Fahrmeir, L. and Kneib, T. and Lang, S.},
+  title = {Penalized Structured Additive Regression: A {B}ayesian Perspective},
+  journal = {Statistica Sinica},
+  year = {2004},
+  volume = {14},
+  pages = {731--761},
+}
+
+@ARTICLE{gertheiss:pen_ordinal:2009,
+  author = {Jan Gertheiss and Gerhard Tutz},
+  title = {Penalized Regression with Ordinal Predictors},
+  journal = {International Statistical Review},
+  year = {2009},
+  volume = {77},
+  pages = {345--365}
+}
+
+@INCOLLECTION{Goldfarb:1982,
+  author = {D. Goldfarb and A. Idnani},
+  year = 1982,
+  title = {Dual and Primal-Dual Methods for Solving Strictly Convex Quadratic Programs},
+  editors = {J. P. Hennart},
+  booktitle = {Numerical Analysis},
+  publisher = {Springer-Verlag, Berlin},
+  pages = {226--239}
+}
+
+@article{Goldfarb:1983,
+  author = {D. Goldfarb and A. Idnani},
+  year = 1983,
+  title = {A numerically stable dual method for solving strictly convex quadratic programs},
+  journal = {Mathematical Programming},
+  volume = {27},
+  pages = {1--33}
+}
+
+@article{Friedrichs_2017,
+         journal = {Computational and Mathematical Methods in Medicine},
+          author = {Stefanie Friedrichs and Juliane Manitz and Patricia Burger and Christopher I. Amos and Angela Risch and Jenny Chang-Claude and Heinz-Erich Wichmann and Thomas Kneib and Heike Bickeb\"oller and Benjamin Hofner},
+           title = {Pathway-Based Kernel Boosting for the Analysis of Genome-Wide Association Studies},
+            year = {2017},
+volume = 6742763,
+pages = {1--17}
+}
+
+@article{Hofner_Kneib_Hothorn_2015,
+  author = {Benjamin Hofner and Thomas Kneib and Torsten Hothorn},
+  title = {A Unified Framework of Constrained Regression},
+  journal = {Statistics and Computing},
+  year = {2016},
+  volume = 26,
+  number = 1,
+  pages = {1--14},
+  doi = {10.1007/s11222-014-9520-y}
+}
+
+@article{Hofner+Mueller+Hothorn_2011,
+  author = {Benjamin Hofner and J{\"o}rg M{\"u}ller and Torsten Hothorn},
+  title = {Monotonicity-Constrained Species Distribution Models},
+  year = 2011,
+  journal = {Ecology},
+  DOI = {10.1890/10-2276.1},
+  volume = 92,
+  number = 10,
+  pages = {1895--1901},
+}
+
+@article{Hofner+Hothorn+Kneib_2011,
+  author = {Benjamin Hofner and Torsten Hothorn and Thomas Kneib and Matthias Schmid},
+  title = {A Framework for Unbiased Model Selection Based on Boosting},
+  journal = {Journal of Computational and Graphical Statistics},
+  year = 2011,
+  volume = 20,
+  number = 4,
+  pages = {956--971},
+  doi = {10.1198/jcgs.2011.09220},
+}
+
+@Article{Hothorn:2006:JCGS,
+    key = {566},   
+    author = {Torsten Hothorn and Kurt Hornik and Achim Zeileis},
+    title = {Unbiased Recursive Partitioning: A Conditional Inference
+             Framework},
+    journal = {Journal of Computational and Graphical Statistics},
+    year = 2006,
+    volume = 15,
+    number = 3, 
+    pages = {651--674},
+    doi = {10.1198/106186006X133933},
+    gs = {12254435965356001085},
+    code = {http://CRAN.R-project.org/package=party}
+}
+
+
+@article{Hothorn+Buehlmann+Kneib+Schmid+Hofner_2010,
+    author =  {Torsten Hothorn and Peter B{\"u}hlmann and Thomas Kneib and
+               Matthias Schmid and Benjamin Hofner},
+    title = {Model-based Boosting 2.0},
+    journal = {Journal of Machine Learning Research},
+    year = 2010,
+    volume = 11,
+    pages = {2109--2113},
+    url = {http://jmlr.csail.mit.edu/papers/v11/hothorn10a.html},
+}
+
+@article{Beliakov2000,
+  title={Shape preserving approximation using least squares splines},
+  author={Beliakov, Gleb},
+  journal={Approximation Theory and its Applications},
+  volume={16},
+  number={4},
+  pages={80--98},
+  year={2000},
+}
+
+@Article{Hothorn:2005:JCGS,
+    author = {Torsten Hothorn and Friedrich Leisch 
+              and Achim Zeileis and Kurt Hornik},
+    year = 2005,
+    title = {The Design and Analysis of Benchmark Experiments},
+    journal = {Journal of Computational and Graphical Statistics},
+    volume = 14,
+    number = 3,
+    pages = {675--699},
+    doi = {10.1198/106186005X59630},
+}
+
+@article{Mayr_2012,
+  author = {Andreas Mayr and Benjamin Hofner and Matthias Schmid},
+  year = 2012,
+  title = {The Importance of Knowing When to Stop--
+           {A} Sequential Stopping Rule for
+           Component-wise Gradient Boosting},
+  journal = {Methods of Information in Medicine}, 
+  volume = 51, 
+  pages = {178--186},
+  doi = {10.3414/ME11-02-0030}
+}
+
+@article{Fenske+Kneib+Hothorn_2011,
+  author = {Nora Fenske and Thomas Kneib and Torsten Hothorn},
+  title = {Identifying Risk Factors for Severe Childhood
+           Malnutrition by Boosting Additive Quantile Regression},
+  journal = {Journal of the American Statistical Association},
+  year = 2011,
+  volume = 106,
+  number = 494,
+  pages = {494--510},
+  doi = {10.1198/jasa.2011.ap09272},
+}
+
+@article{Schmid+Hothorn+Maloney_2011,
+    title = {Geoadditive Regression Modeling of 
+             Stream Biological Condition},
+    author = {Matthias Schmid and Torsten Hothorn and Kelley O. Maloney and Donald
+              E. Weller and Sergej Potapov},
+    journal = {Environmental and Ecological Statistics},
+    year = {2011},
+    volume = 18,
+    number = 4,
+    pages = {709--733},
+    doi = {10.1007/s10651-010-0158-4}
+}
+
+@article{Schmid+Potapov+Pfahlberg:2010,
+  author = {Matthias Schmid and Sergej Potapov and Annette Pfahlberg and Torsten Hothorn}, 
+  title = {Estimation and Regularization Techniques for Regression Models with 
+           Multidimensional Prediction Functions},
+  journal = {Statistics and Computing},
+  year = 2010,
+  volume = 20, 
+  number = 2,
+  pages = {139--150},
+  doi = {10.1007/s11222-009-9162-7}
+}
+
+@Article{         sauerbrei1999,
+  author        = {Willi Sauerbrei and Patrick Royston},
+  title         = {Building multivariable prognostic and diagnostic models:
+                  Transformation of the predictors by using fractional
+                  polynomials},
+  journal       = {Journal of the Royal Statistical Society, Series A},
+  pages         = {71--94},
+  year          = {1999},
+  volume        = {162},
+  number        = {1}
+}
+
+
+@Article{Hothorn:2006:Biostatistics:16344280,
+  author = {Torsten Hothorn and Peter B{\"u}hlmann and Sandrine Dudoit and 
+            Annette Molinaro and Mark J. van der Laan},
+  title = {Survival Ensembles},
+  journal = {Biostatistics},
+  year = {2006},
+  volume = {7},
+  number = {3},
+  pages = {355--373},
+  doi = {10.1093/biostatistics/kxj011},
+}
+
+
+@article{Buehlmann:2008:StatSci,
+    AUTHOR = {Peter B\"{u}hlmann and Torsten Hothorn},
+     TITLE = {Boosting Algorithms: Regularization, Prediction and Model Fitting},
+   JOURNAL = {Statistical Science},
+      YEAR = {2007},
+    VOLUME = {22},
+    NUMBER = {4},
+     PAGES = {477--505},
+       DOI = {10.1214/07-STS242},
+      note = {with discussion},
+}
+
+
+@Article{         hur98,
+  author        = {C.M. Hurvich and J.S. Simonoff and C.-L. Tsai},
+  title         = {Smoothing parameter selection in nonparametric regression
+                  using an improved {A}kaike information criterion},
+  journal       = {Journal of the Royal Statististical Society, Series B},
+  year          = {1998},
+  volume        = {60},
+  optnumber     = {},
+  pages         = {271--293}
+}
+
 
 @article{Kass:1980,
   author        = {Gordon V. Kass},
@@ -1019,5 +1282,4 @@
   doi = {10.1186/1471-2105-9-307}
 }
 
-
-
+@Comment{jabref-meta: databaseType:bibtex;}

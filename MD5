@@ -1,4 +1,4 @@
-3a3df7469837a175fb79642465ff5d3b *DESCRIPTION
+00d4f3f93a414d015944647cd0ad7219 *DESCRIPTION
 dbb653bb1b54f81b13e2715252581cbf *NAMESPACE
 dca7b2a658a4a7e788b807e8126c0062 *R/as.party.R
 c83d333faa723d2dc3aeb6b54eef7aac *R/cforest.R
@@ -7,7 +7,7 @@ c83d333faa723d2dc3aeb6b54eef7aac *R/cforest.R
 e09deeecb4ea0bb89f5c50e57e988246 *R/glmtree.R
 acc00e722783ecc249a989d38cc32f07 *R/lmtree.R
 fdcdcf277b20053030c67f4b1f1b81f1 *R/mob-plot.R
-3f0cd2fec6a3949d66984e510bd8a714 *R/mob-pvalue.R
+7f6c452af476390476624144a7fdbdca *R/mob-pvalue.R
 0262d5be68fdd336686b47498b205661 *R/modelparty.R
 5436a41d79d26887924734b7370e61b6 *R/node.R
 f298064671c13e06ef74b3081871353d *R/party.R
@@ -20,7 +20,7 @@ f298064671c13e06ef74b3081871353d *R/party.R
 d7247611d1d9f749912867e8f6d4c151 *R/utils.R
 9c46336441e4f4907c25cd2129b96244 *R/varimp.R
 4376d9c236937c0f13ba909b235790f5 *R/zzz.R
-2dcdcdebc0d4eff1d43a44590a3d0bc1 *build/partial.rdb
+f211beb9f54669bf0def886b7456546f *build/partial.rdb
 882d1ca50c3e242f34caa0f053b0ddba *build/vignette.rds
 e6811a27b27d6fd7150506491a07f8e2 *cleanup
 b410bf42e75f4c300b7a574bfd4dcd55 *data/HuntingSpiders.rda
@@ -28,8 +28,9 @@ b410bf42e75f4c300b7a574bfd4dcd55 *data/HuntingSpiders.rda
 0bf664829f0398ca3b38000eb93e5e10 *demo/00Index
 a10fbafb2e117a2df08603dc03569f82 *demo/memory-speed.R
 b094cb0509a048dc80d9fb84f036d358 *inst/CITATION
-6c01841f34ec238f24f0db97ee1fe0dc *inst/NEWS.Rd
-8154b3496e9949cc657103b838586b7c *inst/REFERENCES.bib
+76600c44707aafcf2a4bd0c43c6b283f *inst/NEWS.Rd
+65e02ed41ab653d2b2aabf61c3e7e070 *inst/REFERENCES.bib
+92207eb1c8e8e4b7c62aca094573d8c4 *inst/REFERENCES.bib.sav
 b847249ab71ee834cfa87e649308f59d *inst/ULGcourse-2020/Data/Axams_pred.rda
 d623d2cc7274d7341c86b2fa0af3af8a *inst/ULGcourse-2020/Data/Axams_testdata.rda
 f67b3afd0d6efa130e59e49bf76cee22 *inst/ULGcourse-2020/Data/GENS_00_innsbruck-flughafen.txt
@@ -65,16 +66,16 @@ ebe8194e8e61ff7d26a281a1a7d16c70 *inst/ULGcourse-2020/exercises/exercise_german_
 42e4fcdf80c1540ed882f2c4a839b447 *inst/ULGcourse-2020/slides_tree.Rnw
 12001bb859be4abf5118595a87fc62ae *inst/doc/constparty.R
 70100dffd5c975ca87f67ba5f86f4084 *inst/doc/constparty.Rnw
-fa1700614d83c5d46eab84295870674d *inst/doc/constparty.pdf
+1e71c3179b4d3eccf2d16006a975faea *inst/doc/constparty.pdf
 4a527cce69193d00067fe24ee04903b2 *inst/doc/ctree.R
 252e32e5f26a2f3264de383949890209 *inst/doc/ctree.Rnw
-944c2b28a69b5a55a20ba76411f135b9 *inst/doc/ctree.pdf
+8e9c7528213d8513a727334ba6a56cc7 *inst/doc/ctree.pdf
 0969ea1b52df721c87380acf6e2a2bff *inst/doc/mob.R
 82e2687450b9e28bd71c70d7fd69ba5e *inst/doc/mob.Rnw
-a2adeaea72abdc02b8ea2eb6fbb4ae79 *inst/doc/mob.pdf
+b0c508e71789842c9ebe2e7f1ae31854 *inst/doc/mob.pdf
 0287d0f342475dc70b12b87830390d74 *inst/doc/partykit.R
 5962d09b4fedcfd2deaf92d4f821c2cb *inst/doc/partykit.Rnw
-53108f4b7500bcc869052ec58fca6082 *inst/doc/partykit.pdf
+cc3170c03389af18ed1ecd27f70443ab *inst/doc/partykit.pdf
 1b961019a4c8e43e4d046ae20d4a2cf5 *inst/pmml/airq.pmml
 8a72f1494239b092e6821e6534ed6627 *inst/pmml/bbbc.pmml
 ecc0e4f670cfbfda89e14f9df7a76df3 *inst/pmml/iris.pmml
