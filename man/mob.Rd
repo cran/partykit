@@ -10,13 +10,13 @@
 \alias{logLik.modelparty}
 \alias{model.frame.modelparty}
 \alias{nobs.modelparty}
-\alias{plot.modelparty}
-\alias{predict.modelparty}
-\alias{print.modelparty}
 \alias{residuals.modelparty}
 \alias{summary.modelparty}
 \alias{weights.modelparty}
 
+\alias{plot.modelparty}
+\alias{print.modelparty}
+\alias{predict.modelparty}
 \alias{refit.modelparty}
 \alias{sctest.modelparty}
 
@@ -30,6 +30,14 @@
 \usage{
 mob(formula, data, subset, na.action, weights, offset, cluster,
   fit, control = mob_control(), \dots)
+\S3method{plot}{modelparty}(x, terminal_panel = NULL, FUN = NULL, tp_args = NULL, \dots)
+\S3method{predict}{modelparty}(object, newdata = NULL, type = "node", \dots)
+\S3method{refit}{modelparty}(object, node = NULL, drop = TRUE, \dots)
+\S3method{sctest}{modelparty}(x, node = NULL, \dots)
+\S3method{print}{modelparty}(x, node = NULL,
+  FUN = NULL, digits = getOption("digits") - 4L,
+  header = TRUE, footer = TRUE, title = NULL, objfun = "", \dots)
+
 }
 
 \arguments{
@@ -51,6 +59,10 @@ mob(formula, data, subset, na.action, weights, offset, cluster,
     For details see below.}
   \item{control}{A list with control parameters as returned by
     \code{\link{mob_control}}.}
+  \item{x, object}{Objects of class \code{modelparty}.}
+  \item{terminal_panel, FUN, tp_args}{see \code{\link{plot.party}}.}
+  \item{newdata, type, node, drop}{see \code{\link{predict.party}}.}
+  \item{digits,  header, footer, title, objfun}{see \code{\link{print.party}}.}
   \item{\dots}{Additional arguments passed to the \code{fit} function.}
 }
 
@@ -136,8 +148,8 @@ by \bibcitet{partykit::Hothorn_Zeileis_2015}.
 \examples{
 if(require("mlbench")) {
 
-## Pima Indians diabetes data
-data("PimaIndiansDiabetes", package = "mlbench")
+## synthetic diabetes data
+data("SynthDiabetes", package = "mlbench")
 
 ## a simple basic fitting function (of type 1) for a logistic regression
 logit <- function(y, x, start = NULL, weights = NULL, offset = NULL, ...) {
@@ -145,36 +157,36 @@ logit <- function(y, x, start = NULL, weights = NULL, offset = NULL, ...) {
 }
 
 ## set up a logistic regression tree
-pid_tree <- mob(diabetes ~ glucose | pregnant + pressure + triceps + insulin +
-  mass + pedigree + age, data = PimaIndiansDiabetes, fit = logit)
+sd_tree <- mob(diabetes ~ glucose | pregnant + pressure + triceps + insulin +
+  mass + pedigree + age, data = SynthDiabetes, fit = logit)
 ## see lmtree() and glmtree() for interfaces with more efficient fitting functions
 
 ## print tree
-print(pid_tree)
+print(sd_tree)
 
 ## print information about (some) nodes
-print(pid_tree, node = 3:4)
+print(sd_tree, node = 3:4)
 
 ## visualization
-plot(pid_tree)
+plot(sd_tree)
 
 ## coefficients and summary
-coef(pid_tree)
-coef(pid_tree, node = 1)
-summary(pid_tree, node = 1)
+coef(sd_tree)
+coef(sd_tree, node = 1)
+summary(sd_tree, node = 1)
 
 ## average deviance computed in different ways
-mean(residuals(pid_tree)^2)
-deviance(pid_tree)/sum(weights(pid_tree))
-deviance(pid_tree)/nobs(pid_tree)
+mean(residuals(sd_tree)^2)
+deviance(sd_tree)/sum(weights(sd_tree))
+deviance(sd_tree)/nobs(sd_tree)
 
 ## log-likelihood and information criteria
-logLik(pid_tree)
-AIC(pid_tree)
-BIC(pid_tree)
+logLik(sd_tree)
+AIC(sd_tree)
+BIC(sd_tree)
 
 ## predicted nodes
-predict(pid_tree, newdata = head(PimaIndiansDiabetes, 6), type = "node")
+predict(sd_tree, newdata = head(SynthDiabetes, 6), type = "node")
 ## other types of predictions are possible using lmtree()/glmtree()
 }
 }

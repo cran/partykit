@@ -318,6 +318,11 @@ plot.party <- function(x, main = NULL,
 		       margins = NULL, ...)
 {
 
+  ### issue a warning when called directly (in version 1.3-0)
+  caller <- sys.call(-1L)
+  callee <- sys.call()
+  chkS3(caller = caller, callee = callee)
+
     ### extract tree
     node <- node_party(x)
     ### total number of terminal nodes

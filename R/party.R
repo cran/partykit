@@ -241,6 +241,12 @@ nodeapply.partynode <- function(obj, ids = 1, FUN = NULL, ...) {
 
 predict.party <- function(object, newdata = NULL, perm = NULL, ...)
 {
+
+  ### issue a warning when called directly (in version 1.3-0)
+  caller <- sys.call(-1L)
+  callee <- sys.call()
+  chkS3(caller = caller, callee = callee)
+
     ### compute fitted node ids first
     fitted <- if(is.null(newdata) && is.null(perm)) {    
         object$fitted[["(fitted)"]]	
@@ -530,6 +536,11 @@ data_party <- function(party, id = 1L)
 
 data_party.default <- function(party, id = 1L) {
     
+  ### issue a warning when called directly (in version 1.3-0)
+  caller <- sys.call(-1L)
+  callee <- sys.call()
+  chkS3(caller = caller, callee = callee)
+
     extract <- function(id) {
         if(is.null(party$fitted))
             if(nrow(party$data) == 0) return(NULL)

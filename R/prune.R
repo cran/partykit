@@ -1,5 +1,10 @@
 
 nodeprune.party <- function(x, ids, ...) {
+
+  ### issue a warning when called directly (in version 1.3-0)
+  caller <- sys.call(-1L)
+  callee <- sys.call()
+  chkS3(caller = caller, callee = callee)
   
   ### map names to nodeids
   if (!is.numeric(ids))

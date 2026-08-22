@@ -98,6 +98,11 @@ varimp <- function(object, nperm = 1L, ...)
 varimp.constparty <- function(object, nperm = 1L, risk = c("loglik", "misclassification"), 
                               conditions = NULL, mincriterion = 0, ...) {
 
+  ### issue a warning when called directly (in version 1.3-0)
+  caller <- sys.call(-1L)
+  callee <- sys.call()
+  chkS3(caller = caller, callee = callee)
+
     if (!is.function(risk)) {
         risk <- match.arg(risk)
         ### risk is _NEGATIVE_ log-likelihood
@@ -140,6 +145,17 @@ gettree <- function(object, tree = 1L, ...)
     UseMethod("gettree")
 
 gettree.cforest <- function(object, tree = 1L, ...) {
+
+  gfun <- strsplit(callee <- rev(as.character(as.list(sys.call())[[1]]))[1L], 
+                   "\\.")[[1L]][1L]
+  caller <- sys.call(-1)
+  if (is.null(caller) || as.name(as.list(caller)[[1L]]) != gfun) {
+      if (inherits(try(getFromNamespace(caller, ns = "partykit")), "try-error"))
+      .Deprecated(new = gfun, old = callee, package = "partykit",
+                  msg = "calling partykit methods directly is deprecated, please use the generic")
+  }
+
+
     ft <- object$fitted
     ft[["(weights)"]] <- object$weights[[tree]]
     ret <- party(object$nodes[[tree]], data = object$data, fitted = ft)
@@ -206,6 +222,11 @@ gettree.cforest <- function(object, tree = 1L, ...) {
 varimp.cforest <- function(object, nperm = 1L, OOB = TRUE, risk = c("loglik", "misclassification"), 
                            conditional = FALSE, threshold = .2,    
                            applyfun = NULL, cores = NULL, ...) {
+
+  ### issue a warning when called directly (in version 1.3-0)
+  caller <- sys.call(-1L)
+  callee <- sys.call()
+  chkS3(caller = caller, callee = callee)
 
     ret <- matrix(NA, nrow = length(object$nodes), ncol = ncol(object$data))
     colnames(ret) <- names(object$data)

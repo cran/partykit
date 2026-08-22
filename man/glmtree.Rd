@@ -66,39 +66,38 @@ elaborate plotting function.
 \examples{
 if(require("mlbench") && require("vcd")) {
 
-## Pima Indians diabetes data
-data("PimaIndiansDiabetes", package = "mlbench")
+## synthetic diabetes data
+data("SynthDiabetes", package = "mlbench")
 
 ## recursive partitioning of a logistic regression model
-pid_tree2 <- glmtree(diabetes ~ glucose | pregnant +
-  pressure + triceps + insulin + mass + pedigree + age,
-  data = PimaIndiansDiabetes, family = binomial)
+sd_tree2 <- glmtree(diabetes ~ glucose | pressure + triceps +
+  insulin + mass + age, data = SynthDiabetes, family = binomial)
 
 ## printing whole tree or individual nodes
-print(pid_tree2)
-print(pid_tree2, node = 1)
+print(sd_tree2)
+print(sd_tree2, node = 1)
 
 ## visualization
-plot(pid_tree2)
-plot(pid_tree2, tp_args = list(cdplot = TRUE))
-plot(pid_tree2, terminal_panel = NULL)
+plot(sd_tree2)
+plot(sd_tree2, tp_args = list(cdplot = TRUE))
+plot(sd_tree2, terminal_panel = NULL)
 
 ## estimated parameters
-coef(pid_tree2)
-coef(pid_tree2, node = 5)
-summary(pid_tree2, node = 5)
+coef(sd_tree2)
+coef(sd_tree2, node = 5)
+summary(sd_tree2, node = 5)
 
 ## deviance, log-likelihood and information criteria
-deviance(pid_tree2)
-logLik(pid_tree2)
-AIC(pid_tree2)
-BIC(pid_tree2)
+deviance(sd_tree2)
+logLik(sd_tree2)
+AIC(sd_tree2)
+BIC(sd_tree2)
 
 ## different types of predictions
-pid <- head(PimaIndiansDiabetes)
-predict(pid_tree2, newdata = pid, type = "node")
-predict(pid_tree2, newdata = pid, type = "response")
-predict(pid_tree2, newdata = pid, type = "link")
+sd <- head(SynthDiabetes)
+predict(sd_tree2, newdata = sd, type = "node")
+predict(sd_tree2, newdata = sd, type = "response")
+predict(sd_tree2, newdata = sd, type = "link")
 
 }
 }

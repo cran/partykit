@@ -1,5 +1,5 @@
 
-R version 4.6.1 (2026-06-24) -- "Happy Hop"
+R Under development (unstable) (2026-08-20 r90437) -- "Unsuffered Consequences"
 Copyright (C) 2026 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu
 
@@ -21,6 +21,7 @@ Type 'q()' to quit R.
 Loading required package: grid
 Loading required package: libcoin
 Loading required package: mvtnorm
+> library("rpart") ### for prune
 > 
 > set.seed(29)
 > n <- 1000
@@ -203,7 +204,7 @@ NULL
 [1] 5135.347
 > 
 > ## check pruning
-> pr2 <- prune.modelparty(mmfluc2)
+> pr2 <- prune(mmfluc2)
 > AIC(mmfluc2)
 [1] 5117.347
 > AIC(pr2)
@@ -211,8 +212,8 @@ NULL
 > 
 > mmfluc_dfsplit3 <- glmtree(formula = fmla, data = d, alpha = 0.5, dfsplit = 3)
 > mmfluc_dfsplit4 <- glmtree(formula = fmla, data = d, alpha = 0.5, dfsplit = 4)
-> pr_dfsplit3 <- prune.modelparty(mmfluc_dfsplit3)
-> pr_dfsplit4 <- prune.modelparty(mmfluc_dfsplit4)
+> pr_dfsplit3 <- prune(mmfluc_dfsplit3)
+> pr_dfsplit4 <- prune(mmfluc_dfsplit4)
 > AIC(mmfluc_dfsplit3)
 [1] 5142.774
 > AIC(mmfluc_dfsplit4)
@@ -509,44 +510,43 @@ NULL
 > if (requireNamespace("mlbench")) {
 + 
 + ### example from mob vignette
-+ data("PimaIndiansDiabetes", package = "mlbench")
++ data("SynthDiabetes", package = "mlbench")
 + 
 + logit <- function(y, x, start = NULL, weights = NULL, offset = NULL, ...) {
 +   glm(y ~ 0 + x, family = binomial, start = start, ...)
 + }
 + 
-+ pid_formula <- diabetes ~ glucose | pregnant + pressure + triceps +
-+   insulin + mass + pedigree + age
++ sd_formula <- diabetes ~ glucose | pressure + triceps + insulin +
++   mass + age
 + 
-+ pid_tree <- mob(pid_formula, data = PimaIndiansDiabetes, fit = logit)
-+ print(pid_tree)
-+ print(nodeapply(pid_tree, ids = nodeids(pid_tree), function(n) n$info$criterion))
++ sd_tree <- mob(sd_formula, data = SynthDiabetes, fit = logit)
++ print(sd_tree)
++ print(nodeapply(sd_tree, ids = nodeids(sd_tree), function(n) n$info$criterion))
 + 
 + }
 Loading required namespace: mlbench
 Model-based recursive partitioning (logit)
 
 Model formula:
-diabetes ~ glucose | pregnant + pressure + triceps + insulin + 
-    mass + pedigree + age
+diabetes ~ glucose | pressure + triceps + insulin + mass + age
 
 Fitted party:
 [1] root
-|   [2] mass <= 26.3: n = 167
+|   [2] age <= 35
+|   |   [3] mass <= 32.5: n = 271
+|   |       x(Intercept)     xglucose 
+|   |        -5.85351061   0.03490683 
+|   |   [4] mass > 32.5: n = 251
+|   |       x(Intercept)     xglucose 
+|   |        -6.50834431   0.04767106 
+|   [5] age > 35: n = 246
 |       x(Intercept)     xglucose 
-|        -9.95150963   0.05870786 
-|   [3] mass > 26.3
-|   |   [4] age <= 30: n = 304
-|   |       x(Intercept)     xglucose 
-|   |        -6.70558554   0.04683748 
-|   |   [5] age > 30: n = 297
-|   |       x(Intercept)     xglucose 
-|   |        -2.77095386   0.02353582 
+|        -2.62124297   0.02081593 
 
 Number of inner nodes:    2
 Number of terminal nodes: 3
 Number of parameters per node: 2
-Objective function: 355.4578
+Objective function: 385.0292
 $`1`
 NULL
 
@@ -565,4 +565,4 @@ NULL
 > 
 > proc.time()
    user  system elapsed 
-  9.714   0.090   9.792 
+ 11.062   0.075   9.943 

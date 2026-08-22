@@ -5,6 +5,11 @@ pmmlTreeModel <- function(file, ...) {
 
 as.party.XMLNode <- function(obj, ...) {
 
+  ### issue a warning when called directly (in version 1.3-0)
+  caller <- sys.call(-1L)
+  callee <- sys.call()
+  chkS3(caller = caller, callee = callee)
+
   stopifnot(requireNamespace("XML"))
   ## check whether XML specifies a TreeModel
   stopifnot(c("DataDictionary", "TreeModel") %in% names(obj))

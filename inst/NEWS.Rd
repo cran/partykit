@@ -2,6 +2,28 @@
 \name{NEWS}
 \title{NEWS file for the \pkg{partykit} package}
 
+\section{Changes in Version 1.3-0 (2026-08-21)}{
+  \subsection{Other}{
+  \itemize{
+    \item Got rid of manual registration procedures and import or attach
+          all necessary generics.
+    \item Stopped calling methods directly in tests.
+    \item Try to stop exporting methods directly. Infrastructure for
+          deprecation in place, but talk to package authors first. Please
+          avoid calling things like \code{plot.modeltree(x)} in your code or
+          package, use \code{plot(x)} for properly classed objects \code{x}.
+  }
+  }
+  \subsection{Misc}{
+  \itemize{
+    \item{Illustrations using the \code{PimaIndiansDiabetes} data from
+      \pkg{mlbench} have been adapted to use the \pkg{SynthDiabetes} data instead
+      because the former data are not shared in \pkg{mlbench} and the UCI Machine
+      Learning Repository anymore.}
+}
+}
+}
+
 \section{Changes in Version 1.2-29 (2026-07-16)}{
   \subsection{Other}{
   \itemize{
@@ -38,7 +60,7 @@
 
 
 \section{Changes in Version 1.2-25 (2026-02-03)}{
-  \subsection{Buxfixes}{
+  \subsection{Bugfixes}{
   \itemize{
     \item{Make sure absence of suggested packages does not break checks.}
 }
@@ -46,7 +68,7 @@
 }
 
 \section{Changes in Version 1.2-24 (2025-05-02)}{
-  \subsection{Buxfixes}{
+  \subsection{Bugfixes}{
   \itemize{
     \item{Handle ordinal splitting variables like numeric in \code{.list.rules.party()}.}
     \item{\code{MIA = TRUE} failed in rare cases because the principle
@@ -59,7 +81,7 @@
 }
 
 \section{Changes in Version 1.2-23 (2024-12-02)}{
-  \subsection{Buxfixes}{
+  \subsection{Bugfixes}{
   \itemize{
     \item{Make sure weights are propagated properly in \code{data\_party}.}
 }
@@ -68,7 +90,7 @@
 
 
 \section{Changes in Version 1.2-22 (2024-08-17)}{
-  \subsection{Buxfixes}{
+  \subsection{Bugfixes}{
   \itemize{
     \item{Use \code{R\_Calloc}.}
 }
@@ -76,7 +98,7 @@
 }
 
 \section{Changes in Version 1.2-21 (2024-07-18)}{
-  \subsection{Buxfixes}{
+  \subsection{Bugfixes}{
   \itemize{
     \item{Rd link problem.}
 }
@@ -85,7 +107,7 @@
 
 
 \section{Changes in Version 1.2-20 (2023-04-11)}{
-  \subsection{Buxfixes}{
+  \subsection{Bugfixes}{
   \itemize{
     \item{\code{density} now gives warnings when called with weights, avoid this.}
     \item{Check for tied p-values fails on M1mac.}
@@ -95,7 +117,7 @@
 
 
 \section{Changes in Version 1.2-19 (2023-03-19)}{
-  \subsection{Buxfixes}{
+  \subsection{Bugfixes}{
   \itemize{
     \item{Fix documentation bug.}
 }
@@ -103,7 +125,7 @@
 }
 
 \section{Changes in Version 1.2-18 (2023-03-09)}{
-  \subsection{Buxfixes}{
+  \subsection{Bugfixes}{
   \itemize{
     \item{Register default methods.}
 }
@@ -117,7 +139,7 @@
     \item Update \code{CITATION} file.
   }
   }
-  \subsection{Buxfixes}{
+  \subsection{Bugfixes}{
   \itemize{
     \item{Allow \code{NA} in responses when plotting. Reported by Tyson H. Holmes.}
 }
@@ -125,7 +147,7 @@
 }
 
 \section{Changes in Version 1.2-16 (2022-06-20)}{
-  \subsection{Buxfixes}{
+  \subsection{Bugfixes}{
   \itemize{
     \item{Address random CRAN errors (honesty checks).}
 }

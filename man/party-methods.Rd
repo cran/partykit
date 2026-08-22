@@ -35,6 +35,7 @@
 \method{[[}{party}(x, i, \dots)
 \method{depth}{party}(x, root = FALSE, \dots)
 \method{width}{party}(x, \dots)
+nodeprune(x, ids, ...)
 \method{nodeprune}{party}(x, ids, ...)
 }
 \arguments{

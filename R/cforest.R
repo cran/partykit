@@ -247,6 +247,11 @@ cforest <- function
 predict.cforest <- function(object, newdata = NULL, type = c("response", "prob", "weights", "node"), 
                             OOB = FALSE, FUN = NULL, simplify = TRUE, scale = TRUE, ...) {
 
+  ### issue a warning when called directly (in version 1.3-0)
+  caller <- sys.call(-1L)
+  callee <- sys.call()
+  chkS3(caller = caller, callee = callee)
+
     responses <- object$fitted[["(response)"]]
     forest <- object$nodes
     nd <- object$data

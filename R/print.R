@@ -67,6 +67,12 @@ print.party <- function(x,
   footer_panel = function(party) "",
   digits = getOption("digits") - 2, ...)
 {
+
+  ### issue a warning when called directly (in version 1.3-0)
+  caller <- sys.call(-1L)
+  callee <- sys.call()
+  chkS3(caller = caller, callee = callee)
+
   ## header
   cat(paste(header_panel(x), collapse = "\n"))
 

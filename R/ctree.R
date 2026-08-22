@@ -547,9 +547,15 @@ ctree <- function(formula, data, subset, weights, na.action = na.pass, offset, c
     return(infl)
 }
 
-sctest.constparty <- function(object, node = NULL, ...)
+sctest.constparty <- function(x, node = NULL, ...)
 {
 
+  ### issue a warning when called directly (in version 1.3-0)
+  caller <- sys.call(-1L)
+  callee <- sys.call()
+  chkS3(caller = caller, callee = callee)
+
+    object <- x
     if(is.null(node)) {
         ids <- nodeids(object, terminal = FALSE) ### all nodes
     } else {

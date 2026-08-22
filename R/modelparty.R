@@ -816,6 +816,12 @@ coef.modelparty <- function(object, node = NULL, drop = TRUE, ...) {
 
 refit.modelparty <- function(object, node = NULL, drop = TRUE, ...)
 {
+
+  ### issue a warning when called directly (in version 1.3-0)
+  caller <- sys.call(-1L)
+  callee <- sys.call()
+  chkS3(caller = caller, callee = callee)
+
   ## by default use all ids
   if(is.null(node)) node <- nodeids(object)
   
@@ -934,8 +940,15 @@ summary.modelparty <- function(object, node = NULL, ...)
   if(length(ids) == 1L) rval[[1L]] else rval
 }
 
-sctest.modelparty <- function(object, node = NULL, ...)
+sctest.modelparty <- function(x, node = NULL, ...)
 {
+
+  ### issue a warning when called directly (in version 1.3-0)
+  caller <- sys.call(-1L)
+  callee <- sys.call()
+  chkS3(caller = caller, callee = callee)
+
+  object <- x
   ids <- if(is.null(node)) nodeids(object, terminal = FALSE) else node
   rval <- nodeapply(object, ids, function(n) info_node(n)$test)
   names(rval) <- ids
@@ -946,6 +959,12 @@ print.modelparty <- function(x, node = NULL,
   FUN = NULL, digits = getOption("digits") - 4L,
   header = TRUE, footer = TRUE, title = NULL, objfun = "", ...)
 {
+
+  ### issue a warning when called directly (in version 1.3-0)
+  caller <- sys.call(-1L)
+  callee <- sys.call()
+  chkS3(caller = caller, callee = callee)
+
   digits <- max(c(0, digits))
   if(objfun != "") objfun <- paste(" (", objfun, ")", sep = "")
   if(is.null(title)) title <- sprintf("Model-based recursive partitioning (%s)",
@@ -1001,6 +1020,12 @@ print.modelparty <- function(x, node = NULL,
 
 predict.modelparty <- function(object, newdata = NULL, type = "node", ...)
 {
+
+  ### issue a warning when called directly (in version 1.3-0)
+  caller <- sys.call(-1L)
+  callee <- sys.call()
+  chkS3(caller = caller, callee = callee)
+
   ## predicted node ids
   node <- predict.party(object, newdata = newdata)
   if(identical(type, "node")) return(node)
@@ -1090,6 +1115,7 @@ fitted.modelparty <- function(object, ...)
 
 residuals.modelparty <- function(object, ...)
 {
+
   ## fitted nodes
   node <- predict.party(object, type = "node")
 
@@ -1117,6 +1143,12 @@ residuals.modelparty <- function(object, ...)
 }
 
 plot.modelparty <- function(x, terminal_panel = NULL, FUN = NULL, tp_args = NULL, ...) {
+
+  ### issue a warning when called directly (in version 1.3-0)
+  caller <- sys.call(-1L)
+  callee <- sys.call()
+  chkS3(caller = caller, callee = callee)
+
   if(is.null(terminal_panel)) {
     if(is.null(FUN)) {
       FUN <- function(x) {
@@ -1135,6 +1167,12 @@ plot.modelparty <- function(x, terminal_panel = NULL, FUN = NULL, tp_args = NULL
 ### AIC-based pruning
 prune.lmtree <- function(tree, type = "AIC", ...)
 {
+
+  ### issue a warning when called directly (in version 1.3-0)
+  caller <- sys.call(-1L)
+  callee <- sys.call()
+  chkS3(caller = caller, callee = callee)
+  
   ## special handling for AIC and BIC
   ptype <- pmatch(tolower(type), c("aic", "bic"), nomatch = 0L)
   if(ptype == 1L) {
@@ -1147,6 +1185,11 @@ prune.lmtree <- function(tree, type = "AIC", ...)
 
 prune.modelparty <- function(tree, type = "AIC", ...)
 {
+
+  caller <- sys.call(-1L)
+  callee <- sys.call()
+  chkS3(caller = caller, callee = callee)
+
   ## prepare pruning function
   if(is.character(type)) {
     type <- tolower(type)

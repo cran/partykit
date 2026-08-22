@@ -1,6 +1,7 @@
 suppressWarnings(RNGversion("3.5.2"))
 
 library("partykit")
+library("rpart") ### for prune
 
 set.seed(29)
 n <- 1000
@@ -65,14 +66,14 @@ AIC(mmfluc3)
 AIC(mmfluc3_dfsplit)
 
 ## check pruning
-pr2 <- prune.modelparty(mmfluc2)
+pr2 <- prune(mmfluc2)
 AIC(mmfluc2)
 AIC(pr2)
 
 mmfluc_dfsplit3 <- glmtree(formula = fmla, data = d, alpha = 0.5, dfsplit = 3)
 mmfluc_dfsplit4 <- glmtree(formula = fmla, data = d, alpha = 0.5, dfsplit = 4)
-pr_dfsplit3 <- prune.modelparty(mmfluc_dfsplit3)
-pr_dfsplit4 <- prune.modelparty(mmfluc_dfsplit4)
+pr_dfsplit3 <- prune(mmfluc_dfsplit3)
+pr_dfsplit4 <- prune(mmfluc_dfsplit4)
 AIC(mmfluc_dfsplit3)
 AIC(mmfluc_dfsplit4)
 AIC(pr_dfsplit3)
@@ -145,17 +146,17 @@ unclass(m_df)$node$info$criterion
 if (requireNamespace("mlbench")) {
 
 ### example from mob vignette
-data("PimaIndiansDiabetes", package = "mlbench")
+data("SynthDiabetes", package = "mlbench")
 
 logit <- function(y, x, start = NULL, weights = NULL, offset = NULL, ...) {
   glm(y ~ 0 + x, family = binomial, start = start, ...)
 }
 
-pid_formula <- diabetes ~ glucose | pregnant + pressure + triceps +
-  insulin + mass + pedigree + age
+sd_formula <- diabetes ~ glucose | pressure + triceps + insulin +
+  mass + age
 
-pid_tree <- mob(pid_formula, data = PimaIndiansDiabetes, fit = logit)
-print(pid_tree)
-print(nodeapply(pid_tree, ids = nodeids(pid_tree), function(n) n$info$criterion))
+sd_tree <- mob(sd_formula, data = SynthDiabetes, fit = logit)
+print(sd_tree)
+print(nodeapply(sd_tree, ids = nodeids(sd_tree), function(n) n$info$criterion))
 
 }

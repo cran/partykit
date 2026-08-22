@@ -125,9 +125,9 @@ very briefly reviews the original MOB algorithm of \cite{Zeileis+Hothorn+Hornik:
 and also highlights relevant subsequent work. Section~\ref{sec:implementation}
 introduces the new \code{mob()} function in \pkg{partykit} in detail,
 discussing how all steps of the MOB algorithm are implemented and which
-options for customization are available. For illustration logistic-regression-based
-recursive partitioning is applied to the Pima Indians diabetes data set from the
-UCI machine learning repository \citep{mlbench2}. Section~\ref{sec:illustration}
+options for customization are available. For illustration, logistic-regression-based
+recursive partitioning is applied to a synthetic diabetes data set from the
+\pkg{mlbench} package \citep{SynthDiabetes}. Section~\ref{sec:illustration}
 and~\ref{sec:mobster} present further illustrative examples \citep[including replications from][]{Zeileis+Hothorn+Hornik:2008}
 before Section~\ref{sec:conclusion} provides some concluding remarks.
 
@@ -332,22 +332,24 @@ subsets of \code{weights} and \code{offset} are passed on (if specified).
 
 \subsubsection*{Illustration}
 
-For illustration, we employ the popular benchmark data set on diabetes among
-Pima Indian women that is provided by the UCI machine learning repository \citep{mlbench2} and 
-available in the \pkg{mlbench} package \citep{pkg:mlbench}:
+For illustration, we employ a synthetic diabetes data set available in the \pkg{mlbench}
+package \citep{pkg:mlbench}. This replaces a data set that had been shared in the 
+UCI machine learning repository \citep{mlbench2} but was removed upon request from the
+agency that had collected the data. Therefore the results shown here differ somewhat
+from those presented in \cite{Zeileis+Hothorn+Hornik:2008}.
 %
-<<PimaIndiansDiabetes>>=
-data("PimaIndiansDiabetes", package = "mlbench")
+<<SynthDiabetes>>=
+data("SynthDiabetes", package = "mlbench")
 @
 %
 Following \cite{Zeileis+Hothorn+Hornik:2008} we want to fit a model for \code{diabetes}
 employing the plasma glucose concentration \code{glucose} as a regressor. As the influence
-of the remaining variables on \code{diabetes} is less clear, their relationship should be
+of some of the remaining variables on \code{diabetes} is less clear, their relationship should be
 learned by recursive partitioning. Thus, we employ the following formula:
 %
-<<PimIndiansDiabetes-formula>>=
-pid_formula <- diabetes ~ glucose | pregnant + pressure + triceps +
-  insulin + mass + pedigree + age
+<<SynthDiabetes-formula>>=
+sd_formula <- diabetes ~ glucose | pressure + triceps + insulin +
+  mass + age
 @
 %
 Before passing this to \code{mob()}, a \code{fit} function is needed and a logistic regression
@@ -437,39 +439,37 @@ which returns an object of class `\code{glm}' for which all required methods
 (\code{coef()}, \code{logLik()}, and \code{estfun()}) are available.
 
 Using this \code{fit} function and the \code{formula} already set up above
-the MOB algorithm can be easily applied to the \code{PimaIndiansDiabetes}
+the MOB algorithm can be easily applied to the \code{SynthDiabetes}
 data:
 %
-<<PimaIndiansDiabetes-mob>>=
-pid_tree <- mob(pid_formula, data = PimaIndiansDiabetes, fit = logit)
+<<SynthDiabetes-mob>>=
+sd_tree <- mob(sd_formula, data = SynthDiabetes, fit = logit)
 @
 %
 The result is a logistic regression tree with three terminal nodes that
-can be easily visualized via \code{plot(pid_tree)} (see Figure~\ref{fig:pid_tree})
+can be easily visualized via \code{plot(sd_tree)} (see Figure~\ref{fig:sd_tree})
 and printed:
-<<PimaIndiansDiabetes-print>>=
-pid_tree
+<<SynthDiabetes-print>>=
+sd_tree
 @
 %
-The tree finds three groups of Pima Indian women:
+The tree finds three groups of women:
 \begin{itemize}
-  \item[\#2] Women with low body mass index that have on average a low risk of
+  \item[\#3] Women up to 35 years with lower body mass index who have on average a low risk of
     diabetes, however this increases clearly with glucose level.
-  \item[\#4] Women with average and high body mass index, younger than 30 years,
-    that have a higher avarage risk that also increases with glucose level.
-  \item[\#5] Women with average and high body mass index, older than 30 years,
-    that have a high avarage risk that increases only slowly with glucose level.
+  \item[\#4] Women up to 35 years with higher body mass index
+    who have a higher avarage risk that also increases with glucose level.
+  \item[\#5] Women older than 35 years
+    who have a high avarage risk that increases only slowly with glucose level.
 \end{itemize}
-
-
+%
 Note that the example above is used for illustration here and \code{glmtree()} is
 recommended over using \code{mob()} plus manually setting up a \code{logit()} function.
 The same tree structure can be found via:
 %
-<<PimaIndiansDiabetes-glmtree>>=
-pid_tree2 <- glmtree(diabetes ~ glucose | pregnant +
-  pressure + triceps + insulin + mass + pedigree + age,
-  data = PimaIndiansDiabetes, family = binomial)
+<<SynthDiabetes-glmtree>>=
+sd_tree2 <- glmtree(diabetes ~ glucose | pressure + triceps + insulin +
+  mass + age, data = SynthDiabetes, family = binomial)
 @
 %
 However, \code{glmtree()} is slightly faster as it avoids many unnecessary computations,
@@ -478,23 +478,23 @@ see Section~\ref{sec:interface} for further details.
 \begin{figure}[p!]
 \centering
 \setkeys{Gin}{width=0.8\textwidth}
-<<PimaIndiansDiabetes-plot, echo=FALSE, results='hide', fig.height=5, fig.width=7>>=
-plot(pid_tree)
+<<SynthDiabetes-plot, echo=FALSE, results='hide', fig.height=5, fig.width=7>>=
+plot(sd_tree)
 @
-\caption{\label{fig:pid_tree} Logistic-regression-based tree for the Pima Indians diabetes
+\caption{\label{fig:sd_tree} Logistic-regression-based tree for the synthetic diabetes
 data. The plots in the leaves report the estimated regression coefficients.}
 
 \setkeys{Gin}{width=\textwidth}
-<<PimaIndiansDiabetes-plot2,echo=FALSE,results='hide',fig.height=6,fig.width=10>>=
-plot(pid_tree2, tp_args = list(ylines = 1, margins = c(1.5, 1.5, 1.5, 2.5)))
+<<SynthDiabetes-plot2,echo=FALSE,results='hide',fig.height=6,fig.width=10>>=
+plot(sd_tree2, tp_args = list(ylines = 1, margins = c(1.5, 1.5, 1.5, 2.5)))
 @
-\caption{\label{fig:pid_tree2} Logistic-regression-based tree for the Pima Indians
+\caption{\label{fig:sd_tree2} Logistic-regression-based tree for the synthetic
 diabetes data. The plots in the leaves give spinograms for \code{diabetes} versus 
 \code{glucose}.}
 \end{figure}
 
-Here, we only point out that \code{plot(pid_tree2)} produces a nicer visualization
-(see Figure~\ref{fig:pid_tree2}). As $y$ is \code{diabetes}, a binary variable, and $x$ is 
+Here, we only point out that \code{plot(sd_tree2)} produces a nicer visualization
+(see Figure~\ref{fig:sd_tree2}). As $y$ is \code{diabetes}, a binary variable, and $x$ is 
 \code{glucose}, a numeric variable, a spinogram is chosen automatically for visualization
 (using the \pkg{vcd} package, \citealp{vcd}).
 The x-axis breaks in the spinogram are the five-point summary of \code{glucose} on the full data set. The
@@ -578,29 +578,29 @@ associated with the minimal $p$-value is used for splitting the node.
 
 \subsubsection*{Illustration}
 
-In the logistic-regression-based MOB \code{pid_tree} computed above, the parameter instability
+In the logistic-regression-based MOB \code{sd_tree} computed above, the parameter instability
 tests can be extracted using the \code{sctest()} function from the \pkg{strucchange}
 package (for \underline{s}tructural \underline{c}hange \underline{test}). In the first
 node, the test statistics and Bonferroni-corrected $p$-values are:
 %
-<<PimaIndiansDiabetes-sctest1>>=
+<<SynthDiabetes-sctest1>>=
 library("strucchange")
-sctest(pid_tree, node = 1)
+sctest(sd_tree, node = 1)
 @
 %
 Thus, the body \code{mass} index has the lowest $p$-value and is highly significant
 and hence used for splitting the data. In the second node, no further significant
 parameter instabilities can be detected and hence partitioning stops in that branch.
 %
-<<PimaIndiansDiabetes-sctest2>>=
-sctest(pid_tree, node = 2)
+<<SynthDiabetes-sctest2>>=
+sctest(sd_tree, node = 2)
 @
 %
 In the third node, however, there is still significant instability associated with the
 \code{age} variable and hence partitioning continues.
 %
-<<PimaIndiansDiabetes-sctest3>>=
-sctest(pid_tree, node = 3)
+<<SynthDiabetes-sctest3>>=
+sctest(sd_tree, node = 3)
 @
 %
 Because no further instabilities can be found in the fourth and fifth node, the
@@ -628,9 +628,9 @@ starting values, the model fitting can often be speeded up.
 
 \subsubsection*{Illustration}
 
-For the Pima Indians diabetes data, the split points found for \code{pid_tree}
-are displayed both in the print output and the visualization (see Figure~\ref{fig:pid_tree}
-and~\ref{fig:pid_tree2}).
+For the synthetic diabetes data, the split points found for \code{sd_tree}
+are displayed both in the print output and the visualization (see Figure~\ref{fig:sd_tree}
+and~\ref{fig:sd_tree2}).
 
 \subsection{Pruning} \label{sec:prune}
 
@@ -668,13 +668,13 @@ for lower or higher penalization of additional splits.
 
 \subsubsection*{Illustration}
 
-With $n = \Sexpr{nrow(PimaIndiansDiabetes)}$ observations, the sample size is quite
+With $n = \Sexpr{nrow(SynthDiabetes)}$ observations, the sample size is quite
 reasonable for using the classical significance level of $\alpha = 0.05$ which is also reflected
 by the moderate tree size with three terminal nodes. However, if we wished to explore further
 splits, a conceivable strategy could be the following:
 %
-<<PimaIndiansDiabetes-prune, eval=FALSE>>=
-pid_tree3 <- mob(pid_formula, data = PimaIndiansDiabetes,
+<<SynthDiabetes-prune, eval=FALSE>>=
+sd_tree3 <- mob(sd_formula, data = SynthDiabetes,
   fit = logit, control = mob_control(verbose = TRUE,
     minsize = 50, maxdepth = 4, alpha = 0.9, prune = "BIC"))
 @
@@ -682,7 +682,7 @@ This first grows a large tree until the nodes become too small (minimum node siz
 or the tree becomes too deep (maximum depth 4~levels) or the significance levels come very close
 to one (larger than $\alpha = 0.9$). Here, this large tree has eleven nodes which are subsequently
 pruned based on whether or not they improve the BIC of the model. For this data set, the resulting
-BIC-pruned tree is in fact identical to the pre-pruned \code{pid_tree} considered above.
+BIC-pruned tree is in fact identical to the pre-pruned \code{sd_tree} considered above.
 
 \subsection[Fitted `party' objects]{Fitted `\texttt{party}' objects} \label{sec:object}
 
@@ -697,10 +697,10 @@ are exemplified below.
 \subsubsection*{Illustration}
 
 In the \code{info} of the overall `\code{party}' the following information is stored for
-\code{pid_tree}:
+\code{sd_tree}:
 %
-<<PimaIndiansDiabetes-info>>=
-names(pid_tree$info)
+<<SynthDiabetes-info>>=
+names(sd_tree$info)
 @
 %
 The \code{call} contains the \code{mob()} call. The \code{formula} and \code{Formula}
@@ -712,8 +712,8 @@ to \code{mob()} and \code{nreg} is the number of regressor variables.
 
 Furthermore, each \code{node} of the tree contains the following information:
 %
-<<PimaIndiansDiabetes-info-tree>>=
-names(pid_tree$node$info)
+<<SynthDiabetes-info-tree>>=
+names(sd_tree$node$info)
 @
 %
 The \code{coefficients}, \code{objfun}, and \code{object} are the results of the \code{fit}
@@ -777,21 +777,21 @@ model objects in the specified nodes (by default from all nodes).
 
 \subsubsection*{Illustration}
 
-The \code{plot()} and \code{print()} methods have already been illustrated for the \code{pid_tree}
+The \code{plot()} and \code{print()} methods have already been illustrated for the \code{sd_tree}
 above. However, here we add that the \code{print()} method can also be used to show
 more detailed information about particular nodes instead of showing the full tree:
 %
-<<PimaIndiansDiabetes-print3>>=
-print(pid_tree, node = 3)
+<<SynthDiabetes-print3>>=
+print(sd_tree, node = 3)
 @
 %
 Information about the model and coefficients can for example be extracted by:
 %
-<<PimaIndiansDiabetes-coef>>=
-coef(pid_tree)
-coef(pid_tree, node = 1)
+<<SynthDiabetes-coef>>=
+coef(sd_tree)
+coef(sd_tree, node = 1)
 ## IGNORE_RDIFF_BEGIN
-summary(pid_tree, node = 1)
+summary(sd_tree, node = 1)
 ## IGNORE_RDIFF_END
 @
 %
@@ -799,11 +799,11 @@ As the coefficients pertain to a logistic regression, they can be easily
 interpreted as odds ratios by taking the \code{exp()}:
 %
 <<>>=
-exp(coef(pid_tree)[,2])
+exp(coef(sd_tree)[,2])
 @  
 %
 <<echo=FALSE>>=
-risk <- round(100 * (exp(coef(pid_tree)[,2])-1), digits = 1)
+risk <- round(100 * (exp(coef(sd_tree)[,2])-1), digits = 1)
 @
 %
 i.e., the odds increase by \Sexpr{risk[1]}\%, \Sexpr{risk[2]}\% and \Sexpr{risk[3]}\%
@@ -811,24 +811,24 @@ with respect to glucose in the three terminal nodes.
 
 Log-likelihoods and information criteria are available (which by default also
 penalize the estimation of splits):
-<<PimaIndiansDiabetes-logLik>>=
-logLik(pid_tree)
-AIC(pid_tree)
-BIC(pid_tree)
+<<SynthDiabetes-logLik>>=
+logLik(sd_tree)
+AIC(sd_tree)
+BIC(sd_tree)
 @
 %
 Mean squared residuals (or deviances) can be extracted in different ways:
-<<PimaIndiansDiabetes-deviance>>=
-mean(residuals(pid_tree)^2)
-deviance(pid_tree)/sum(weights(pid_tree))
-deviance(pid_tree)/nobs(pid_tree)
+<<SynthDiabetes-deviance>>=
+mean(residuals(sd_tree)^2)
+deviance(sd_tree)/sum(weights(sd_tree))
+deviance(sd_tree)/nobs(sd_tree)
 @
 %
 Predicted nodes can also be easily obtained:
 %
-<<PimaIndiansDiabetes-predict>>=
-pid <- head(PimaIndiansDiabetes)
-predict(pid_tree, newdata = pid, type = "node")
+<<SynthDiabetes-predict>>=
+sd <- head(SynthDiabetes)
+predict(sd_tree, newdata = sd, type = "node")
 @
 %
 More predictions, e.g., predicted probabilities within the nodes, can also
@@ -840,19 +840,19 @@ Finally, several methods for `\code{party}' objects are, of course, also
 available for `\code{modelparty}' objects, e.g., querying width and depth of
 the tree:
 %
-<<PimaIndiansDiabetes-width>>=
-width(pid_tree)
-depth(pid_tree)
+<<SynthDiabetes-width>>=
+width(sd_tree)
+depth(sd_tree)
 @
 %
 Also subtrees can be easily extracted:
 %
-<<PimaIndiansDiabetes-subset>>=
-pid_tree[3]
+<<SynthDiabetes-subset>>=
+sd_tree[3]
 @
 %
 The subtree is again a completely valid `\code{modelparty}' and hence it could
-also be visualized via \code{plot(pid_tree[3])} etc.
+also be visualized via \code{plot(sd_tree[3])} etc.
 
 
 \subsection{Extensions and convenience interfaces} \label{sec:interface}
@@ -883,17 +883,17 @@ additional class `\code{lmtree}'/`\code{glmtree}' to dispatch to its enhanced
 
 \subsubsection*{Illustration}
 
-The \code{pid_tree2} object was already created above with \code{glmtree()}
-(instead of \code{mob()} as for \code{pid_tree}) to illustrate the enhanced
-plotting capabilities in Figure~\ref{fig:pid_tree2}. Here, the enhanced
+The \code{sd_tree2} object was already created above with \code{glmtree()}
+(instead of \code{mob()} as for \code{sd_tree}) to illustrate the enhanced
+plotting capabilities in Figure~\ref{fig:sd_tree2}. Here, the enhanced
 \code{predict()} method is used to obtain predicted means (i.e., probabilities)
 and associated linear predictors (on the logit scale) in addition to the
 previously available predicted nods IDs.
 %
 <<>>=
-predict(pid_tree2, newdata = pid, type = "node")
-predict(pid_tree2, newdata = pid, type = "response")
-predict(pid_tree2, newdata = pid, type = "link")
+predict(sd_tree2, newdata = sd, type = "node")
+predict(sd_tree2, newdata = sd, type = "response")
+predict(sd_tree2, newdata = sd, type = "link")
 @
 
 
@@ -907,7 +907,7 @@ provided, including replications of the results from \cite{Zeileis+Hothorn+Horni
     journals across covariates describing the type of journal (e.g., its
     price, its age, and whether it is published by a society, etc.)
   \item Prediction of house prices in the well-known Boston Housing data
-    set, also taken from the UCI machine learning repository.
+    set, taken from the UCI machine learning repository.
   \item Explore how teaching ratings and beauty scores of professors are
     associated and how this association changes across further explanatory
     variables such as age, gender, and native speaker status of the professors.

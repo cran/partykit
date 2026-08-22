@@ -3,6 +3,11 @@ as.party <- function(obj, ...)
 
 as.party.rpart <- function(obj, data = TRUE, ...) {
 
+  ### issue a warning when called directly (in version 1.3-0)
+  caller <- sys.call(-1L)
+  callee <- sys.call()
+  chkS3(caller = caller, callee = callee)
+
     ff <- obj$frame
     n  <- nrow(ff)
 
@@ -130,6 +135,11 @@ model_frame_rpart <- function(formula, ...) {
 }
 
 as.party.Weka_tree <- function(obj, data = TRUE, ...) {
+
+  ### issue a warning when called directly (in version 1.3-0)
+  caller <- sys.call(-1L)
+  callee <- sys.call()
+  chkS3(caller = caller, callee = callee)
 
   ## needs RWeka and rJava
   stopifnot(requireNamespace("RWeka"))

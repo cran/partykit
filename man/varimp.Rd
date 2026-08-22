@@ -8,6 +8,7 @@
     principle of the `mean decrease in accuracy' importance in `randomForest'.
 }
 \usage{
+varimp(object, nperm = 1L, ...)
 \method{varimp}{constparty}(object, nperm = 1L, 
        risk = c("loglik", "misclassification"), conditions = NULL,
        mincriterion = 0, ...)

@@ -6,6 +6,7 @@
 
 \usage{
 \method{prune}{modelparty}(tree, type = "AIC", ...)
+\method{prune}{lmtree}(tree, type = "AIC", ...)
 }
 
 \description{
@@ -27,10 +28,10 @@ criteria like AIC, BIC, or related user-defined criteria.
   or does is not sufficient (e.g., possibly in large samples) the \code{prune}
   method can be used for subsequent post-pruning based on information criteria.
 
-  The function \code{prune.modelparty} can be called directly but it is also
+  The function \code{prune.modelparty} is 
   registered as a method for the generic \code{\link[rpart]{prune}} function
-  from the \pkg{rpart} package. Thus, if \pkg{rpart} is attached,
-  \code{prune(tree, type = "AIC", ...)} also works (see examples below).
+  from the \pkg{rpart} package. Thus to use it, \pkg{rpart} needs to be attached,
+  such that \code{prune(tree, type = "AIC", ...)} works (see examples below).
 
   To customize the post-pruning strategy,
   \code{type} can be set to a \code{function(objfun, df, nobs)}
@@ -76,7 +77,6 @@ AIC(lm_big)
 AIC(glm_big)
 
 ## load rpart for prune() generic
-## (otherwise: use prune.modelparty directly)
 if (require("rpart")) {
 
 ## pruning

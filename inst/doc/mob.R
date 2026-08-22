@@ -15,97 +15,96 @@ if (any(!pkgs))
     knitr::knit_exit()
 }
 
-## ----PimaIndiansDiabetes--------------------------------------------
-data("PimaIndiansDiabetes", package = "mlbench")
+## ----SynthDiabetes--------------------------------------------------
+data("SynthDiabetes", package = "mlbench")
 
-## ----PimIndiansDiabetes-formula-------------------------------------
-pid_formula <- diabetes ~ glucose | pregnant + pressure + triceps +
-  insulin + mass + pedigree + age
+## ----SynthDiabetes-formula------------------------------------------
+sd_formula <- diabetes ~ glucose | pressure + triceps + insulin +
+  mass + age
 
 ## ----logit----------------------------------------------------------
 logit <- function(y, x, start = NULL, weights = NULL, offset = NULL, ...) {
   glm(y ~ 0 + x, family = binomial, start = start, ...)
 }
 
-## ----PimaIndiansDiabetes-mob----------------------------------------
-pid_tree <- mob(pid_formula, data = PimaIndiansDiabetes, fit = logit)
+## ----SynthDiabetes-mob----------------------------------------------
+sd_tree <- mob(sd_formula, data = SynthDiabetes, fit = logit)
 
-## ----PimaIndiansDiabetes-print--------------------------------------
-pid_tree
+## ----SynthDiabetes-print--------------------------------------------
+sd_tree
 
-## ----PimaIndiansDiabetes-glmtree------------------------------------
-pid_tree2 <- glmtree(diabetes ~ glucose | pregnant +
-  pressure + triceps + insulin + mass + pedigree + age,
-  data = PimaIndiansDiabetes, family = binomial)
+## ----SynthDiabetes-glmtree------------------------------------------
+sd_tree2 <- glmtree(diabetes ~ glucose | pressure + triceps + insulin +
+  mass + age, data = SynthDiabetes, family = binomial)
 
-## ----PimaIndiansDiabetes-plot, echo=FALSE, results='hide', fig.height=5, fig.width=7----
-plot(pid_tree)
+## ----SynthDiabetes-plot, echo=FALSE, results='hide', fig.height=5, fig.width=7----
+plot(sd_tree)
 
-## ----PimaIndiansDiabetes-plot2,echo=FALSE,results='hide',fig.height=6,fig.width=10----
-plot(pid_tree2, tp_args = list(ylines = 1, margins = c(1.5, 1.5, 1.5, 2.5)))
+## ----SynthDiabetes-plot2,echo=FALSE,results='hide',fig.height=6,fig.width=10----
+plot(sd_tree2, tp_args = list(ylines = 1, margins = c(1.5, 1.5, 1.5, 2.5)))
 
-## ----PimaIndiansDiabetes-sctest1------------------------------------
+## ----SynthDiabetes-sctest1------------------------------------------
 library("strucchange")
-sctest(pid_tree, node = 1)
+sctest(sd_tree, node = 1)
 
-## ----PimaIndiansDiabetes-sctest2------------------------------------
-sctest(pid_tree, node = 2)
+## ----SynthDiabetes-sctest2------------------------------------------
+sctest(sd_tree, node = 2)
 
-## ----PimaIndiansDiabetes-sctest3------------------------------------
-sctest(pid_tree, node = 3)
+## ----SynthDiabetes-sctest3------------------------------------------
+sctest(sd_tree, node = 3)
 
-## ----PimaIndiansDiabetes-prune, eval=FALSE--------------------------
-# pid_tree3 <- mob(pid_formula, data = PimaIndiansDiabetes,
+## ----SynthDiabetes-prune, eval=FALSE--------------------------------
+# sd_tree3 <- mob(sd_formula, data = SynthDiabetes,
 #   fit = logit, control = mob_control(verbose = TRUE,
 #     minsize = 50, maxdepth = 4, alpha = 0.9, prune = "BIC"))
 
-## ----PimaIndiansDiabetes-info---------------------------------------
-names(pid_tree$info)
+## ----SynthDiabetes-info---------------------------------------------
+names(sd_tree$info)
 
-## ----PimaIndiansDiabetes-info-tree----------------------------------
-names(pid_tree$node$info)
+## ----SynthDiabetes-info-tree----------------------------------------
+names(sd_tree$node$info)
 
-## ----PimaIndiansDiabetes-print3-------------------------------------
-print(pid_tree, node = 3)
+## ----SynthDiabetes-print3-------------------------------------------
+print(sd_tree, node = 3)
 
-## ----PimaIndiansDiabetes-coef---------------------------------------
-coef(pid_tree)
-coef(pid_tree, node = 1)
+## ----SynthDiabetes-coef---------------------------------------------
+coef(sd_tree)
+coef(sd_tree, node = 1)
 ## IGNORE_RDIFF_BEGIN
-summary(pid_tree, node = 1)
+summary(sd_tree, node = 1)
 ## IGNORE_RDIFF_END
 
 ## -------------------------------------------------------------------
-exp(coef(pid_tree)[,2])
+exp(coef(sd_tree)[,2])
 
 ## ----echo=FALSE-----------------------------------------------------
-risk <- round(100 * (exp(coef(pid_tree)[,2])-1), digits = 1)
+risk <- round(100 * (exp(coef(sd_tree)[,2])-1), digits = 1)
 
-## ----PimaIndiansDiabetes-logLik-------------------------------------
-logLik(pid_tree)
-AIC(pid_tree)
-BIC(pid_tree)
+## ----SynthDiabetes-logLik-------------------------------------------
+logLik(sd_tree)
+AIC(sd_tree)
+BIC(sd_tree)
 
-## ----PimaIndiansDiabetes-deviance-----------------------------------
-mean(residuals(pid_tree)^2)
-deviance(pid_tree)/sum(weights(pid_tree))
-deviance(pid_tree)/nobs(pid_tree)
+## ----SynthDiabetes-deviance-----------------------------------------
+mean(residuals(sd_tree)^2)
+deviance(sd_tree)/sum(weights(sd_tree))
+deviance(sd_tree)/nobs(sd_tree)
 
-## ----PimaIndiansDiabetes-predict------------------------------------
-pid <- head(PimaIndiansDiabetes)
-predict(pid_tree, newdata = pid, type = "node")
+## ----SynthDiabetes-predict------------------------------------------
+sd <- head(SynthDiabetes)
+predict(sd_tree, newdata = sd, type = "node")
 
-## ----PimaIndiansDiabetes-width--------------------------------------
-width(pid_tree)
-depth(pid_tree)
+## ----SynthDiabetes-width--------------------------------------------
+width(sd_tree)
+depth(sd_tree)
 
-## ----PimaIndiansDiabetes-subset-------------------------------------
-pid_tree[3]
+## ----SynthDiabetes-subset-------------------------------------------
+sd_tree[3]
 
 ## -------------------------------------------------------------------
-predict(pid_tree2, newdata = pid, type = "node")
-predict(pid_tree2, newdata = pid, type = "response")
-predict(pid_tree2, newdata = pid, type = "link")
+predict(sd_tree2, newdata = sd, type = "node")
+predict(sd_tree2, newdata = sd, type = "response")
+predict(sd_tree2, newdata = sd, type = "link")
 
 ## ----Journals-data--------------------------------------------------
 data("Journals", package = "AER")

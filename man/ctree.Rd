@@ -13,6 +13,7 @@
 ctree(formula, data, subset, weights, na.action = na.pass, offset, cluster, 
     control = ctree_control(\dots), ytrafo = NULL, 
     converged = NULL, scores = NULL, doFit = TRUE, \dots)
+\S3method{sctest}{constparty}(x, node = NULL, \dots)
 }
 
 \arguments{
@@ -44,6 +45,7 @@ ctree(formula, data, subset, weights, na.action = na.pass, offset, cluster,
   \item{scores}{an optional named list of scores to be attached to ordered
                 factors.}
   \item{doFit}{a logical, if \code{FALSE}, the tree is not fitted.}
+  \item{x, node}{an object of class \code{constparty} and a node number.}
   \item{\dots}{arguments passed to \code{\link{ctree_control}}.}
 }
 
@@ -85,7 +87,7 @@ ctree(formula, data, subset, weights, na.action = na.pass, offset, cluster,
   towards input variables with many possible cutpoints. The test statistics
   in each of the nodes can be extracted with the \code{sctest} method.
   (Note that the generic is in the \pkg{strucchange} package so this either
-  needs to be loaded or \code{sctest.constparty} has to be called directly.)
+  needs to be loaded).
   In cases where splitting stops due to the sample size (e.g., \code{minsplit}
   or \code{minbucket} etc.), the test results may be empty.
 

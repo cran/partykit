@@ -24,6 +24,7 @@ cforest(formula, data, weights, subset, offset, cluster, strata,
 \method{predict}{cforest}(object, newdata = NULL,
         type = c("response", "prob", "weights", "node"),
         OOB = FALSE, FUN = NULL, simplify = TRUE, scale = TRUE, \dots)
+gettree(object, tree = 1L, \dots)
 \method{gettree}{cforest}(object, tree = 1L, \dots)
 }
 
